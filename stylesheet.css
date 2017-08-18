@@ -1,324 +1,59 @@
 QPushButton {
-    border-color: #ff634d;
+    border-color: #9700E6;
     border-style: solid;
-    background-color: #ff634d;
+    background-color: #9700E6;
     color: #f9f9f9;
     font-size: 18px;
 }
 
 QPushButton:hover{
-    border-color: #ff5840;
+    border-color: #8700CF;
     border-style: solid;
-    background-color: #ff5840;
+    background-color: #8700CF;
     color: #f9f9f9;
     font-size: 18px;
 }
 
-QPushButton::menu-indicator
-{
-    background-color: #ff634d;
-}
-
-#toolButtons{
-    border-color: #ff634d;
-    border-style: solid;
-    background-color: #ff634d;
-    color: #f9f9f9;
-    font-size: 18px;
-}
-
-#toolButtons:hover{
-    border-color: #ff5840;
-    background-color: #ff5840;
-}
-
-#quitBtn{
-    border-color: #a51946;
-    border-style: solid;
-    background-color: #a51946;
-    color: #f9f9f9;
-    font-size: 18px;
-}
-
-#quitBtn:hover{
-    border-color: #9b123e;
-    border-style: solid;
+#wMainColor{
     background-color: #9b123e;
-    color: #f9f9f9;
-    font-size: 18px;
 }
 
-#minimize{
-    border-color: #0084a8;
-    border-style: solid;
-    background-color: #0084a8;
-    color: #f9f9f9;
-    font-size: 18px;
+#passColor{
+    background-color: #9700E6;
 }
 
-#minimize:hover{
-    border-color: #006986;
-    border-style: solid;
-    background-color: #006986;
-    color: #f9f9f9;
-    font-size: 18px;
-}
-
-#settingsBtn{
-    border-color: #34c873;
-    border-style: solid;
-    background-color: #34c873;
-    color: #f9f9f9;
-    font-size: 18px;
-}
-
-#settingsBtn:hover{
-    border-color: #2dad63;
-    border-style: solid;
-    background-color: #2dad63;
-    color: #f9f9f9;
-    font-size: 18px;
-}
-
-#maxim{
-    border-color: #ffb041;
-    border-style: solid;
-    background-color: #ffb041;
-    color: #f9f9f9;
-    font-size: 18px;
-}
-
-#maxim:hover{
-    border-color: #f19f2d;
-    border-style: solid;
-    background-color: #f19f2d;
-    color: #f9f9f9;
-    font-size: 18px;
-}
-
-#tools{
-    border-color: #006986;
-    border-style: solid;
-    background-color: #0084a8;
-    color: #f9f9f9;
-    font-size: 18px;
-}
-
-#tools:hover{
-    border-color: #0084a8;
-    border-style: solid;
-    background-color: #0084a8;
-    color: #f9f9f9;
-    font-size: 18px;
-}
-
-#titlebar {
-    border-color: #18184A;
-    border-style: solid;
-    background-color: #18184a;
-    color: #18184a;
-}
-
-#leftEdit{
-    background-color: #330033;
-    border-style: solid;
-}
-
-#centerEdit{
-    background-color: #18184A;
-    border-style: solid;
-}
-
-#rightEdit{
-    background-color: #330033;
-    border-style: solid;
-}
-
-#openFilesBar{
-    background-color: #18184A;
-}
-
-#openFilesTab{
-    background-color: #34c873;
-    font-size: 16px;
-}
-
-#openFilesTab:hover{
-    background-color: #2dad63;
-    font-size: 16px;
-}
-
-#menuTitle{
-    color: #f9f9f9;
-    font-size: 45px;
-    font-weight: italic;
-    font-family: 'Comfortaa';
-}
-
-#menuLay{
-    background-color: #006986;
-    border-style: solid;
-    color: #006986;
-}
-
-#menuItem{
-    background-color: #34c873;
-    border-style:  solid;
-    border-radius: 8px;
-    color: #f9f9f9;
-}
-
-#menuItem:hover{
-    background-color: #2dad63;
-    border-radius: 8px;
-    color: #f9f9f9;
-}
-
-#quitBtnFile{
-    border-color: #a51946;
-    border-style: solid;
-    border-radius: 8px;
-    background-color: #a51946;
-    color: #f9f9f9;
-    font-size: 18px;
-}
-
-#quitBtnFile:hover{
-    border-color: #9b123e;
-    border-style: solid;
-    border-radius: 8px;
-    background-color: #9b123e;
-    color: #f9f9f9;
-    font-size: 18px;
-}
-
-#menuRunChooser{
-    background-color: #34c873;
-    border-style:  solid;
-    border-radius: 8px;
-    font-size: 18px;
-    color: #f9f9f9;
-}
-
-#menuRunChooser::drop-down {
-    width: 15px;
-    border: 3px solid #0084a8;
-    border-radius: 5px;
-}
-
-#menuRunChooser QAbstractItemView {
-    background-color: #2dad63;
-}
-
-#menuSearch{
-    background-color: #18184a;
-    color: #f9f9f9;
-    border-radius: 8px;
-    font-size: 18px;
-}
-
-#console{
-    background-color: #18184a;
-}
-
-#consoleText{
-    font-size: 20px;
-    font-family: 'bignoodletoo oblique';
-    color: #f9f9f9;
+#passTab{
+    background-color: #ff5840;
 }
 
 #seperator{
     background-color: #f9f9f9;
 }
 
-#openTab{
-    background-color: #e54f39;
-    border-radius: 8px;
-}
-
-#normalTab{
-    background-color: #ff634d;
-    border-radius: 8px;
-}
-
-#greetText{
-    font-family: 'Bangers';
-    color: #ffb041;
-    font-size: 20px;
-}
-
-#titleText{
-    font-family: 'Comfortaa';
-    color: #f9f9f9;
-    font-size: 60px;
-}
-
-#lastProjects{
-    background-color: #330033;
-}
-
-#lastProjectsLaunch{
-    background-color: #330033;
-}
-
-#launchProject{
-    background-color: #0084a8;
-    color: #f9f9f9;
-}
-
-#launchProject:hover{
-    background-color: #006986;
-    color: #f9f9f9;
-}
-
-#projectName{
-    color: #f9f9f9;
-    background-color: #0084a8;
-    font-size: 30px;
+#listText{
+    font-size: 18px;
     font-weight: bold;
-    font-family: 'Roboto';
-}
-
-#infoText{
     color: #f9f9f9;
-    font-family: 'Roboto';
-    font-size: 30px;
-}
-
-#projectTextEdit{
-    background-color: #34c873;
-    color: #f9f9f9;
-    border-radius: 8px;
-    font-size: 18px;
-}
-
-#createSubfolder{
-    color: #f9f9f9;
-    font-size: 18px;
-}
-
-#infoTextCreate{
-    color: #f9f9f9;
-    font-size: 16px;
+    font-family: 'Comfortaa';
 }
 
 QScrollBar:vertical {
-    background-color: #34c873;
+    background-color: #4CC3EC;
 }
 
 QScrollBar::handle:vertical {
-    border: 3px solid #0084a8;
+    border: 3px solid #9b123e;
     border-radius: 5px;
     min-height: 25px;
 }
 
 QScrollBar::up-arrow:vertical{
-    background-color: #34c873;
+    background-color: #4CC3EC;
     border-style: solid;
 }
 
 QScrollBar::down-arrow:vertical{
-    background-color: #34c873;
+    background-color: #4CC3EC;
     border-style: solid;
 }
 
@@ -335,18 +70,17 @@ QScrollBar::sub-line:vertical {
     subcontrol-position: top;
 }
 
-
 @font-face {
     font-family: 'Bangers';
-    src: url('../../resources/fonts/Bangers/Bangers-Regular.ttf');
+    src: url('./resources/fonts/Bangers/Bangers-Regular.ttf');
 }
 
 @font-face {
     font-family: 'bignoodletoo';
-    src: url('../../resources/fonts/bignoodletoo/bignoodletoo.ttf');
+    src: url('./resources/fonts/bignoodletoo/bignoodletoo.ttf');
 }
 
 @font-face {
     font-family: 'Comfortaa';
-    src: url('../../resources/fonts/Comfortaa/Comfortaa-Bold.ttf');
+    src: url('./resources/fonts/Comfortaa/Comfortaa-Bold.ttf');
 }
