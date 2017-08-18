@@ -18,7 +18,10 @@ class Database:
         Database.db.commit()
 
     def insert(self, place, crypt, info):
-        f = Fernet(Database.key.encode())
+        try:
+            f = Fernet(Database.key.encode())
+        except:
+            f = Fernet(Database.key)
         dataCrypt = [f.encrypt(place.encode()), f.encrypt(crypt.encode()), f.encrypt(info.encode())]
         Database.cur.execute("INSERT INTO PassTable(place, crypt, info) VALUES(?,?,?)", (dataCrypt[0], dataCrypt[1], dataCrypt[2]))
         Database.db.commit()

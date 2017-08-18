@@ -20,7 +20,7 @@ class CreateUI(QtWidgets.QWidget):
         
         mainLay = QtWidgets.QVBoxLayout()
 
-        infoText = QtWidgets.QLabel("LLLLL")
+        infoText = QtWidgets.QLabel("")
         infoText.setTextInteractionFlags(QtCore.Qt.TextSelectableByMouse)
         mainLay.addWidget(infoText)
 

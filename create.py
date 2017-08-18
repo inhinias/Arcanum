@@ -64,6 +64,9 @@ class CreateUI:
     def addItem(self):
             dab.Database.insert(self, self.place.text(), self.newPass.text(), self.infoEdit.text())
             CreateUI.populateList(self)
+            self.place.setText("")
+            self.newPass.setText("")
+            self.infoEdit.setText("")
 
     def populateList(self):
             for i in reversed(range(CreateUI.vPassList.count())): 
