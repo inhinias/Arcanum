@@ -8,6 +8,4 @@ NOTE:
 
 -Have a look a the issues tab on here first before using!
 
--Editing and deleting is sofar not supported, but I plan on adding it in a future release.
-
--Also a search option is planned.
+-Editing and searching is sofar not supported, but I plan on adding it in a future release.
