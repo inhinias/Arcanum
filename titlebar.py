@@ -1,27 +1,17 @@
 from PyQt5 import QtGui, QtCore, QtWidgets
-import seperator, dab
-import qtawesome as qta
+import seperator, sys
 
 class CreateUI(QtWidgets.QWidget):
-    def setup(self, placeText, cryptText, infoText, index):
-        self.thePlace = index
-
-        CreateUI.thePlace = placeText.decode()
+    def setup(self, placeText, cryptText, infoText):
         place = QtWidgets.QLabel(placeText.decode())
         place.setObjectName("listText")
         crypto = QtWidgets.QLabel(cryptText.decode())
         crypto.setObjectName("listText")
         info = QtWidgets.QLabel(infoText.decode())
         info.setObjectName("listText")
-        cross = qta.icon("fa.times", color="#f9f9f9")
-        deleteBtn = QtWidgets.QPushButton(cross, "")
-        deleteBtn.setObjectName("deleteBtn")
-        deleteBtn.clicked.connect(lambda:dab.Database.delete(self, self.thePlace))
 
         wMain = QtWidgets.QWidget()
         wMain.setObjectName("passColor")
-
-        
 
         #Layouts
         vBack = QtWidgets.QVBoxLayout()
@@ -37,17 +27,28 @@ class CreateUI(QtWidgets.QWidget):
         sep.setup()
         sep2 = seperator.MenuSeperator()
         sep2.setup()
-        sep3 = seperator.MenuSeperator()
-        sep3.setup()
 
         hMain.addWidget(place)
         hMain.addWidget(sep)
         hMain.addWidget(crypto)
         hMain.addWidget(sep2)
         hMain.addWidget(info)
-        hMain.addWidget(sep3)
-        hMain.addWidget(deleteBtn)
         vBack.addWidget(wMain)
 
         self.setLayout(vBack)
         self.setSizePolicy(QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Minimum))
+
+if __name__ == '__main__':
+    #Creating the QApplication
+    app = QtWidgets.QApplication(sys.argv)
+
+    #Set the main styling of the app
+    with open("./stylesheet.css") as f:
+        theme = f.read()
+    app.setStyleSheet(theme)
+
+    #Misc stuff
+    window = CreateUI()
+    window.setup(b"pass", b"pass", b"pass")
+    window.show()
+    sys.exit(app.exec_())

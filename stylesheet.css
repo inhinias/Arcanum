@@ -1,29 +1,29 @@
 QPushButton {
-    border-color: #9700E6;
+    border-color: #94C794;
     border-style: solid;
-    background-color: #9700E6;
+    background-color: #94C794;
     color: #f9f9f9;
     font-size: 18px;
 }
 
 QPushButton:hover{
-    border-color: #8700CF;
+    border-color: #769F76;
     border-style: solid;
-    background-color: #8700CF;
+    background-color: #769F76;
     color: #f9f9f9;
     font-size: 18px;
 }
 
 #wMainColor{
-    background-color: #9b123e;
+    background-color: #E19D6C;
 }
 
 #passColor{
-    background-color: #9700E6;
+    background-color: #3C9CBC;
 }
 
 #passTab{
-    background-color: #ff5840;
+    background-color: #4CC3EC;
 }
 
 #seperator{
@@ -37,23 +37,27 @@ QPushButton:hover{
     font-family: 'Comfortaa';
 }
 
+#deleteBtn{
+    background-color: #9b123e;
+}
+
 QScrollBar:vertical {
-    background-color: #4CC3EC;
+    background-color: #2A6D83;
 }
 
 QScrollBar::handle:vertical {
-    border: 3px solid #9b123e;
+    border: 3px solid #2A836D;
     border-radius: 5px;
     min-height: 25px;
 }
 
 QScrollBar::up-arrow:vertical{
-    background-color: #4CC3EC;
+    background-color: #2A6D83;
     border-style: solid;
 }
 
 QScrollBar::down-arrow:vertical{
-    background-color: #4CC3EC;
+    background-color: #2A6D83;
     border-style: solid;
 }
 

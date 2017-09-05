@@ -53,26 +53,33 @@ class CreateUI(QtWidgets.QWidget):
         self.move(frameGm.topLeft())
             
     def closeEvent(self, event):
-        if not(CreateUI.keyJustAdded):
+        if CreateUI.keyExists:
             quit()
+        else:
+            dab.Database.insert(self, "Place", "Password", "Additional Info")
 
     def accepted(self):
         if CreateUI.keyExists:
             try:
-                dab.Database.key = self.keyIn.text()
+                dab.Database.key = self.keyIn.text().encode()
                 f = Fernet(dab.Database.key)
-                f.decrypt(dab.Database.read(self, 0)[1])
+                try:
+                    f.decrypt((dab.Database.read(self, 0)[1]).encode())
+                except:
+                    f.decrypt((dab.Database.read(self, 0)[1]))
                 self.hide()
                 create.CreateUI.populateList(self)
 
-            except Exception:
-                CreateUI.msg.setIcon(QtWidgets.QMessageBox.Information)
-                CreateUI.msg.setText("Invalid Key")
-                CreateUI.msg.setWindowTitle("Key Error")
-                retval = CreateUI.msg.exec_()
+            except:
+                CreateUI.msg.setText("The key is incorrect!")
+                CreateUI.msg.setWindowTitle("Error")
+                CreateUI.msg.setIcon(QtWidgets.QMessageBox.Warning)
+                CreateUI.msg.show()
+            
 
         else:
             self.hide()
+            dab.Database.insert(self, "Place", "Password", "Additional Info")
             create.CreateUI.populateList(self)
 
 #For executing this file standalone

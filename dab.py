@@ -1,4 +1,4 @@
-import os
+import os, create
 import sqlite3 as dab
 from PyQt5 import QtGui, QtCore, QtWidgets
 from cryptography.fernet import Fernet
@@ -29,8 +29,10 @@ class Database:
     def update(self, index, newCrypt):
         print("R")
 
-    def delete(self, index):
-        print("R")
+    def delete(self, prim):
+        Database.cur.execute("DELETE FROM PassTable WHERE prim = ?", (prim,))
+        Database.db.commit()
+        create.CreateUI.populateList(self)
 
     def read(self, row):
         Database.cur.execute("SELECT *  FROM PassTable")
