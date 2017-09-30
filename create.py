@@ -8,6 +8,9 @@ class CreateUI:
     vHelper = None
     wPass = None
     scroll = None
+    place = None
+    newPass = None
+    infoEdit = None
     def create(self):
         wMain = QtWidgets.QWidget()
         wMain.setObjectName("wMainColor")
@@ -26,15 +29,15 @@ class CreateUI:
 
         width = 300
         height = 30
-        self.place = QtWidgets.QLineEdit("")
-        self.place.setPlaceholderText("Place")
-        self.place.setMaximumSize(QtCore.QSize(width, height))
-        self.newPass = QtWidgets.QLineEdit("")
-        self.newPass.setPlaceholderText("Password")
-        self.newPass.setMaximumSize(QtCore.QSize(width, height))
-        self.infoEdit = QtWidgets.QLineEdit("")
-        self.infoEdit.setPlaceholderText("Additional information")
-        self.infoEdit.setMaximumSize(QtCore.QSize(width, height))
+        CreateUI.place = QtWidgets.QLineEdit("")
+        CreateUI.place.setPlaceholderText("Place")
+        CreateUI.place.setMaximumSize(QtCore.QSize(width, height))
+        CreateUI.newPass = QtWidgets.QLineEdit("")
+        CreateUI.newPass.setPlaceholderText("Password")
+        CreateUI.newPass.setMaximumSize(QtCore.QSize(width, height))
+        CreateUI.infoEdit = QtWidgets.QLineEdit("")
+        CreateUI.infoEdit.setPlaceholderText("Additional information")
+        CreateUI.infoEdit.setMaximumSize(QtCore.QSize(width, height))
         addBtn = QtWidgets.QPushButton("Add")
         addBtn.setMaximumSize(QtCore.QSize(width, height))
         addBtn.clicked.connect(lambda:CreateUI.addItem(self))
@@ -65,9 +68,9 @@ class CreateUI:
         wAdd.setLayout(vAdd)
         self.wHelper.setLayout(CreateUI.vHelper)
 
-        vAdd.addWidget(self.place)
-        vAdd.addWidget(self.newPass)
-        vAdd.addWidget(self.infoEdit)
+        vAdd.addWidget(CreateUI.place)
+        vAdd.addWidget(CreateUI.newPass)
+        vAdd.addWidget(CreateUI.infoEdit)
         vAdd.addWidget(addBtn)
         hMain.addWidget(wAdd)
         hMain.addWidget(self.wHelper)
@@ -76,11 +79,11 @@ class CreateUI:
         self.setLayout(vBack)
 
     def addItem(self):
-            dab.Database.insert(self, self.place.text(), self.newPass.text(), self.infoEdit.text())
+            dab.Database.insert(self, CreateUI.place.text(), CreateUI.newPass.text(), CreateUI.infoEdit.text())
             CreateUI.populateList(self)
-            self.place.setText("")
-            self.newPass.setText("")
-            self.infoEdit.setText("")
+            CreateUI.place.setText("")
+            CreateUI.newPass.setText("")
+            CreateUI.infoEdit.setText("")
 
     def populateList(self):
             for i in reversed(range(CreateUI.vPassList.count())):
@@ -93,9 +96,7 @@ class CreateUI:
                 dabItem = dab.Database.read(self, i)
                 if i == 0:
                     titleWid = titlebar.CreateUI()
-
                     f = Fernet(dab.Database.key)
-
                     string = ""
                     f.encrypt(string.encode())
 
@@ -106,7 +107,6 @@ class CreateUI:
                     except:
                         titleWid.setup(f.decrypt(dabItem[1]), f.decrypt(dabItem[2]), f.decrypt(dabItem[3]))
                         CreateUI.vHelper.addWidget(titleWid)
-                    
                     
                     CreateUI.vHelper.addWidget(CreateUI.scroll)
 

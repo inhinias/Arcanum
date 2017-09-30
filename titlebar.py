@@ -37,18 +37,3 @@ class CreateUI(QtWidgets.QWidget):
 
         self.setLayout(vBack)
         self.setSizePolicy(QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Minimum))
-
-if __name__ == '__main__':
-    #Creating the QApplication
-    app = QtWidgets.QApplication(sys.argv)
-
-    #Set the main styling of the app
-    with open("./stylesheet.css") as f:
-        theme = f.read()
-    app.setStyleSheet(theme)
-
-    #Misc stuff
-    window = CreateUI()
-    window.setup(b"pass", b"pass", b"pass")
-    window.show()
-    sys.exit(app.exec_())

@@ -26,8 +26,17 @@ class Database:
         Database.cur.execute("INSERT INTO PassTable(place, crypt, info) VALUES(?,?,?)", (dataCrypt[0], dataCrypt[1], dataCrypt[2]))
         Database.db.commit()
 
-    def update(self, index, newCrypt):
-        print("R")
+    def update(self, index, newPlace, newPass, newInfo):
+        if newPlace != "":
+            Database.cur.execute("UPDATE PassTable SET place = ? WHERE prim = ?", (newPlace, index))
+            Database.db.commit()
+        if newPlace != "":
+            Database.cur.execute("UPDATE PassTable SET crypt = ? WHERE prim = ?", (newPass, index))
+            Database.db.commit()
+        if newPlace != "":
+            Database.cur.execute("UPDATE PassTable SET info = ? WHERE prim = ?", (newInfo, index))
+            Database.db.commit()
+        create.CreateUI.populateList(self)
 
     def delete(self, prim):
         Database.cur.execute("DELETE FROM PassTable WHERE prim = ?", (prim,))
