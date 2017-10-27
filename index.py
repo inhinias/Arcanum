@@ -29,16 +29,6 @@ class Window(QtWidgets.QWidget):
         frameGm.moveCenter(centerPoint)
         self.move(frameGm.topLeft())
 
-    #Minimize and maximize methods for the new window action buttons
-    def minimize(self):
-        self.showMinimized()
-
-    def maximize(self):
-        if self.isMaximized():
-            self.showNormal()
-        else:
-            self.showMaximized()
-
     def icon(self):
         #set app icon    
         app_icon = QtGui.QIcon()
