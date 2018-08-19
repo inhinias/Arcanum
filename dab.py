@@ -1,56 +1,44 @@
 import os, create
-import sqlite3 as dab
+import mysql.connector as connector
 from PyQt5 import QtGui, QtCore, QtWidgets
 from cryptography.fernet import Fernet
 
-class Database:
-    key = None
-    db = None
-    cur = None
-
-    def create(self):
-        Database.db = dab.connect("passwords.db")
-        Database.cur = Database.db.cursor()
-        Database.create_table(self)
-
-    def create_table(self):
-        Database.cur.execute('''CREATE TABLE IF NOT EXISTS PassTable(prim INTEGER PRIMARY KEY,place TEXT, crypt TEXT, info TEXT)''')
-        Database.db.commit()
-
-    def insert(self, place, crypt, info):
+class DatabaseActions():
+    def connect(self, username, thePassword, address, thePort=3306, theDatabase="passwords"):
+        success = False
         try:
-            f = Fernet(Database.key.encode())
-        except:
-            f = Fernet(Database.key)
-        dataCrypt = [f.encrypt(place.encode()), f.encrypt(crypt.encode()), f.encrypt(info.encode())]
-        Database.cur.execute("INSERT INTO PassTable(place, crypt, info) VALUES(?,?,?)", (dataCrypt[0], dataCrypt[1], dataCrypt[2]))
-        Database.db.commit()
+            connection = connector.connect(user=username, host=address, password=thePassword, port=int(thePort), database=theDatabase)
+            print("Connection established and closed")
+            connection.close()
+            success = True
+        except connector.Error as err:
+            if err.errno == connector.errorcode.ER_ACCESS_DENIED_ERROR:
+                print("Access denied, wrong credentials?")
+            elif err.errno == connector.errorcode.ER_BAD_DB_ERROR:
+                print("Database not found!")
+            else:
+                print(err)
+            print("Unable to connect")
+        return success
+    
+    def read(self, table, rows):
 
-    def update(self, index, newPlace, newPass, newInfo):
-        if newPlace != "":
-            Database.cur.execute("UPDATE PassTable SET place = ? WHERE prim = ?", (newPlace, index))
-            Database.db.commit()
-        if newPlace != "":
-            Database.cur.execute("UPDATE PassTable SET crypt = ? WHERE prim = ?", (newPass, index))
-            Database.db.commit()
-        if newPlace != "":
-            Database.cur.execute("UPDATE PassTable SET info = ? WHERE prim = ?", (newInfo, index))
-            Database.db.commit()
-        create.CreateUI.populateList(self)
+        if rows == 0:
+            #return everything
+            print()
+        else:
+            #return all the rows
+            print()
 
-    def delete(self, prim):
-        Database.cur.execute("DELETE FROM PassTable WHERE prim = ?", (prim,))
-        Database.db.commit()
-        create.CreateUI.populateList(self)
+    def insert(self, table, row, context):
+        #insert stuff
+        print()
+    
+    def update(self, table, row, columns, context):
+        #Change stuff
+        print()
 
-    def read(self, row):
-        Database.cur.execute("SELECT *  FROM PassTable")
-        return Database.cur.fetchall()[row]
-
-    def length(self):
-        Database.cur.execute("SELECT *  FROM PassTable")
-        return len(Database.cur.fetchall())
-
-
-    def createKey(self):
-        Database.key = Fernet.generate_key()
+    def delete(self, table, row):
+        #delete row
+        print()
+    

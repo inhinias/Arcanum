@@ -1,5 +1,6 @@
 from PyQt5 import QtGui, QtCore, QtWidgets
 from cryptography.fernet import Fernet
+import qtawesome as qta
 import dab, passItem, titlebar
 
 class CreateUI:
@@ -12,111 +13,109 @@ class CreateUI:
     newPass = None
     infoEdit = None
     def create(self):
-        wMain = QtWidgets.QWidget()
-        wMain.setObjectName("wMainColor")
-        wAdd = QtWidgets.QWidget()
-        wAdd.setObjectName("passTab")
-        wAdd.setMaximumWidth(320)
-        wAdd.setSizePolicy(QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Minimum))
-        CreateUI.wPass = QtWidgets.QWidget()
-        CreateUI.wPass.setObjectName("passTab")
-        CreateUI.wPass.setSizePolicy(QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding))
-        wTitle = QtWidgets.QWidget()
-        wTitle.setObjectName("Titlebar")
-        self.wHelper = QtWidgets.QWidget()
-        self.wHelper.setObjectName("passTab")
-        self.wHelper.setSizePolicy(QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding))
-
-        width = 300
-        height = 30
-        CreateUI.place = QtWidgets.QLineEdit("")
-        CreateUI.place.setPlaceholderText("Place")
-        CreateUI.place.setMaximumSize(QtCore.QSize(width, height))
-        CreateUI.newPass = QtWidgets.QLineEdit("")
-        CreateUI.newPass.setPlaceholderText("Password")
-        CreateUI.newPass.setMaximumSize(QtCore.QSize(width, height))
-        CreateUI.infoEdit = QtWidgets.QLineEdit("")
-        CreateUI.infoEdit.setPlaceholderText("Additional information")
-        CreateUI.infoEdit.setMaximumSize(QtCore.QSize(width, height))
-        addBtn = QtWidgets.QPushButton("Add")
-        addBtn.setMaximumSize(QtCore.QSize(width, height))
-        addBtn.clicked.connect(lambda:CreateUI.addItem(self))
-
-        CreateUI.scroll = QtWidgets.QScrollArea()
-        CreateUI.scroll.setWidget(CreateUI.wPass)
-        CreateUI.scroll.setWidgetResizable(True)
-
         #Layouts
-        vBack = QtWidgets.QVBoxLayout()
+        vBack = QtWidgets.QVBoxLayout() #Backbone layout for color at the lowest level
+        vBack.setContentsMargins(0,0,0,0)
+        vMain = QtWidgets.QVBoxLayout() #Layouts for the main stuff
         hMain = QtWidgets.QHBoxLayout()
-        vAdd = QtWidgets.QVBoxLayout()
-        CreateUI.vPassList = QtWidgets.QVBoxLayout()
-        #CreateUI.hTitle = QtWidgets.QHBoxLayout()
-        CreateUI.vHelper = QtWidgets.QVBoxLayout()
+        vMain.setContentsMargins(0,0,0,0)
+        hMain.setContentsMargins(5,0,5,5)
+        vToolRack = QtWidgets.QVBoxLayout()
+        vToolRack.setAlignment(QtCore.Qt.AlignTop)
+        vCentral = QtWidgets.QStackedLayout()
 
-        CreateUI.vPassList.setAlignment(QtCore.Qt.AlignTop)
-        hMain.setAlignment(QtCore.Qt.AlignTop)
-        vAdd.setAlignment(QtCore.Qt.AlignLeft | QtCore.Qt.AlignTop)
-        vBack.setContentsMargins(QtCore.QMargins(0,0,0,0))
-        CreateUI.vHelper.setContentsMargins(QtCore.QMargins(0,0,0,0))
-        CreateUI.vHelper.setSpacing(0)
-        CreateUI.vPassList.setSpacing(3)
+        #Widget in the main layout for the background colour
+        wBack = QtWidgets.QWidget()
+        wBack.setObjectName("wMain")
+        wBack.setLayout(vMain)
+        vBack.addWidget(wBack)
 
-        #wTitle.setLayout(CreateUI.hTitle)
-        wMain.setLayout(hMain)
-        CreateUI.wPass.setLayout(CreateUI.vPassList)
-        wAdd.setLayout(vAdd)
-        self.wHelper.setLayout(CreateUI.vHelper)
+        wToolRack = QtWidgets.QWidget()
+        wToolRack.setObjectName("wRack")
+        wToolRack.setMinimumWidth(200)
+        wToolRack.setSizePolicy(QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Minimum))
+        wToolRack.setLayout(vToolRack)
+        hMain.addWidget(wToolRack)
 
-        vAdd.addWidget(CreateUI.place)
-        vAdd.addWidget(CreateUI.newPass)
-        vAdd.addWidget(CreateUI.infoEdit)
-        vAdd.addWidget(addBtn)
-        hMain.addWidget(wAdd)
-        hMain.addWidget(self.wHelper)
-        vBack.addWidget(wMain)
+        wCentral = QtWidgets.QWidget()
+        wCentral.setObjectName("wCentral")
+        wCentral.setSizePolicy(QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding))
+        wCentral.setLayout(vCentral)
+        hMain.addWidget(wCentral)
+
+        #Titlebar stuff
+        tbLay = QtWidgets.QHBoxLayout()
+        tbLay.setAlignment(QtCore.Qt.AlignRight)
+        tbLay.setContentsMargins(0,0,0,0)
+        tbWid = QtWidgets.QWidget()
+        tbWid.setObjectName("titlebar")
+        tbWid.setLayout(tbLay)
+        
+        mini = QtWidgets.QPushButton(qta.icon("fa.minus", color="#f9f9f9"), "")
+        mini.setObjectName("minimize")
+        mini.setMinimumSize(QtCore.QSize(30,30))
+        #mini.clicked.connect(CreateUI.minimize(self))
+        tbLay.addWidget(mini)
+
+        quitBtn = QtWidgets.QPushButton(qta.icon("fa.times", color="#f9f9f9"), "")
+        quitBtn.setObjectName("quitBtn")
+        quitBtn.setMinimumSize(QtCore.QSize(30,30))
+        quitBtn.clicked.connect(QtCore.QCoreApplication.instance().quit)
+        tbLay.addWidget(quitBtn)
+
+        vMain.addWidget(tbWid)
+        vMain.addLayout(hMain)
+        
+        rackBtnMinheight = 50
+        rackIcoSize = QtCore.QSize(32, 32)
+        btnOverview = QtWidgets.QPushButton(qta.icon("fa.compass", color="#f9f9f9"), "Overview")
+        btnPasswords = QtWidgets.QPushButton(qta.icon("fa.lock", color="#f9f9f9"), "Passwords")
+        btnGenerate = QtWidgets.QPushButton(qta.icon("fa.bolt", color="#f9f9f9"), "Generator")
+        btnNotes = QtWidgets.QPushButton(qta.icon("fa.paperclip", color="#f9f9f9"), "Notes")
+        btnBunkers = QtWidgets.QPushButton(qta.icon("fa.university", color="#f9f9f9"), "Bunkers")
+
+        btnOverview.setMinimumHeight(rackBtnMinheight)
+        btnPasswords.setMinimumHeight(rackBtnMinheight)
+        btnGenerate.setMinimumHeight(rackBtnMinheight)
+        btnNotes.setMinimumHeight(rackBtnMinheight)
+        btnBunkers.setMinimumHeight(rackBtnMinheight)
+
+        btnOverview.setIconSize(rackIcoSize)
+        btnPasswords.setIconSize(rackIcoSize)
+        btnGenerate.setIconSize(rackIcoSize)
+        btnNotes.setIconSize(rackIcoSize)
+        btnBunkers.setIconSize(rackIcoSize)
+
+        vToolRack.addWidget(btnOverview)
+        vToolRack.addWidget(btnPasswords)
+        vToolRack.addWidget(btnGenerate)
+        vToolRack.addWidget(btnNotes)
+        vToolRack.addWidget(btnBunkers)
 
         self.setLayout(vBack)
 
-    def addItem(self):
-            dab.Database.insert(self, CreateUI.place.text(), CreateUI.newPass.text(), CreateUI.infoEdit.text())
-            CreateUI.populateList(self)
-            CreateUI.place.setText("")
-            CreateUI.newPass.setText("")
-            CreateUI.infoEdit.setText("")
+    def minimize(self):
+        self.showMinimized()
 
-    def populateList(self):
-            for i in reversed(range(CreateUI.vPassList.count())):
-                CreateUI.vPassList.itemAt(i).widget().setParent(None)
-            for i in reversed(range(CreateUI.vHelper.count())): 
-                CreateUI.vHelper.itemAt(i).widget().setParent(None)
 
-            len = dab.Database.length(self)
-            for i in range(len):
-                dabItem = dab.Database.read(self, i)
-                if i == 0:
-                    titleWid = titlebar.CreateUI()
-                    f = Fernet(dab.Database.key)
-                    string = ""
-                    f.encrypt(string.encode())
+    def mousePressEvent(self, event):
+        global dragging
+        global clickPos
+        clickPos = event.pos()
+        if clickPos.y() < 121:
+            self.showNormal()
+        if event.buttons() == QtCore.Qt.LeftButton:
+            dragging = True
 
-                    try:
-                        titleWid.setup(f.decrypt(dabItem[1].encode()), f.decrypt(dabItem[2].encode()), f.decrypt(dabItem[3].encode()))
-                        CreateUI.vHelper.addWidget(titleWid)
-                    
-                    except:
-                        titleWid.setup(f.decrypt(dabItem[1]), f.decrypt(dabItem[2]), f.decrypt(dabItem[3]))
-                        CreateUI.vHelper.addWidget(titleWid)
-                    
-                    CreateUI.vHelper.addWidget(CreateUI.scroll)
+    def mouseReleaseEvent(self, event):
+        global dragging
+        dragging = False
+        posit = self.pos()
+        if posit.y() < 15:
+            self.maximize()
 
-                else:
-                    passWid = passItem.CreateUI()
-                    f = Fernet(dab.Database.key)
-
-                    try:
-                        passWid.setup(f.decrypt(dabItem[1].encode()), f.decrypt(dabItem[2].encode()), f.decrypt(dabItem[3].encode()), dabItem[0])
-                        CreateUI.vPassList.addWidget(passWid)
-                    except:
-                        passWid.setup(f.decrypt(dabItem[1]), f.decrypt(dabItem[2]), f.decrypt(dabItem[3]), dabItem[0])
-                        CreateUI.vPassList.addWidget(passWid)
+    def mouseMoveEvent(self, event):
+        global dragging
+        global clickPos
+        if dragging and clickPos.y() < 121:
+            self.move(self.pos() + (event.pos() - clickPos))

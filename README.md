@@ -1,8 +1,8 @@
 # Axon
-A small tool for saving encrypted passwords in a local database.
+A small tool for saving encrypted passwords in a database.
 
-On startup it will show a key, note it down and store it somewhere save.
-Use this key then whenever you want to access your passwords.
+On startup it will show a dialog to connect to a database. The information will then be encrypted and stored 
+in this database. Have a look at the code and adjust it to your needs (tables, encryption, etc.).
 
 NOTE:
 

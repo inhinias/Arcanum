@@ -1,86 +1,115 @@
-import os, sys, dab, index, create
+import os, sys, index, create, dab
 from PyQt5 import QtGui, QtCore, QtWidgets
-from cryptography.fernet import Fernet
+import qtawesome as qta
 
 class CreateUI(QtWidgets.QWidget):
-    keyExists = False
+    #Globals
     msg = None
-    def create(self):
-        if not(os.path.isfile("./passwords.db")):
-            dab.Database.createKey(self)
-            return False
-        else:
-            return True
-        
+
     def __init__(self):
         super(CreateUI, self).__init__()
         self.setGeometry(50,50,400,100)
-        self.setWindowTitle("Axon")
+        self.setWindowTitle("Connect")
+        self.setWindowFlags(self.windowFlags() | QtCore.Qt.FramelessWindowHint) #Use this for a frameless window. Will be used later!
         self.center()
+
+        tbLay = QtWidgets.QHBoxLayout()
+        tbLay.setAlignment(QtCore.Qt.AlignRight)
+        tbLay.setContentsMargins(0,0,0,0)
+        tbWid = QtWidgets.QWidget()
+        tbWid.setObjectName("titlebar")
+        tbWid.setLayout(tbLay)
+
+        mini = QtWidgets.QPushButton(qta.icon("fa.minus", color="#f9f9f9"), "")
+        mini.setObjectName("minimize")
+        mini.setMinimumSize(QtCore.QSize(30,30))
+        #mini.clicked.connect(CreateUI.minimize(self))
+        tbLay.addWidget(mini)
+
+        quitBtn = QtWidgets.QPushButton(qta.icon("fa.times", color="#f9f9f9"), "")
+        quitBtn.setObjectName("quitBtn")
+        quitBtn.setMinimumSize(QtCore.QSize(30,30))
+        quitBtn.clicked.connect(QtCore.QCoreApplication.instance().quit)
+        tbLay.addWidget(quitBtn)
         
         mainLay = QtWidgets.QVBoxLayout()
+        mainLay.setContentsMargins(0,0,0,0)
+        addressLay = QtWidgets.QGridLayout()
+        mainLay.addWidget(tbWid)
+        mainLay.addLayout(addressLay)
 
-        infoText = QtWidgets.QLabel("")
-        infoText.setTextInteractionFlags(QtCore.Qt.TextSelectableByMouse)
-        mainLay.addWidget(infoText)
+        #Connection details input
+        leHostname = QtWidgets.QLineEdit("")
+        leHostname.setPlaceholderText("Hostname")
+        addressLay.addWidget(leHostname,0,0)
 
-        self.keyIn = QtWidgets.QLineEdit("")
-        self.keyIn.setPlaceholderText("Place Key Here")
-        self.keyIn.setVisible(False)
-        mainLay.addWidget(self.keyIn)
+        lePort = QtWidgets.QLineEdit("3306")
+        lePort.setValidator(QtGui.QIntValidator())
+        lePort.setPlaceholderText("Port")
+        addressLay.addWidget(lePort,0,1)
 
-        acceptBtn = QtWidgets.QPushButton("OK")
-        acceptBtn.clicked.connect(lambda:CreateUI.accepted(self))
-        mainLay.addWidget(acceptBtn)
+        leUsername = QtWidgets.QLineEdit("")
+        leUsername.setPlaceholderText("Username")
+        mainLay.addWidget(leUsername)
+
+        lePassword = QtWidgets.QLineEdit("")
+        lePassword.setPlaceholderText("Password")
+        mainLay.addWidget(lePassword)
+
+        leDatabase = QtWidgets.QLineEdit("")
+        leDatabase.setPlaceholderText("Database")
+        mainLay.addWidget(leDatabase)
+
+        btnConnect = QtWidgets.QPushButton("Connect")
+        btnConnect.setObjectName("btnConnect")
+        btnConnect.clicked.connect(lambda:CreateUI.connect(
+            self, username=leUsername.text(), thePassword=lePassword.text(), address=leHostname.text(), thePort=lePort.text(), theDatabase=leDatabase.text()))
+        mainLay.addWidget(btnConnect)
 
         CreateUI.msg = QtWidgets.QMessageBox()
 
         self.setLayout(mainLay)
 
-        if CreateUI.create(self):
-            CreateUI.keyExists = True
-            infoText.setVisible(False)
-            self.keyIn.setVisible(True)
-        
-        else:
-            infoText.setText("Key: {0}".format(str(dab.Database.key).lstrip("b")))
+    #Connect to the database and raise an error when failed
+    def connect(self, username, thePassword, address, thePort, theDatabase):
+        dab.DatabaseActions.connect(
+            self, username, thePassword, address, thePort, theDatabase)
 
+    #Centers the window at the start
     def center(self):
         frameGm = self.frameGeometry()
         screen = QtWidgets.QApplication.desktop().screenNumber(QtWidgets.QApplication.desktop().cursor().pos())
         centerPoint = QtWidgets.QApplication.desktop().screenGeometry(screen).center()
         frameGm.moveCenter(centerPoint)
         self.move(frameGm.topLeft())
-            
+    
+    #When the connect dialog is closed quit the app
     def closeEvent(self, event):
-        if CreateUI.keyExists:
-            quit()
-        else:
-            dab.Database.insert(self, "Place", "Password", "Additional Info")
+        quit()
 
-    def accepted(self):
-        if CreateUI.keyExists:
-            try:
-                dab.Database.key = self.keyIn.text().encode()
-                f = Fernet(dab.Database.key)
-                try:
-                    f.decrypt((dab.Database.read(self, 0)[1]).encode())
-                except:
-                    f.decrypt((dab.Database.read(self, 0)[1]))
-                self.hide()
-                create.CreateUI.populateList(self)
+    #Method for minimizing the dialog
+    def minimize(self):
+        self.showMinimized()
+    
 
-            except:
-                CreateUI.msg.setText("The key is incorrect!")
-                CreateUI.msg.setWindowTitle("Error")
-                CreateUI.msg.setIcon(QtWidgets.QMessageBox.Warning)
-                CreateUI.msg.show()
-            
 
-        else:
-            self.hide()
-            dab.Database.insert(self, "Place", "Password", "Additional Info")
-            create.CreateUI.populateList(self)
+    #Methods for moving the window with a custom titlebar
+    def mousePressEvent(self, event):
+        global dragging
+        global clickPos
+        clickPos = event.pos()
+        if event.buttons() == QtCore.Qt.LeftButton:
+            dragging = True
+
+    def mouseReleaseEvent(self, event):
+        global dragging
+        dragging = False
+
+    def mouseMoveEvent(self, event):
+        global dragging
+        global clickPos
+        if dragging and clickPos.y() < 121:
+            self.move(self.pos() + (event.pos() - clickPos))
 
 #For executing this file standalone
 if __name__ == '__main__':

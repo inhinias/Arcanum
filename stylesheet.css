@@ -1,29 +1,45 @@
 QPushButton {
-    border-color: #94C794;
+    border-color: #ff9853;
     border-style: solid;
-    background-color: #94C794;
+    background-color: #ff9853;
     color: #f9f9f9;
     font-size: 18px;
 }
 
 QPushButton:hover{
-    border-color: #769F76;
+    border-color: #ff9853;
     border-style: solid;
-    background-color: #769F76;
+    background-color: #ff9853;
     color: #f9f9f9;
     font-size: 18px;
 }
 
-#wMainColor{
-    background-color: #E19D6C;
+#btnConnect{
+    margin-top: 10px;
 }
 
-#passColor{
-    background-color: #3C9CBC;
+#minimize{
+    background-color: #032358;
 }
 
-#passTab{
-    background-color: #4CC3EC;
+#quitButton{
+    background-color: #9b123e;
+}
+
+#titlebar{
+    background-color: #2A836D;
+}
+
+#wMain{
+    background-color: #032358;
+}
+
+#wCentral{
+    background-color: #2d2d2d;
+}
+
+#wRack{
+    background-color: #2d2d2d;
 }
 
 #seperator{

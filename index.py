@@ -1,4 +1,4 @@
-import sys, os, create, keyDialog, dab
+import sys, os, create, keyDialog
 import qtawesome as qta
 import create
 from PyQt5 import QtGui, QtCore, QtWidgets
@@ -9,13 +9,15 @@ from PyQt5 import QtGui, QtCore, QtWidgets
 #Variables
 
 class Window(QtWidgets.QWidget):
+    #Global
+
     def __init__(self):
         super(Window, self).__init__()
         self.setGeometry(50,50,1200,700)
         self.setWindowTitle("Axon")
-        #self.setWindowFlags(self.windowFlags() | QtCore.Qt.FramelessWindowHint) #Use this for a frameless window. Will be used later!
+        self.setWindowFlags(self.windowFlags() | QtCore.Qt.FramelessWindowHint) #Use this for a frameless window. Will be used later!
         dial = keyDialog.CreateUI()
-        dab.Database.create(self)
+        #dab.Database.create(self)
         create.CreateUI.create(self)
         self.icon()
         self.show()
