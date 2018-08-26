@@ -42,15 +42,31 @@ QPushButton:hover{
     background-color: #2d2d2d;
 }
 
-#seperator{
-    background-color: #f9f9f9;
+#numPasswords{
+    font-size: 70px;
+    font-family: 'DSEG14Classic';
+}
+
+#oText{
+    font-size: 20px;
+    font-family: 'Quicksand';
+}
+
+#pStoredText{
+    font-size: 40px;
+    font-weight: bold;
+    font-family: 'Quicksand';
 }
 
 #listText{
-    font-size: 18px;
+    font-size: 20px;
     font-weight: bold;
     color: #f9f9f9;
     font-family: 'Comfortaa';
+}
+
+#seperator{
+    background-color: #f9f9f9;
 }
 
 #deleteBtn{
@@ -91,16 +107,21 @@ QScrollBar::sub-line:vertical {
 }
 
 @font-face {
-    font-family: 'Bangers';
-    src: url('./resources/fonts/Bangers/Bangers-Regular.ttf');
+    font-family: 'DSEG14Classic';
+    src: url('./resources/fonts/SegmentedDisplay/DSEG14Classic-Regular.ttf');
 }
 
 @font-face {
-    font-family: 'bignoodletoo';
-    src: url('./resources/fonts/bignoodletoo/bignoodletoo.ttf');
+    font-family: 'Julius';
+    src: url('./resources/fonts/Julius_Sans_One/JuliusSansOne-Regular.ttf');
 }
 
 @font-face {
-    font-family: 'Comfortaa';
-    src: url('./resources/fonts/Comfortaa/Comfortaa-Bold.ttf');
+    font-family: 'Roboto';
+    src: url('./resources/fonts/Roboto/Roboto-Regular.ttf');
+}
+
+@font-face {
+    font-family: 'Quicksand';
+    src: url('./resources/fonts/Quicksand/Quicksand-Regular.ttf');
 }

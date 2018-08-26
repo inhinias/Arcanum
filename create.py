@@ -1,7 +1,7 @@
 from PyQt5 import QtGui, QtCore, QtWidgets
 from cryptography.fernet import Fernet
 import qtawesome as qta
-import dab, passItem, titlebar
+import dab, passItem
 
 class CreateUI:
     vPassList = None
@@ -14,6 +14,7 @@ class CreateUI:
     infoEdit = None
     def create(self):
         #Layouts
+        #Main Layouts
         vBack = QtWidgets.QVBoxLayout() #Backbone layout for color at the lowest level
         vBack.setContentsMargins(0,0,0,0)
         vMain = QtWidgets.QVBoxLayout() #Layouts for the main stuff
@@ -22,7 +23,34 @@ class CreateUI:
         hMain.setContentsMargins(5,0,5,5)
         vToolRack = QtWidgets.QVBoxLayout()
         vToolRack.setAlignment(QtCore.Qt.AlignTop)
-        vCentral = QtWidgets.QStackedLayout()
+        sCentral = QtWidgets.QStackedLayout()
+
+        hOverview = QtWidgets.QHBoxLayout()
+        hOverview.setAlignment(QtCore.Qt.AlignVCenter)
+        hOverview.setSpacing(20)
+
+        gStrength = QtWidgets.QGridLayout()
+        gStrength.setAlignment(QtCore.Qt.AlignTop | QtCore.Qt.AlignLeft)
+        gStrength.setContentsMargins(10,10,10,10)
+
+        gStats = QtWidgets.QGridLayout()
+        gStats.setAlignment(QtCore.Qt.AlignTop | QtCore.Qt.AlignRight)
+        gStats.setContentsMargins(10,10,10,10)
+
+        vOCenter = QtWidgets.QVBoxLayout()
+        vOCenter.setSpacing(50)
+        vOCenter.setAlignment(QtCore.Qt.AlignHCenter | QtCore.Qt.AlignTop)
+
+        gPasswords = QtWidgets.QGridLayout()
+
+        #Layout widgets
+        wOverview = QtWidgets.QWidget()
+        wOverview.setLayout(hOverview)
+        sCentral.addWidget(wOverview)
+
+        wOCenter = QtWidgets.QWidget()
+        #wOCenter.setSizePolicy(QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding))
+        wOCenter.setLayout(vOCenter)
 
         #Widget in the main layout for the background colour
         wBack = QtWidgets.QWidget()
@@ -40,7 +68,7 @@ class CreateUI:
         wCentral = QtWidgets.QWidget()
         wCentral.setObjectName("wCentral")
         wCentral.setSizePolicy(QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding))
-        wCentral.setLayout(vCentral)
+        wCentral.setLayout(sCentral)
         hMain.addWidget(wCentral)
 
         #Titlebar stuff
@@ -66,6 +94,7 @@ class CreateUI:
         vMain.addWidget(tbWid)
         vMain.addLayout(hMain)
         
+        #Populate the rack on the side
         rackBtnMinheight = 50
         rackIcoSize = QtCore.QSize(32, 32)
         btnOverview = QtWidgets.QPushButton(qta.icon("fa.compass", color="#f9f9f9"), "Overview")
@@ -91,6 +120,81 @@ class CreateUI:
         vToolRack.addWidget(btnGenerate)
         vToolRack.addWidget(btnNotes)
         vToolRack.addWidget(btnBunkers)
+
+        #Create the overview page
+        #Strength overview
+        strengthLvls = ["Very Weak","Weak","Acceptable","Strong","Very Strong","Fort Knox"]
+        for i in range(len(strengthLvls)):
+            sLabel = QtWidgets.QLabel(strengthLvls[i] + ":")
+            sLabel.setObjectName("oText")
+            gStrength.addWidget(sLabel,i,0)
+        
+        tVeryWeak = QtWidgets.QLabel("0")
+        tVeryWeak.setObjectName("oText")
+        gStrength.addWidget(tVeryWeak,0,1)
+
+        tWeak = QtWidgets.QLabel("0")
+        tWeak.setObjectName("oText")
+        gStrength.addWidget(tWeak,1,1)
+
+        tAcceptable = QtWidgets.QLabel("0")
+        tAcceptable.setObjectName("oText")
+        gStrength.addWidget(tAcceptable,2,1)
+
+        tStrong = QtWidgets.QLabel("0")
+        tStrong.setObjectName("oText")
+        gStrength.addWidget(tStrong,3,1)
+
+        tVeryStrong = QtWidgets.QLabel("0")
+        tVeryStrong.setObjectName("oText")
+        gStrength.addWidget(tVeryStrong,4,1)
+
+        tFortKnox = QtWidgets.QLabel("0")
+        tFortKnox.setObjectName("oText")
+        gStrength.addWidget(tFortKnox,5,1)
+        
+        tNPassText = QtWidgets.QLabel("Passwords Stored")
+        tNPassText.setObjectName("pStoredText")
+        tNPassText.setAlignment(QtCore.Qt.AlignHCenter)
+        vOCenter.addWidget(tNPassText)
+        tNumPasswords = QtWidgets.QLabel("00000")
+        tNumPasswords.setObjectName("numPasswords")
+        vOCenter.addWidget(tNumPasswords)
+
+        statTexts = ["Reused","Forgotten","Generated","2FA","In RockYou","Leaked"]
+        for j in range(len(statTexts)):
+            sStats = QtWidgets.QLabel(statTexts[j] + ":")
+            sStats.setObjectName("oText")
+            gStats.addWidget(sStats,j,0)
+
+        tReused = QtWidgets.QLabel("0")
+        tReused.setObjectName("oText")
+        gStats.addWidget(tReused,0,1)
+
+        tForgotten = QtWidgets.QLabel("0")
+        tForgotten.setObjectName("oText")
+        gStats.addWidget(tForgotten,1,1)
+
+        tGen = QtWidgets.QLabel("0")
+        tGen.setObjectName("oText")
+        gStats.addWidget(tGen,2,1)
+
+        tTwoFA = QtWidgets.QLabel("0")
+        tTwoFA.setObjectName("oText")
+        gStats.addWidget(tTwoFA,3,1)
+
+        tRockYou = QtWidgets.QLabel("0")
+        tRockYou.setObjectName("oText")
+        gStats.addWidget(tRockYou,4,1)
+
+        tLeaked = QtWidgets.QLabel("0")
+        tLeaked.setObjectName("oText")
+        gStats.addWidget(tLeaked,5,1)
+
+        hOverview.addLayout(gStrength)
+        hOverview.addWidget(wOCenter)
+        hOverview.addLayout(gStats)
+
 
         self.setLayout(vBack)
 

@@ -54,11 +54,17 @@ class CreateUI(QtWidgets.QWidget):
 
         lePassword = QtWidgets.QLineEdit("")
         lePassword.setPlaceholderText("Password")
+        lePassword.setEchoMode(2)
         mainLay.addWidget(lePassword)
 
         leDatabase = QtWidgets.QLineEdit("")
         leDatabase.setPlaceholderText("Database")
         mainLay.addWidget(leDatabase)
+
+        leCryptPass = QtWidgets.QLineEdit("")
+        leCryptPass.setPlaceholderText("Encryption Password")
+        leCryptPass.setEchoMode(2)
+        mainLay.addWidget(leCryptPass)
 
         btnConnect = QtWidgets.QPushButton("Connect")
         btnConnect.setObjectName("btnConnect")
