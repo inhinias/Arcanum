@@ -7,11 +7,7 @@ QPushButton {
 }
 
 QPushButton:hover{
-    border-color: #ff9853;
-    border-style: solid;
-    background-color: #ff9853;
-    color: #f9f9f9;
-    font-size: 18px;
+    background-color: #cc7942;
 }
 
 #btnConnect{
@@ -22,8 +18,16 @@ QPushButton:hover{
     background-color: #032358;
 }
 
+#minimize:hover{
+    background-color: #02183d;
+}
+
 #quitButton{
     background-color: #9b123e;
+}
+
+#quitbutton:hover{
+    background-color: #6c0c2b;
 }
 
 #titlebar{
@@ -63,6 +67,15 @@ QPushButton:hover{
     font-weight: bold;
     color: #f9f9f9;
     font-family: 'Comfortaa';
+}
+
+#passSlate{
+    background-color: #2A6D83;
+    box-shadow: #000000;
+}
+
+btnCreate{
+    font-size: 16px;
 }
 
 #seperator{

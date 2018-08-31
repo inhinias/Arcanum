@@ -78,8 +78,9 @@ class CreateUI(QtWidgets.QWidget):
 
     #Connect to the database and raise an error when failed
     def connect(self, username, thePassword, address, thePort, theDatabase):
-        dab.DatabaseActions.connect(
-            self, username, thePassword, address, thePort, theDatabase)
+        if dab.DatabaseActions.connect(self, username, thePassword, address, thePort, theDatabase):
+            create.CreateUI.setData(self, 0)
+            self.hide()
 
     #Centers the window at the start
     def center(self):

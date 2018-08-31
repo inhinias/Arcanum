@@ -3,65 +3,58 @@ import seperator, dab, create
 import qtawesome as qta
 
 class CreateUI(QtWidgets.QWidget):
-    def setup(self, placeText, cryptText, infoText, index):
-        self.theIndex = index
-        self.thePalce = create.CreateUI.place.text()
-        self.theCrypt = create.CreateUI.newPass.text()
-        self.theInfo = create.CreateUI.infoEdit.text()
-
-        CreateUI.thePlace = placeText.decode()
-        place = QtWidgets.QLabel(placeText.decode())
-        place.setObjectName("listText")
-        crypto = QtWidgets.QLabel(cryptText.decode())
-        crypto.setObjectName("listText")
-        info = QtWidgets.QLabel(infoText.decode())
-        info.setObjectName("listText")
-        cross = qta.icon("fa.times", color="#f9f9f9")
-        editIcon = qta.icon("fa.pencil", color="#f9f9f9")
-        deleteBtn = QtWidgets.QPushButton(cross, "")
-        deleteBtn.setObjectName("deleteBtn")
-        deleteBtn.clicked.connect(lambda:dab.Database.delete(self, self.theIndex))
-        editBtn = QtWidgets.QPushButton(editIcon, "")
-        editBtn.setObjectName("deleteBtn")
-        editBtn.clicked.connect(lambda:dab.Database.update(self, self.theIndex, self.thePlace, self.theCrypt, self.theInfo))
-
+    def setup(self, name, lastChanged, generated, password, banner="", email="", username="", category="generic", twoFa=False):
+        #Main layouts and layout widgets
+        vMain = QtWidgets.QVBoxLayout()
         wMain = QtWidgets.QWidget()
-        wMain.setObjectName("passColor")
-        wEdit = QtWidgets.QWidget()
-        wEdit.setSizePolicy(QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Preferred))
-
-        #Layouts
+        wMain.setObjectName("passSlate")
         vBack = QtWidgets.QVBoxLayout()
-        hMain = QtWidgets.QHBoxLayout()
-        hEdit = QtWidgets.QHBoxLayout()
+        vBack.setContentsMargins(0)
 
-        vBack.setContentsMargins(QtCore.QMargins(0,0,0,0))
-        hMain.setContentsMargins(QtCore.QMargins(10,5,10,5))
-        hMain.setAlignment(QtCore.Qt.AlignLeft)
-        hEdit.setContentsMargins(QtCore.QMargins(0,0,0,0))
-        hEdit.setAlignment(QtCore.Qt.AlignRight)
+        iBanner = QtWidgets.QLabel()
+        if banner != "":
+            try:
+                iBanner.setPixmap(QtGui.QPixmap(banner).scaled(256, 256, QtCore.Qt.KeepAspectRatio))
+            except:
+                iBanner.setPixmap(QtGui.QPixmap("./resources/icons/icon256.png").scaled(256, 256, QtCore.Qt.KeepAspectRatio))
+        else:
+            iBanner.setPixmap(QtGui.QPixmap("./resources/icons/icon256.png").scaled(256, 256, QtCore.Qt.KeepAspectRatio))
+        vMain.addWidget(iBanner)
 
-        wMain.setLayout(hMain)
-        wEdit.setLayout(hEdit)
+        lName = QtWidgets.QLabel('Name: ' + name)
+        vMain.addWidget(lName)
 
-        sep = seperator.MenuSeperator()
-        sep.setup()
-        sep2 = seperator.MenuSeperator()
-        sep2.setup()
-        sep3 = seperator.MenuSeperator()
-        sep3.setup()
+        if email != "":
+            lEmail = QtWidgets.QLabel("")
+            lEmail.setText('Email: ' + email)
+            vMain.addWidget(lEmail)
 
-        hMain.addWidget(place)
-        hMain.addWidget(sep)
-        hMain.addWidget(crypto)
-        hMain.addWidget(sep2)
-        hMain.addWidget(info)
-        hMain.addWidget(sep3)
-        hEdit.addWidget(deleteBtn)
-        #uncomment when fixed!
-        #hEdit.addWidget(editBtn)
-        hMain.addWidget(wEdit)
+        if username != "":
+            lUsername = QtWidgets.QLabel("")
+            lUsername.setText('Username: ' + username)
+            vMain.addWidget(lUsername)
+
+        lPassword = QtWidgets.QLabel('Password: ' + password)
+        vMain.addWidget(lPassword)
+
+        lCategory = QtWidgets.QLabel("Category: " + category)
+        vMain.addWidget(lCategory)
+
+        lTwoFA = QtWidgets.QLabel("2FA: " + twoFa)
+        vMain.addWidget(lTwoFA)
+
+        lGenerated = QtWidgets.QLabel("")
+        if generated:
+            lGenerated.setText("Generated: True")
+        else:
+            lGenerated.setText("Generated: False")
+        vMain.addWidget(lGenerated)
+
+        lDate = QtWidgets.QLabel("Last Changed: " + lastChanged)
+        vMain.addWidget(lDate)
+
+        wMain.setLayout(vMain)
         vBack.addWidget(wMain)
 
         self.setLayout(vBack)
-        self.setSizePolicy(QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Minimum))
+        self.setSizePolicy(QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Maximum, QtWidgets.QSizePolicy.Maximum))

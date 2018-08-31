@@ -21,10 +21,11 @@ class CreateUI:
         hMain = QtWidgets.QHBoxLayout()
         vMain.setContentsMargins(0,0,0,0)
         hMain.setContentsMargins(5,0,5,5)
-        vToolRack = QtWidgets.QVBoxLayout()
+        vToolRack = QtWidgets.QVBoxLayout() #Layout of the rack on the side
         vToolRack.setAlignment(QtCore.Qt.AlignTop)
-        sCentral = QtWidgets.QStackedLayout()
+        self.sCentral = QtWidgets.QStackedLayout()
 
+        #Overview tab layouts
         hOverview = QtWidgets.QHBoxLayout()
         hOverview.setAlignment(QtCore.Qt.AlignVCenter)
         hOverview.setSpacing(20)
@@ -41,16 +42,39 @@ class CreateUI:
         vOCenter.setSpacing(50)
         vOCenter.setAlignment(QtCore.Qt.AlignHCenter | QtCore.Qt.AlignTop)
 
-        gPasswords = QtWidgets.QGridLayout()
+        #Password tab layouts
+        vPassMain = QtWidgets.QVBoxLayout()
+        vPassMain.setAlignment(QtCore.Qt.AlignTop | QtCore.Qt.AlignHCenter)
+        hPExtras = QtWidgets.QHBoxLayout()
+        hPExtras.setSpacing(20)
 
-        #Layout widgets
+        #SWITCH BACK TO GRID LAYOUT LATER!
+        global gPasswords 
+        gPasswords = QtWidgets.QVBoxLayout()
+        vPassMain.addLayout(hPExtras)
+
+        #Layout widgets and important elements
         wOverview = QtWidgets.QWidget()
         wOverview.setLayout(hOverview)
-        sCentral.addWidget(wOverview)
 
         wOCenter = QtWidgets.QWidget()
-        #wOCenter.setSizePolicy(QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding))
+        """wOCenter.setSizePolicy(QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding))"""
         wOCenter.setLayout(vOCenter)
+
+        passScroll = QtWidgets.QScrollArea()
+        wPassScroll = QtWidgets.QWidget()
+        wPassScroll.setLayout(gPasswords)
+        passScroll.setWidget(wPassScroll)
+
+        vPassMain.addWidget(passScroll)
+
+        wPasswords = QtWidgets.QWidget()
+        wPasswords.setLayout(vPassMain)
+
+        #Combine the pages of the sCentral layout
+        self.sCentral.addWidget(wOverview)
+        self.sCentral.addWidget(wPasswords)
+
 
         #Widget in the main layout for the background colour
         wBack = QtWidgets.QWidget()
@@ -68,7 +92,7 @@ class CreateUI:
         wCentral = QtWidgets.QWidget()
         wCentral.setObjectName("wCentral")
         wCentral.setSizePolicy(QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding))
-        wCentral.setLayout(sCentral)
+        wCentral.setLayout(self.sCentral)
         hMain.addWidget(wCentral)
 
         #Titlebar stuff
@@ -82,7 +106,7 @@ class CreateUI:
         mini = QtWidgets.QPushButton(qta.icon("fa.minus", color="#f9f9f9"), "")
         mini.setObjectName("minimize")
         mini.setMinimumSize(QtCore.QSize(30,30))
-        #mini.clicked.connect(CreateUI.minimize(self))
+        """mini.clicked.connect(CreateUI.minimize(self))"""
         tbLay.addWidget(mini)
 
         quitBtn = QtWidgets.QPushButton(qta.icon("fa.times", color="#f9f9f9"), "")
@@ -114,6 +138,12 @@ class CreateUI:
         btnGenerate.setIconSize(rackIcoSize)
         btnNotes.setIconSize(rackIcoSize)
         btnBunkers.setIconSize(rackIcoSize)
+
+        btnOverview.clicked.connect(lambda:CreateUI.switchTab(self, 0))
+        btnPasswords.clicked.connect(lambda:CreateUI.switchTab(self, 1))
+        btnGenerate.clicked.connect(lambda:CreateUI.switchTab(self, 2))
+        btnNotes.clicked.connect(lambda:CreateUI.switchTab(self, 3))
+        btnBunkers.clicked.connect(lambda:CreateUI.switchTab(self, 4))
 
         vToolRack.addWidget(btnOverview)
         vToolRack.addWidget(btnPasswords)
@@ -195,8 +225,54 @@ class CreateUI:
         hOverview.addWidget(wOCenter)
         hOverview.addLayout(gStats)
 
+        #Create passwords tab
+        btnPWCreate = QtWidgets.QPushButton("Create New")
+        btnPWCreate.setObjectName("btncreate")
+        btnPWCreate.setMaximumWidth(200)
+        hPExtras.addWidget(btnPWCreate)
+
+        leSearch = QtWidgets.QLineEdit()
+        leSearch.setPlaceholderText("Search")
+        leSearch.setMaximumWidth(300)
+        hPExtras.addWidget(leSearch)
 
         self.setLayout(vBack)
+
+    def setData(self, tab):
+        #Overview
+        if tab == 0:
+            print(str(dab.DatabaseActions.getPasswordsAmmount(self)))
+            print("Overview data set")
+
+        #Passwords
+        elif tab == 1:
+            for i in range(dab.DatabaseActions.getPasswordsAmmount(self)):
+                print(dab.DatabaseActions.read(self, table="passTable", rows=i) + " adflkg")
+                """
+                passSlate = passItem()
+                passSlate.setup(self, )
+                """
+            print("Passwords tab data set")
+
+        #Generators not needed
+        elif tab == 2:
+            print("Generator need nothing to be set")
+
+        #Notes
+        elif tab == 3:
+            print("Notes tab data set")
+
+        #Bunkers
+        elif tab == 4:
+            print("Bunkers tab set")
+
+        #catch out of bounds
+        else:
+            print("The given tab index was not found!")
+
+    def switchTab(self, tabIndex):
+        CreateUI.setData(self, tabIndex)
+        self.sCentral.setCurrentIndex(tabIndex)
 
     def minimize(self):
         self.showMinimized()

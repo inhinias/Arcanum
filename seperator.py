@@ -1,7 +1,8 @@
-from PyQt5 import QtGui, QtCore, QtWidgets
+from PyQt5 import QtCore, QtWidgets
 
 class MenuSeperator(QtWidgets.QWidget):
-    def setup(self):
+    def __init__(self):
+        super(Window, self).__init__()
         vMenu = QtWidgets.QVBoxLayout()
         vMenu.setContentsMargins(QtCore.QMargins(0,0,0,0))
 

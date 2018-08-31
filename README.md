@@ -1,11 +1,10 @@
 # Axon
-A small tool for saving encrypted passwords in a database.
+A small tool for generating, encrypting and saving passwords, notes and files.
 
-On startup it will show a dialog to connect to a database. The information will then be encrypted and stored 
-in this database. Have a look at the code and adjust it to your needs (tables, encryption, etc.).
+On startup it will show a dialog to connect to a database where the passwords and notes will be stored.
+Have a look at the code and adjust it to your needs to ensure a correct connection!
 
-NOTE:
-
--Have a look a the issues tab on here first before using!
-
--Editing and searching is sofar not supported, but I plan on adding it in a future release.
+Notes:
+-I can't guarante that your passwords will be secure. Use this programm at your own risk.
+-For encryption the python-gnupg module is used.
+-No data will be saved locally. (You need to reenter your connection data every time, unless changed in the code!)

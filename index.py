@@ -9,7 +9,7 @@ from PyQt5 import QtGui, QtCore, QtWidgets
 #Variables
 
 class Window(QtWidgets.QWidget):
-    #Global
+    #Global stuff (none I guess?!)
 
     def __init__(self):
         super(Window, self).__init__()
@@ -40,6 +40,24 @@ class Window(QtWidgets.QWidget):
         app_icon.addFile('./resources/icons/128x128.png', QtCore.QSize(128,128))
         app_icon.addFile('./resources/icons/256x256.png', QtCore.QSize(256,256))
         app.setWindowIcon(app_icon)
+
+    #Methods for moving the window with a custom titlebar
+    def mousePressEvent(self, event):
+        global dragging
+        global clickPos
+        clickPos = event.pos()
+        if event.buttons() == QtCore.Qt.LeftButton:
+            dragging = True
+
+    def mouseReleaseEvent(self, event):
+        global dragging
+        dragging = False
+
+    def mouseMoveEvent(self, event):
+        global dragging
+        global clickPos
+        if dragging and clickPos.y() < 121:
+            self.move(self.pos() + (event.pos() - clickPos))
 
 
 if __name__ == '__main__':
