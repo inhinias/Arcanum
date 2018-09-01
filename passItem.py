@@ -9,8 +9,9 @@ class CreateUI(QtWidgets.QWidget):
         wMain = QtWidgets.QWidget()
         wMain.setObjectName("passSlate")
         vBack = QtWidgets.QVBoxLayout()
-        vBack.setContentsMargins(0)
+        vBack.setContentsMargins(0,0,0,0)
 
+        """
         iBanner = QtWidgets.QLabel()
         if banner != "":
             try:
@@ -20,6 +21,7 @@ class CreateUI(QtWidgets.QWidget):
         else:
             iBanner.setPixmap(QtGui.QPixmap("./resources/icons/icon256.png").scaled(256, 256, QtCore.Qt.KeepAspectRatio))
         vMain.addWidget(iBanner)
+        """
 
         lName = QtWidgets.QLabel('Name: ' + name)
         vMain.addWidget(lName)
@@ -37,10 +39,10 @@ class CreateUI(QtWidgets.QWidget):
         lPassword = QtWidgets.QLabel('Password: ' + password)
         vMain.addWidget(lPassword)
 
-        lCategory = QtWidgets.QLabel("Category: " + category)
+        lCategory = QtWidgets.QLabel("Category: " + str(category))
         vMain.addWidget(lCategory)
 
-        lTwoFA = QtWidgets.QLabel("2FA: " + twoFa)
+        lTwoFA = QtWidgets.QLabel("2FA: " + str(twoFa))
         vMain.addWidget(lTwoFA)
 
         lGenerated = QtWidgets.QLabel("")
@@ -50,7 +52,7 @@ class CreateUI(QtWidgets.QWidget):
             lGenerated.setText("Generated: False")
         vMain.addWidget(lGenerated)
 
-        lDate = QtWidgets.QLabel("Last Changed: " + lastChanged)
+        lDate = QtWidgets.QLabel("Last Changed: " + str(lastChanged))
         vMain.addWidget(lDate)
 
         wMain.setLayout(vMain)

@@ -39,7 +39,8 @@ class CreateUI(QtWidgets.QWidget):
         mainLay.addLayout(addressLay)
 
         #Connection details input
-        leHostname = QtWidgets.QLineEdit("")
+        #Note: the credentials here are just used for testing and not for real use!
+        leHostname = QtWidgets.QLineEdit("kennethmathis.ch")
         leHostname.setPlaceholderText("Hostname")
         addressLay.addWidget(leHostname,0,0)
 
@@ -48,16 +49,16 @@ class CreateUI(QtWidgets.QWidget):
         lePort.setPlaceholderText("Port")
         addressLay.addWidget(lePort,0,1)
 
-        leUsername = QtWidgets.QLineEdit("")
+        leUsername = QtWidgets.QLineEdit("galenite")
         leUsername.setPlaceholderText("Username")
         mainLay.addWidget(leUsername)
 
-        lePassword = QtWidgets.QLineEdit("")
+        lePassword = QtWidgets.QLineEdit("pnR(z*j(xp85Sqf(")
         lePassword.setPlaceholderText("Password")
         lePassword.setEchoMode(2)
         mainLay.addWidget(lePassword)
 
-        leDatabase = QtWidgets.QLineEdit("")
+        leDatabase = QtWidgets.QLineEdit("passwords")
         leDatabase.setPlaceholderText("Database")
         mainLay.addWidget(leDatabase)
 

@@ -14,7 +14,7 @@ class Window(QtWidgets.QWidget):
     def __init__(self):
         super(Window, self).__init__()
         self.setGeometry(50,50,1200,700)
-        self.setWindowTitle("Axon")
+        self.setWindowTitle("Arcanum")
         self.setWindowFlags(self.windowFlags() | QtCore.Qt.FramelessWindowHint) #Use this for a frameless window. Will be used later!
         dial = keyDialog.CreateUI()
         #dab.Database.create(self)
@@ -31,14 +31,14 @@ class Window(QtWidgets.QWidget):
         frameGm.moveCenter(centerPoint)
         self.move(frameGm.topLeft())
 
-    def icon(self):
-        #set app icon    
+    #set the application icon
+    def icon(self):    
         app_icon = QtGui.QIcon()
-        app_icon.addFile('./resources/icons/16x16.png', QtCore.QSize(16,16))
-        app_icon.addFile('./resources/icons/32x32.png', QtCore.QSize(32,32))
-        app_icon.addFile('./resources/icons/64x64.png', QtCore.QSize(64,64))
-        app_icon.addFile('./resources/icons/128x128.png', QtCore.QSize(128,128))
-        app_icon.addFile('./resources/icons/256x256.png', QtCore.QSize(256,256))
+        app_icon.addFile('./resources/icons/icon16.png', QtCore.QSize(16,16))
+        app_icon.addFile('./resources/icons/icon32.png', QtCore.QSize(32,32))
+        app_icon.addFile('./resources/icons/icon64.png', QtCore.QSize(64,64))
+        app_icon.addFile('./resources/icons/icon128.png', QtCore.QSize(128,128))
+        app_icon.addFile('./resources/icons/icon256.png', QtCore.QSize(256,256))
         app.setWindowIcon(app_icon)
 
     #Methods for moving the window with a custom titlebar
@@ -72,3 +72,29 @@ if __name__ == '__main__':
     #Misc stuff
     window = Window()
     sys.exit(app.exec_())
+
+"""
+
+          _____                    _____                    _____                    _____                    _____                    _____                    _____          
+         /\    \                  /\    \                  /\    \                  /\    \                  /\    \                  /\    \                  /\    \         
+        /::\    \                /::\    \                /::\    \                /::\    \                /::\____\                /::\____\                /::\____\        
+       /::::\    \              /::::\    \              /::::\    \              /::::\    \              /::::|   |               /:::/    /               /::::|   |        
+      /::::::\    \            /::::::\    \            /::::::\    \            /::::::\    \            /:::::|   |              /:::/    /               /:::::|   |        
+     /:::/\:::\    \          /:::/\:::\    \          /:::/\:::\    \          /:::/\:::\    \          /::::::|   |             /:::/    /               /::::::|   |        
+    /:::/__\:::\    \        /:::/__\:::\    \        /:::/  \:::\    \        /:::/__\:::\    \        /:::/|::|   |            /:::/    /               /:::/|::|   |        
+   /::::\   \:::\    \      /::::\   \:::\    \      /:::/    \:::\    \      /::::\   \:::\    \      /:::/ |::|   |           /:::/    /               /:::/ |::|   |        
+  /::::::\   \:::\    \    /::::::\   \:::\    \    /:::/    / \:::\    \    /::::::\   \:::\    \    /:::/  |::|   | _____    /:::/    /      _____    /:::/  |::|___|______  
+ /:::/\:::\   \:::\    \  /:::/\:::\   \:::\____\  /:::/    /   \:::\    \  /:::/\:::\   \:::\    \  /:::/   |::|   |/\    \  /:::/____/      /\    \  /:::/   |::::::::\    \ 
+/:::/  \:::\   \:::\____\/:::/  \:::\   \:::|    |/:::/____/     \:::\____\/:::/  \:::\   \:::\____\/:: /    |::|   /::\____\|:::|    /      /::\____\/:::/    |:::::::::\____\
+\::/    \:::\  /:::/    /\::/   |::::\  /:::|____|\:::\    \      \::/    /\::/    \:::\  /:::/    /\::/    /|::|  /:::/    /|:::|____\     /:::/    /\::/    / ~~~~~/:::/    /
+ \/____/ \:::\/:::/    /  \/____|:::::\/:::/    /  \:::\    \      \/____/  \/____/ \:::\/:::/    /  \/____/ |::| /:::/    /  \:::\    \   /:::/    /  \/____/      /:::/    / 
+          \::::::/    /         |:::::::::/    /    \:::\    \                       \::::::/    /           |::|/:::/    /    \:::\    \ /:::/    /               /:::/    /  
+           \::::/    /          |::|\::::/    /      \:::\    \                       \::::/    /            |::::::/    /      \:::\    /:::/    /               /:::/    /   
+           /:::/    /           |::| \::/____/        \:::\    \                      /:::/    /             |:::::/    /        \:::\__/:::/    /               /:::/    /    
+          /:::/    /            |::|  ~|               \:::\    \                    /:::/    /              |::::/    /          \::::::::/    /               /:::/    /     
+         /:::/    /             |::|   |                \:::\    \                  /:::/    /               /:::/    /            \::::::/    /               /:::/    /      
+        /:::/    /              \::|   |                 \:::\____\                /:::/    /               /:::/    /              \::::/    /               /:::/    /       
+        \::/    /                \:|   |                  \::/    /                \::/    /                \::/    /                \::/____/                \::/    /        
+         \/____/                  \|___|                   \/____/                  \/____/                  \/____/                  ~~                       \/____/         
+                                                                                                                                                                               
+"""

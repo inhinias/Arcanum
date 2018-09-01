@@ -8,7 +8,7 @@ class DatabaseActions():
         success = False
         try:
             global connection 
-            connection = connector.connect(user=username, host=address, password=thePassword, port=int(thePort), database=theDatabase)
+            connection = connector.connect(user=username, host=address, password=thePassword, port=int(thePort), database=theDatabase, buffered=True)
             print("Connection established!")
             global cur 
             cur = connection.cursor()
@@ -28,7 +28,8 @@ class DatabaseActions():
         connection.close()
 
     def getPasswordsAmmount(self):
-        return cur.execute("SELECT COUNT(*) FROM passwords.passTable")
+        cur.execute("SELECT COUNT(*) FROM passwords.passTable")
+        return cur.fetchall()[0][0]
     
     def read(self, table, rows):
         #Test the demand and return the according row
@@ -36,7 +37,8 @@ class DatabaseActions():
             print("getting row: {0} from table: {1}".format(rows, table))
             dictOfRow = {'theRow':rows}
             if table == "passTable":
-                return cur.execute("SELECT * FROM passwords.passTable WHERE prim == %(theRow)s", dictOfRow)
+                cur.execute("SELECT * FROM passwords.passTable WHERE prim = %(theRow)s", dictOfRow)
+                return cur.fetchall()[0]
 
     def insert(self, table, row, context):
         #insert stuff

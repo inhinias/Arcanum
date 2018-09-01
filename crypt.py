@@ -3,7 +3,8 @@ import gnupg
 
 class Encryption:
     def __init__(self):
-        global gpg = gnupg.GPG(gnupghome = str(Path.home()))
+        global gpg
+        gpg = gnupg.GPG(gnupghome = str(Path.home()))
         gpg.encoding = 'utf-8'
     
     def generateKey(self, type, length):

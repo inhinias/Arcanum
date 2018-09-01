@@ -159,6 +159,13 @@ class CreateUI:
             sLabel.setObjectName("oText")
             gStrength.addWidget(sLabel,i,0)
         
+        global tVeryWeak
+        global tWeak
+        global tAcceptable
+        global tStrong
+        global tVeryStrong
+        global tFortKnox
+
         tVeryWeak = QtWidgets.QLabel("0")
         tVeryWeak.setObjectName("oText")
         gStrength.addWidget(tVeryWeak,0,1)
@@ -187,6 +194,8 @@ class CreateUI:
         tNPassText.setObjectName("pStoredText")
         tNPassText.setAlignment(QtCore.Qt.AlignHCenter)
         vOCenter.addWidget(tNPassText)
+
+        global tNumPasswords
         tNumPasswords = QtWidgets.QLabel("00000")
         tNumPasswords.setObjectName("numPasswords")
         vOCenter.addWidget(tNumPasswords)
@@ -196,6 +205,13 @@ class CreateUI:
             sStats = QtWidgets.QLabel(statTexts[j] + ":")
             sStats.setObjectName("oText")
             gStats.addWidget(sStats,j,0)
+
+        global tReused
+        global tForgotten
+        global tGen
+        global tTwoFA
+        global tRockYou
+        global tLeaked
 
         tReused = QtWidgets.QLabel("0")
         tReused.setObjectName("oText")
@@ -241,17 +257,33 @@ class CreateUI:
     def setData(self, tab):
         #Overview
         if tab == 0:
-            print(str(dab.DatabaseActions.getPasswordsAmmount(self)))
+            numPass = dab.DatabaseActions.getPasswordsAmmount(self)
+            if len(str(numPass)) >= 5:
+                tNumPasswords.setText(str(numPass))
+            elif len(str(numPass)) == 4:
+                tNumPasswords.setText("0" + str(numPass))
+            elif len(str(numPass)) == 3:
+                tNumPasswords.setText("00" + str(numPass))
+            elif len(str(numPass)) == 2:
+                tNumPasswords.setText("0000" + str(numPass))
+            elif len(str(numPass)) == 1:
+                tNumPasswords.setText("00000" + str(numPass))
+            else:
+                print("Error with adding 0 to the numPass number")
+
             print("Overview data set")
 
         #Passwords
         elif tab == 1:
-            for i in range(dab.DatabaseActions.getPasswordsAmmount(self)):
-                print(dab.DatabaseActions.read(self, table="passTable", rows=i) + " adflkg")
-                """
-                passSlate = passItem()
-                passSlate.setup(self, )
-                """
+            for i in range(1, dab.DatabaseActions.getPasswordsAmmount(self)+1):
+                data = dab.DatabaseActions.read(self, table="passTable", rows=i)
+
+                passSlate = passItem.CreateUI()
+                #name, lastChanged, generated, password, banner="", email="", username="", category="generic", twoFa=False
+                passSlate.setup(data[1], data[5], data[6], data[9], data[7], data[2], data[3], data[5], data[8])
+
+                gPasswords.addWidget(passSlate)
+                
             print("Passwords tab data set")
 
         #Generators not needed
