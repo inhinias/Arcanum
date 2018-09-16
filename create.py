@@ -50,7 +50,7 @@ class CreateUI:
 
         #SWITCH BACK TO GRID LAYOUT LATER!
         global gPasswords 
-        gPasswords = QtWidgets.QVBoxLayout()
+        gPasswords = QtWidgets.QGridLayout()
         vPassMain.addLayout(hPExtras)
 
         #Layout widgets and important elements
@@ -62,6 +62,7 @@ class CreateUI:
         wOCenter.setLayout(vOCenter)
 
         passScroll = QtWidgets.QScrollArea()
+        passScroll.setWidgetResizable(True)
         wPassScroll = QtWidgets.QWidget()
         wPassScroll.setLayout(gPasswords)
         passScroll.setWidget(wPassScroll)
@@ -126,30 +127,35 @@ class CreateUI:
         btnGenerate = QtWidgets.QPushButton(qta.icon("fa.bolt", color="#f9f9f9"), "Generator")
         btnNotes = QtWidgets.QPushButton(qta.icon("fa.paperclip", color="#f9f9f9"), "Notes")
         btnBunkers = QtWidgets.QPushButton(qta.icon("fa.university", color="#f9f9f9"), "Bunkers")
+        btnSettings = QtWidgets.QPushButton(qta.icon("fa.cog", color="#f9f9f9"), "Settings")
 
         btnOverview.setMinimumHeight(rackBtnMinheight)
         btnPasswords.setMinimumHeight(rackBtnMinheight)
         btnGenerate.setMinimumHeight(rackBtnMinheight)
         btnNotes.setMinimumHeight(rackBtnMinheight)
         btnBunkers.setMinimumHeight(rackBtnMinheight)
+        btnSettings.setMinimumHeight(rackBtnMinheight)
 
         btnOverview.setIconSize(rackIcoSize)
         btnPasswords.setIconSize(rackIcoSize)
         btnGenerate.setIconSize(rackIcoSize)
         btnNotes.setIconSize(rackIcoSize)
         btnBunkers.setIconSize(rackIcoSize)
+        btnSettings.setIconSize(rackIcoSize)
 
         btnOverview.clicked.connect(lambda:CreateUI.switchTab(self, 0))
         btnPasswords.clicked.connect(lambda:CreateUI.switchTab(self, 1))
         btnGenerate.clicked.connect(lambda:CreateUI.switchTab(self, 2))
         btnNotes.clicked.connect(lambda:CreateUI.switchTab(self, 3))
         btnBunkers.clicked.connect(lambda:CreateUI.switchTab(self, 4))
+        btnSettings.clicked.connect(lambda:CreateUI.switchTab(self, 5))
 
         vToolRack.addWidget(btnOverview)
         vToolRack.addWidget(btnPasswords)
         vToolRack.addWidget(btnGenerate)
         vToolRack.addWidget(btnNotes)
         vToolRack.addWidget(btnBunkers)
+        vToolRack.addWidget(btnSettings)
 
         #Create the overview page
         #Strength overview
@@ -275,14 +281,31 @@ class CreateUI:
 
         #Passwords
         elif tab == 1:
+            for i in reversed(range(gPasswords.count())):
+                gPasswords.itemAt(i).widget().setParent(None)
+
+            row = 0
+            column = 0
+            #Ajust to the ammount of horizontal widgets
+            widgetRowBreak = 4
+
             for i in range(1, dab.DatabaseActions.getPasswordsAmmount(self)+1):
                 data = dab.DatabaseActions.read(self, table="passTable", rows=i)
+                print(data)
 
                 passSlate = passItem.CreateUI()
                 #name, lastChanged, generated, password, banner="", email="", username="", category="generic", twoFa=False
                 passSlate.setup(data[1], data[5], data[6], data[9], data[7], data[2], data[3], data[5], data[8])
 
-                gPasswords.addWidget(passSlate)
+                if column < widgetRowBreak:
+                    print("Row: {0}; Column: {1}".format(row, column))
+                    gPasswords.addWidget(passSlate, row, column)
+                    column += 1
+                else:
+                    row += 1
+                    column = 0
+                    gPasswords.addWidget(passSlate, row, column)
+                    column +=1
                 
             print("Passwords tab data set")
 
@@ -297,6 +320,10 @@ class CreateUI:
         #Bunkers
         elif tab == 4:
             print("Bunkers tab set")
+
+        #Settings
+        elif tab == 5:
+            print("Settings tab set")
 
         #catch out of bounds
         else:

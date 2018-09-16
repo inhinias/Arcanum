@@ -85,23 +85,25 @@ btnCreate{
     background-color: #9b123e;
 }
 
+
+/*Vertiacl Scrollbar CSS*/
 QScrollBar:vertical {
-    background-color: #2A6D83;
+    background-color: #032358;
 }
 
 QScrollBar::handle:vertical {
-    border: 3px solid #2A836D;
+    border: 3px solid #ff9853;
     border-radius: 5px;
     min-height: 25px;
 }
 
 QScrollBar::up-arrow:vertical{
-    background-color: #2A6D83;
+    background-color: #032358;
     border-style: solid;
 }
 
 QScrollBar::down-arrow:vertical{
-    background-color: #2A6D83;
+    background-color: #032358;
     border-style: solid;
 }
 
@@ -118,6 +120,41 @@ QScrollBar::sub-line:vertical {
     subcontrol-position: top;
 }
 
+/*Horizontal Scrollbar CSS*/
+QScrollBar:horizontal {
+    background-color: #032358;
+}
+
+QScrollBar::handle:horizontal {
+    border: 3px solid #ff9853;
+    border-radius: 5px;
+    min-height: 25px;
+}
+
+QScrollBar::up-arrow:horizontal{
+    background-color: #032358;
+    border-style: solid;
+}
+
+QScrollBar::down-arrow:horizontal{
+    background-color: #032358;
+    border-style: solid;
+}
+
+
+QScrollBar::add-line:horizontal {
+    border: 0px solid;
+    height: 0px;
+    subcontrol-position: bottom;
+}
+
+QScrollBar::sub-line:horizontal {
+    border: 0px solid;
+    height: 0px;
+    subcontrol-position: top;
+}
+
+/*FONTS!*/
 @font-face {
     font-family: 'DSEG14Classic';
     src: url('./resources/fonts/SegmentedDisplay/DSEG14Classic-Regular.ttf');

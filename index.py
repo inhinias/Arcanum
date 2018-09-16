@@ -13,7 +13,7 @@ class Window(QtWidgets.QWidget):
 
     def __init__(self):
         super(Window, self).__init__()
-        self.setGeometry(50,50,1200,700)
+        self.setGeometry(50,50,1320,700)
         self.setWindowTitle("Arcanum")
         self.setWindowFlags(self.windowFlags() | QtCore.Qt.FramelessWindowHint) #Use this for a frameless window. Will be used later!
         dial = keyDialog.CreateUI()

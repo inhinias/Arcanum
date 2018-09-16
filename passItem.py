@@ -11,17 +11,20 @@ class CreateUI(QtWidgets.QWidget):
         vBack = QtWidgets.QVBoxLayout()
         vBack.setContentsMargins(0,0,0,0)
 
-        """
+        #Banner to the Password currently only in placeholder version!
         iBanner = QtWidgets.QLabel()
+        """
         if banner != "":
             try:
                 iBanner.setPixmap(QtGui.QPixmap(banner).scaled(256, 256, QtCore.Qt.KeepAspectRatio))
             except:
                 iBanner.setPixmap(QtGui.QPixmap("./resources/icons/icon256.png").scaled(256, 256, QtCore.Qt.KeepAspectRatio))
         else:
-            iBanner.setPixmap(QtGui.QPixmap("./resources/icons/icon256.png").scaled(256, 256, QtCore.Qt.KeepAspectRatio))
+            """
+
+        iBanner.setPixmap(QtGui.QPixmap("./resources/icons/icon256.png").scaled(128, 128, QtCore.Qt.KeepAspectRatio))
         vMain.addWidget(iBanner)
-        """
+        
 
         lName = QtWidgets.QLabel('Name: ' + name)
         vMain.addWidget(lName)
@@ -42,7 +45,13 @@ class CreateUI(QtWidgets.QWidget):
         lCategory = QtWidgets.QLabel("Category: " + str(category))
         vMain.addWidget(lCategory)
 
-        lTwoFA = QtWidgets.QLabel("2FA: " + str(twoFa))
+        lTwoFA = QtWidgets.QLabel("2FA: ")
+        if twoFa == 0:
+            lTwoFA.setText("2FA: Inactive")
+        elif twoFa == 1:
+            lTwoFA.setText("2FA: Active")
+        else:
+            lTwoFA.setText("2FA: Error")
         vMain.addWidget(lTwoFA)
 
         lGenerated = QtWidgets.QLabel("")

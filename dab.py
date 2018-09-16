@@ -1,4 +1,4 @@
-import os, create
+import os, create, crypt
 import mysql.connector as connector
 from PyQt5 import QtGui, QtCore, QtWidgets
 from cryptography.fernet import Fernet
@@ -51,4 +51,13 @@ class DatabaseActions():
     def delete(self, table, row):
         #delete row
         print()
+    
+    def testPassword(self, password):
+        crypt.Encryption()
+        dictOfRow = {'theRow':1}
+        cur.execute("SELECT * FROM passwords.passTable WHERE prim = %(theRow)s", dictOfRow)
+        firstPass = cur.fetchall()[0][9]
+        #Should be finishable as soon as encrypted stuff is in the DB
+        #print(crypt.Encryption.decrypt(self, firstPass, password))
+        return True
     

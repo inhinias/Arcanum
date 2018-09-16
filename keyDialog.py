@@ -62,6 +62,7 @@ class CreateUI(QtWidgets.QWidget):
         leDatabase.setPlaceholderText("Database")
         mainLay.addWidget(leDatabase)
 
+        global leCryptPass
         leCryptPass = QtWidgets.QLineEdit("")
         leCryptPass.setPlaceholderText("Encryption Password")
         leCryptPass.setEchoMode(2)
@@ -80,8 +81,11 @@ class CreateUI(QtWidgets.QWidget):
     #Connect to the database and raise an error when failed
     def connect(self, username, thePassword, address, thePort, theDatabase):
         if dab.DatabaseActions.connect(self, username, thePassword, address, thePort, theDatabase):
-            create.CreateUI.setData(self, 0)
-            self.hide()
+            if dab.DatabaseActions.testPassword(self, leCryptPass.text()):
+                create.CreateUI.setData(self, 0)
+                self.hide()
+            else:
+                print("Wrong Password for decryption!")
 
     #Centers the window at the start
     def center(self):
