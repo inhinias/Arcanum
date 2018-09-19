@@ -1,4 +1,4 @@
-import os, create, crypt
+import os, create, crypt, datetime
 import mysql.connector as connector
 from PyQt5 import QtGui, QtCore, QtWidgets
 from cryptography.fernet import Fernet
@@ -29,7 +29,11 @@ class DatabaseActions():
 
     def getPasswordsAmmount(self):
         cur.execute("SELECT COUNT(*) FROM passwords.passTable")
-        return cur.fetchall()[0][0]
+        try:
+            ammount = cur.fetchall()[0][0]
+        except:
+            ammount = 0
+        return ammount
     
     def read(self, table, rows):
         #Test the demand and return the according row
@@ -40,9 +44,17 @@ class DatabaseActions():
                 cur.execute("SELECT * FROM passwords.passTable WHERE prim = %(theRow)s", dictOfRow)
                 return cur.fetchall()[0]
 
-    def insert(self, table, row, context):
+    def insert(self, table, context):
         #insert stuff
-        print()
+        #PasswordsName, EMAS, Username, Password, 2fa, category, banner
+        if table == "passwords":
+            print("Inserting password")
+            cur.execute("INSERT INTO passwords.passTable"
+            "(name, email, username, category, lastUsed, generated, banner, twoFA, encryptedPassword)"
+            "VALUES (%(name)s, %(email)s, %(uName)s, %(cat)s, %(lstUsed)s, %(gen)s, %(ban)s, %(twofactor)s, %(crypticPass)s)", context)
+
+        else:
+            print("Table not found!")
     
     def update(self, table, row, columns, context):
         #Change stuff
@@ -53,11 +65,11 @@ class DatabaseActions():
         print()
     
     def testPassword(self, password):
-        crypt.Encryption()
-        dictOfRow = {'theRow':1}
-        cur.execute("SELECT * FROM passwords.passTable WHERE prim = %(theRow)s", dictOfRow)
-        firstPass = cur.fetchall()[0][9]
         #Should be finishable as soon as encrypted stuff is in the DB
+        #crypt.Encryption()
+        #dictOfRow = {'theRow':1}
+        #cur.execute("SELECT * FROM passwords.passTable WHERE prim = %(theRow)s", dictOfRow)
+        #firstPass = cur.fetchall()[0][9]
         #print(crypt.Encryption.decrypt(self, firstPass, password))
         return True
     

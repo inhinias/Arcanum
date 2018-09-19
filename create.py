@@ -1,7 +1,7 @@
 from PyQt5 import QtGui, QtCore, QtWidgets
 from cryptography.fernet import Fernet
 import qtawesome as qta
-import dab, passItem
+import dab, passItem, seperator
 
 class CreateUI:
     vPassList = None
@@ -12,6 +12,7 @@ class CreateUI:
     place = None
     newPass = None
     infoEdit = None
+    emailAddress = "karlculomb@gmail.com"
     def create(self):
         #Layouts
         #Main Layouts
@@ -43,9 +44,10 @@ class CreateUI:
         vOCenter.setAlignment(QtCore.Qt.AlignHCenter | QtCore.Qt.AlignTop)
 
         #Password tab layouts
-        vPassMain = QtWidgets.QVBoxLayout()
+        vPassMain = QtWidgets.QHBoxLayout()
         vPassMain.setAlignment(QtCore.Qt.AlignTop | QtCore.Qt.AlignHCenter)
-        hPExtras = QtWidgets.QHBoxLayout()
+        hPExtras = QtWidgets.QVBoxLayout()
+        hPExtras.setAlignment(QtCore.Qt.AlignTop)
         hPExtras.setSpacing(20)
 
         #SWITCH BACK TO GRID LAYOUT LATER!
@@ -248,15 +250,55 @@ class CreateUI:
         hOverview.addLayout(gStats)
 
         #Create passwords tab
-        btnPWCreate = QtWidgets.QPushButton("Create New")
-        btnPWCreate.setObjectName("btncreate")
-        btnPWCreate.setMaximumWidth(200)
-        hPExtras.addWidget(btnPWCreate)
-
         leSearch = QtWidgets.QLineEdit()
         leSearch.setPlaceholderText("Search")
         leSearch.setMaximumWidth(300)
         hPExtras.addWidget(leSearch)
+
+        sep = seperator.MenuSeperator()
+        hPExtras.addWidget(sep)
+
+        lePassName = QtWidgets.QLineEdit()
+        lePassName.setPlaceholderText("Name")
+        lePassName.setMaximumWidth(300)
+        hPExtras.addWidget(lePassName)
+
+        chkEMAS = QtWidgets.QCheckBox("Email as username")
+        chkEMAS.stateChanged.connect(lambda:print("Hide and unhide the username le accrding to the check state!"))
+        chkEMAS.setMaximumWidth(300)
+        hPExtras.addWidget(chkEMAS)
+
+        leUsername = QtWidgets.QLineEdit()
+        leUsername.setPlaceholderText("Username")
+        leUsername.setMaximumWidth(300)
+        hPExtras.addWidget(leUsername)
+
+        leNewPass = QtWidgets.QLineEdit()
+        leNewPass.setPlaceholderText("Password")
+        leNewPass.setMaximumWidth(300)
+        hPExtras.addWidget(leNewPass)
+
+        chkTwoFA = QtWidgets.QCheckBox("Uses 2FA")
+        chkTwoFA.setMaximumWidth(300)
+        hPExtras.addWidget(chkTwoFA)
+
+        global cbCategories
+        cbCategories = QtWidgets.QComboBox()
+        cbCategories.setMaximumWidth(300)
+        hPExtras.addWidget(cbCategories)
+
+        global cbBanner
+        cbBanner = QtWidgets.QComboBox()
+        cbBanner.setMaximumWidth(300)
+        hPExtras.addWidget(cbBanner)
+
+        btnPWCreate = QtWidgets.QPushButton("Create New")
+        btnPWCreate.setObjectName("btncreate")
+        btnPWCreate.setMaximumWidth(300)
+        #PasswordsName, EMAS, Username, Password, 2fa, category, banner
+        btnPWCreate.clicked.connect(lambda:CreateUI.addPassword(
+            self, lePassName.text(), chkEMAS.isChecked(), leUsername.text(), leNewPass.text(), chkTwoFA.isChecked(), cbCategories.currentText(), cbBanner.currentText()))
+        hPExtras.addWidget(btnPWCreate)
 
         self.setLayout(vBack)
 
@@ -272,7 +314,7 @@ class CreateUI:
                 tNumPasswords.setText("00" + str(numPass))
             elif len(str(numPass)) == 2:
                 tNumPasswords.setText("0000" + str(numPass))
-            elif len(str(numPass)) == 1:
+            elif len(str(numPass)) == 1 or numPass == 0:
                 tNumPasswords.setText("00000" + str(numPass))
             else:
                 print("Error with adding 0 to the numPass number")
@@ -294,8 +336,8 @@ class CreateUI:
                 print(data)
 
                 passSlate = passItem.CreateUI()
-                #name, lastChanged, generated, password, banner="", email="", username="", category="generic", twoFa=False
-                passSlate.setup(data[1], data[5], data[6], data[9], data[7], data[2], data[3], data[5], data[8])
+                #index, name, lastChanged, generated, password, banner="", email="", username="", category="generic", twoFa=False
+                passSlate.setup(data[0], data[1], data[5], data[6], data[9], data[7], data[2], data[3], data[5], data[8])
 
                 if column < widgetRowBreak:
                     print("Row: {0}; Column: {1}".format(row, column))
@@ -332,6 +374,31 @@ class CreateUI:
     def switchTab(self, tabIndex):
         CreateUI.setData(self, tabIndex)
         self.sCentral.setCurrentIndex(tabIndex)
+
+
+    #PasswordsName, EMAS, Username, Password, 2fa, category, banner
+    def addPassword(self, passName, EMAS, theUsername, thePassword, twoFAEnabled, theCategory, theBanner):
+        if emas:
+            insertionData = {"name":passName,
+                "email":emailAddress,
+                "uname":emailAddress,
+                "lstUsed":datetime.datetime.now(), 
+                "gen":False, 
+                "crypticPass":thePassword, 
+                "twofactor":twoFAEnabled, 
+                "cat":theCategory, 
+                "ban":theBanner}
+        else:
+            {"name":passName,
+                "email":emailAddress,
+                "uname":theUsername,
+                "lstUsed":datetime.datetime.now(),
+                "gen":False,
+                "crypticPass":thePassword,
+                "twofactor":twoFAEnabled,
+                "cat":theCategory,
+                "ban":theBanner}
+        dab.DatabaseActions.insert(self, "passwords", insertionData)
 
     def minimize(self):
         self.showMinimized()

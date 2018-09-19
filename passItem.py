@@ -3,7 +3,7 @@ import seperator, dab, create
 import qtawesome as qta
 
 class CreateUI(QtWidgets.QWidget):
-    def setup(self, name, lastChanged, generated, password, banner="", email="", username="", category="generic", twoFa=False):
+    def setup(self, passIndex, name, lastChanged, generated, password, banner="", email="", username="", category="generic", twoFa=False):
         #Main layouts and layout widgets
         vMain = QtWidgets.QVBoxLayout()
         wMain = QtWidgets.QWidget()
@@ -24,7 +24,9 @@ class CreateUI(QtWidgets.QWidget):
 
         iBanner.setPixmap(QtGui.QPixmap("./resources/icons/icon256.png").scaled(128, 128, QtCore.Qt.KeepAspectRatio))
         vMain.addWidget(iBanner)
-        
+
+        lPassIndex = QtWidgets.QLabel(passIndex)
+        vMain.addWidget(lPassIndex)
 
         lName = QtWidgets.QLabel('Name: ' + name)
         vMain.addWidget(lName)
