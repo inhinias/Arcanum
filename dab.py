@@ -27,13 +27,23 @@ class DatabaseActions():
         cur.close()
         connection.close()
 
-    def getPasswordsAmmount(self):
-        cur.execute("SELECT COUNT(*) FROM passwords.passTable")
-        try:
-            ammount = cur.fetchall()[0][0]
-        except:
-            ammount = 0
-        return ammount
+    def getAmmount(self, table):
+        if table=="passwords":
+            cur.execute("SELECT COUNT(*) FROM passwords.passTable")
+            try:
+                ammount = cur.fetchall()[0][0]
+            except:
+                ammount = 0
+            return ammount
+        elif table=="categories":
+            cur.execute("SELECT COUNT(*) FROM passwords.categories")
+            try:
+                ammount = cur.fetchall()[0][0]
+            except:
+                ammount = 0
+            return ammount
+        else:
+            print("unable to find table to get ammount of!")
     
     def read(self, table, rows):
         #Test the demand and return the according row
@@ -42,6 +52,9 @@ class DatabaseActions():
             dictOfRow = {'theRow':rows}
             if table == "passTable":
                 cur.execute("SELECT * FROM passwords.passTable WHERE prim = %(theRow)s", dictOfRow)
+                return cur.fetchall()[0]
+            if table == "categories":
+                cur.execute("SELECT * FROM passwords.categories WHERE prim = %(theRow)s", dictOfRow)
                 return cur.fetchall()[0]
 
     def insert(self, table, context):

@@ -48,7 +48,7 @@ class CreateUI:
         vPassMain.setAlignment(QtCore.Qt.AlignTop | QtCore.Qt.AlignHCenter)
         hPExtras = QtWidgets.QVBoxLayout()
         hPExtras.setAlignment(QtCore.Qt.AlignTop)
-        hPExtras.setSpacing(20)
+        hPExtras.setSpacing(10)
 
         #SWITCH BACK TO GRID LAYOUT LATER!
         global gPasswords 
@@ -264,10 +264,11 @@ class CreateUI:
         hPExtras.addWidget(lePassName)
 
         chkEMAS = QtWidgets.QCheckBox("Email as username")
-        chkEMAS.stateChanged.connect(lambda:print("Hide and unhide the username le accrding to the check state!"))
+        chkEMAS.stateChanged.connect(lambda:CreateUI.toggleUsername(self, chkEMAS.isChecked()))
         chkEMAS.setMaximumWidth(300)
         hPExtras.addWidget(chkEMAS)
 
+        global leUsername
         leUsername = QtWidgets.QLineEdit()
         leUsername.setPlaceholderText("Username")
         leUsername.setMaximumWidth(300)
@@ -305,7 +306,7 @@ class CreateUI:
     def setData(self, tab):
         #Overview
         if tab == 0:
-            numPass = dab.DatabaseActions.getPasswordsAmmount(self)
+            numPass = dab.DatabaseActions.getAmmount(self, "passwords")
             if len(str(numPass)) >= 5:
                 tNumPasswords.setText(str(numPass))
             elif len(str(numPass)) == 4:
@@ -331,7 +332,7 @@ class CreateUI:
             #Ajust to the ammount of horizontal widgets
             widgetRowBreak = 4
 
-            for i in range(1, dab.DatabaseActions.getPasswordsAmmount(self)+1):
+            for i in range(1, dab.DatabaseActions.getAmmount(self, "passwords")+1):
                 data = dab.DatabaseActions.read(self, table="passTable", rows=i)
                 print(data)
 
@@ -348,6 +349,10 @@ class CreateUI:
                     column = 0
                     gPasswords.addWidget(passSlate, row, column)
                     column +=1
+            for i in range(1, dab.DatabaseActions.getAmmount(self, "categories")+1):
+                dataCat = dab.DatabaseActions.read(self, table="categories", rows=i)
+                print(dataCat)
+                cbCategories.addItem(dataCat[1])
                 
             print("Passwords tab data set")
 
@@ -370,6 +375,12 @@ class CreateUI:
         #catch out of bounds
         else:
             print("The given tab index was not found!")
+
+    def toggleUsername(self, state):
+        if state: 
+            leUsername.hide() 
+        else: 
+            leUsername.show() 
 
     def switchTab(self, tabIndex):
         CreateUI.setData(self, tabIndex)

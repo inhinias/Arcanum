@@ -8,7 +8,7 @@ class CreateUI(QtWidgets.QWidget):
 
     def __init__(self):
         super(CreateUI, self).__init__()
-        self.setGeometry(50,50,400,100)
+        self.setGeometry(50,50,450,100)
         self.setWindowTitle("Connect")
         self.setWindowFlags(self.windowFlags() | QtCore.Qt.FramelessWindowHint) #Use this for a frameless window. Will be used later!
         self.center()
@@ -70,6 +70,7 @@ class CreateUI(QtWidgets.QWidget):
 
         btnConnect = QtWidgets.QPushButton("Connect")
         btnConnect.setObjectName("btnConnect")
+        btnConnect.setMinimumHeight(38)
         btnConnect.clicked.connect(lambda:CreateUI.connect(
             self, username=leUsername.text(), thePassword=lePassword.text(), address=leHostname.text(), thePort=lePort.text(), theDatabase=leDatabase.text()))
         mainLay.addWidget(btnConnect)

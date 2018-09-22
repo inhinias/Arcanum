@@ -66,7 +66,7 @@ QPushButton:hover{
     font-size: 20px;
     font-weight: bold;
     color: #f9f9f9;
-    font-family: 'Comfortaa';
+    font-family: 'Roboto';
 }
 
 #passSlate{
@@ -83,6 +83,28 @@ btnCreate{
 
 #deleteBtn{
     background-color: #9b123e;
+}
+
+QLineEdit{
+    border: 1px solid #032358;
+    padding: 3px;
+    background-color: #222d32;
+    font-family: 'Quicksand';
+    font-size: 16px;
+    color: #f9f9f9;
+}
+
+QComboBox{
+    background-color: #222d32;
+    border: 1px solid #032358;
+    font-size: 18px;
+    color: #f9f9f9;
+}
+
+QComboBox::drop-down{
+    width: 15px;
+    border-style: solid;
+    background-color: #ff9853;
 }
 
 
