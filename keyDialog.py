@@ -1,11 +1,11 @@
-import os, sys, index, create, dab
+import sys, index, create, dab, crypt
 from PyQt5 import QtGui, QtCore, QtWidgets
 import qtawesome as qta
 
 class CreateUI(QtWidgets.QWidget):
     #Globals
     msg = None
-
+    pEncStat = None
     def __init__(self):
         super(CreateUI, self).__init__()
         self.setGeometry(50,50,450,100)
@@ -68,6 +68,13 @@ class CreateUI(QtWidgets.QWidget):
         leCryptPass.setEchoMode(2)
         mainLay.addWidget(leCryptPass)
 
+        global lWrongPass
+        lWrongPass = QtWidgets.QLabel("Wrong Password")
+        lWrongPass.setObjectName("wrongPass")
+        lWrongPass.setAlignment(QtCore.Qt.AlignHCenter)
+        mainLay.addWidget(lWrongPass)
+        lWrongPass.hide()
+
         btnConnect = QtWidgets.QPushButton("Connect")
         btnConnect.setObjectName("btnConnect")
         btnConnect.setMinimumHeight(38)
@@ -75,18 +82,35 @@ class CreateUI(QtWidgets.QWidget):
             self, username=leUsername.text(), thePassword=lePassword.text(), address=leHostname.text(), thePort=lePort.text(), theDatabase=leDatabase.text()))
         mainLay.addWidget(btnConnect)
 
+        #Idea of a progressbar when connecting because there is some delay!
+        """
+        pEncStat = QtWidgets.QProgressBar()
+        pEncStat.hide()
+        mainLay.addWidget(pEncStat)
+        """
+
         CreateUI.msg = QtWidgets.QMessageBox()
 
         self.setLayout(mainLay)
 
     #Connect to the database and raise an error when failed
     def connect(self, username, thePassword, address, thePort, theDatabase):
+        crypt.Encryption.password = leCryptPass.text()
         if dab.DatabaseActions.connect(self, username, thePassword, address, thePort, theDatabase):
             if dab.DatabaseActions.testPassword(self, leCryptPass.text()):
                 create.CreateUI.setData(self, 0)
                 self.hide()
             else:
-                print("Wrong Password for decryption!")
+                print("Wrong Password!")
+                if lWrongPass.isVisible():
+                    lWrongPass.setStyleSheet("color: #6c0c2b; font-size:18px;")
+                    timer = QtCore.QTimer(self)
+                    timer.setSingleShot(True)
+                    timer.setInterval(500)
+                    timer.timeout.connect(lambda:lWrongPass.setStyleSheet("color: #9b123e; font-size:16px;"))
+                    timer.start()
+                else:
+                    lWrongPass.show()
 
     #Centers the window at the start
     def center(self):

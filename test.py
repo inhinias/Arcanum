@@ -35,5 +35,5 @@ for i in range(10):
     theEncrypt = encrypt("A Very Secret message!", "Password")
     print(theEncrypt)
     theDecrypt = decrypt(theEncrypt, "Password")
-    print(theDecrypt[0])
+    print(theDecrypt)
 

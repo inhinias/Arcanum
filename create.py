@@ -1,7 +1,7 @@
 from PyQt5 import QtGui, QtCore, QtWidgets
 from cryptography.fernet import Fernet
 import qtawesome as qta
-import dab, passItem, seperator
+import dab, passItem, seperator, crypt
 
 class CreateUI:
     vPassList = None
@@ -12,6 +12,7 @@ class CreateUI:
     place = None
     newPass = None
     infoEdit = None
+    password = ""
     emailAddress = "karlculomb@gmail.com"
     def create(self):
         #Layouts
@@ -77,7 +78,6 @@ class CreateUI:
         #Combine the pages of the sCentral layout
         self.sCentral.addWidget(wOverview)
         self.sCentral.addWidget(wPasswords)
-
 
         #Widget in the main layout for the background colour
         wBack = QtWidgets.QWidget()
@@ -204,7 +204,7 @@ class CreateUI:
         vOCenter.addWidget(tNPassText)
 
         global tNumPasswords
-        tNumPasswords = QtWidgets.QLabel("00000")
+        tNumPasswords = QtWidgets.QLabel("000000")
         tNumPasswords.setObjectName("numPasswords")
         vOCenter.addWidget(tNumPasswords)
 
@@ -279,6 +279,10 @@ class CreateUI:
         leNewPass.setMaximumWidth(300)
         hPExtras.addWidget(leNewPass)
 
+        chkGen = QtWidgets.QCheckBox("Generated")
+        chkGen.setMaximumWidth(300)
+        hPExtras.addWidget(chkGen)
+
         chkTwoFA = QtWidgets.QCheckBox("Uses 2FA")
         chkTwoFA.setMaximumWidth(300)
         hPExtras.addWidget(chkTwoFA)
@@ -293,12 +297,27 @@ class CreateUI:
         cbBanner.setMaximumWidth(300)
         hPExtras.addWidget(cbBanner)
 
+        pteComment = QtWidgets.QTextEdit()
+        pteComment.setPlaceholderText("Comment")
+        pteComment.setMaximumWidth(300)
+        pteComment.setMaximumHeight(100)
+        pteComment.setSizePolicy(QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Minimum))
+        hPExtras.addWidget(pteComment)
+
         btnPWCreate = QtWidgets.QPushButton("Create New")
         btnPWCreate.setObjectName("btncreate")
         btnPWCreate.setMaximumWidth(300)
         #PasswordsName, EMAS, Username, Password, 2fa, category, banner
         btnPWCreate.clicked.connect(lambda:CreateUI.addPassword(
-            self, lePassName.text(), chkEMAS.isChecked(), leUsername.text(), leNewPass.text(), chkTwoFA.isChecked(), cbCategories.currentText(), cbBanner.currentText()))
+            self, lePassName.text(), 
+            chkEMAS.isChecked(), 
+            leUsername.text(), 
+            leNewPass.text(), 
+            chkGen.isChecked(), 
+            chkTwoFA.isChecked(), 
+            cbCategories.currentText(), 
+            cbBanner.currentText(),
+            pteComment.text()))
         hPExtras.addWidget(btnPWCreate)
 
         self.setLayout(vBack)
@@ -307,15 +326,20 @@ class CreateUI:
         #Overview
         if tab == 0:
             numPass = dab.DatabaseActions.getAmmount(self, "passwords")
-            if len(str(numPass)) >= 5:
+            print(numPass)
+            if numPass == 0:
+                tNumPasswords.setText("000000")
+            elif len(str(numPass)) >= 6:
                 tNumPasswords.setText(str(numPass))
-            elif len(str(numPass)) == 4:
+            elif len(str(numPass)) == 5:
                 tNumPasswords.setText("0" + str(numPass))
-            elif len(str(numPass)) == 3:
+            elif len(str(numPass)) == 4:
                 tNumPasswords.setText("00" + str(numPass))
+            elif len(str(numPass)) == 3:
+                tNumPasswords.setText("000" + str(numPass))
             elif len(str(numPass)) == 2:
                 tNumPasswords.setText("0000" + str(numPass))
-            elif len(str(numPass)) == 1 or numPass == 0:
+            elif len(str(numPass))== 1:
                 tNumPasswords.setText("00000" + str(numPass))
             else:
                 print("Error with adding 0 to the numPass number")
@@ -338,7 +362,16 @@ class CreateUI:
 
                 passSlate = passItem.CreateUI()
                 #index, name, lastChanged, generated, password, banner="", email="", username="", category="generic", twoFa=False
-                passSlate.setup(data[0], data[1], data[5], data[6], data[9], data[7], data[2], data[3], data[5], data[8])
+                passSlate.setup(crypt.Encryption.decrypt(self, data[0])[0], 
+                crypt.Encryption.decrypt(self, data[1])[0], 
+                crypt.Encryption.decrypt(self, data[5])[0], 
+                crypt.Encryption.decrypt(self, data[6])[0], 
+                crypt.Encryption.decrypt(self, data[9])[0], 
+                crypt.Encryption.decrypt(self, data[7])[0], 
+                crypt.Encryption.decrypt(self, data[2])[0], 
+                crypt.Encryption.decrypt(self, data[3])[0], 
+                crypt.Encryption.decrypt(self, data[5])[0], 
+                crypt.Encryption.decrypt(self, data[8])[0])
 
                 if column < widgetRowBreak:
                     print("Row: {0}; Column: {1}".format(row, column))
@@ -351,8 +384,11 @@ class CreateUI:
                     column +=1
             for i in range(1, dab.DatabaseActions.getAmmount(self, "categories")+1):
                 dataCat = dab.DatabaseActions.read(self, table="categories", rows=i)
-                print(dataCat)
-                cbCategories.addItem(dataCat[1])
+                cbCategories.addItem(crypt.Encryption.decrypt(self, dataCat[1])[0])
+
+            for i in range(1, dab.DatabaseActions.getAmmount(self, "banners")+1):
+                dataBanner = dab.DatabaseActions.read(self, table="banners", rows=i)
+                cbBanner.addItem(crypt.Encryption.decrypt(self, dataBanner[1])[0])
                 
             print("Passwords tab data set")
 
@@ -388,7 +424,7 @@ class CreateUI:
 
 
     #PasswordsName, EMAS, Username, Password, 2fa, category, banner
-    def addPassword(self, passName, EMAS, theUsername, thePassword, twoFAEnabled, theCategory, theBanner):
+    def addPassword(self, passName, EMAS, theUsername, thePassword, generated, twoFAEnabled, theCategory, theBanner, theComment):
         if emas:
             insertionData = {"name":passName,
                 "email":emailAddress,
@@ -398,7 +434,8 @@ class CreateUI:
                 "crypticPass":thePassword, 
                 "twofactor":twoFAEnabled, 
                 "cat":theCategory, 
-                "ban":theBanner}
+                "ban":theBanner,
+                "comment":theComment}
         else:
             {"name":passName,
                 "email":emailAddress,
@@ -408,7 +445,8 @@ class CreateUI:
                 "crypticPass":thePassword,
                 "twofactor":twoFAEnabled,
                 "cat":theCategory,
-                "ban":theBanner}
+                "ban":theBanner,
+                "comment":theComment}
         dab.DatabaseActions.insert(self, "passwords", insertionData)
 
     def minimize(self):

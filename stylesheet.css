@@ -85,6 +85,11 @@ btnCreate{
     background-color: #9b123e;
 }
 
+#wrongPass{
+    color: #9b123e;
+    font-size: 16px;
+}
+
 QLineEdit{
     border: 1px solid #032358;
     padding: 3px;

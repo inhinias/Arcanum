@@ -1,4 +1,4 @@
-import os, create, crypt, datetime
+import os, create, crypt, datetime, keyDialog
 import mysql.connector as connector
 from PyQt5 import QtGui, QtCore, QtWidgets
 from cryptography.fernet import Fernet
@@ -35,13 +35,53 @@ class DatabaseActions():
             except:
                 ammount = 0
             return ammount
+
         elif table=="categories":
-            cur.execute("SELECT COUNT(*) FROM passwords.categories")
             try:
+                cur.execute("SELECT COUNT(*) FROM passwords.categories")
                 ammount = cur.fetchall()[0][0]
             except:
-                ammount = 0
+                print("Adding Generic as a category")
+                name = crypt.Encryption.encrypt(self, "Generic")
+                path = crypt.Encryption.encrypt(self, "")
+                catDict = {"name":name, "path":path}
+                cur.execute("INSERT INTO passwords.categories (name, icon) VALUES (%(name)s, %(path)s)", catDict)
             return ammount
+
+        elif table=="banners":
+            try:
+                cur.execute("SELECT COUNT(*) FROM passwords.banners")
+                ammount = cur.fetchall()[0][0]
+            except:
+                print("Adding a basic banner")
+                name = crypt.Encryption.encrypt(self, "Generic")
+                path = crypt.Encryption.encrypt(self, "./resources/icons/icon256.png")
+                banDict = {"name":name, "path":path}
+                cur.execute("INSERT INTO passwords.banners (name, path) VALUES (%(name)s, %(path)s)", banDict)
+            return ammount
+
+        elif table=="configs":
+            cur.execute("SELECT COUNT(*) FROM passwords.configs")
+            ammount = cur.fetchall()[0][0]
+            
+            if ammount == 0:
+                #The status updates for the progressbar are disabled due to issues i dont care atm to resolve
+                #keyDialog.CreateUI.pEncStat.show()
+                #keyDialog.CreateUI.pEncStat.setValue(0)
+                rand = crypt.Encryption.encrypt(self, theData=crypt.Encryption.randString(self))
+                #keyDialog.CreateUI.pEncStat.setValue(20)
+                name = crypt.Encryption.encrypt(self, "Generic")
+                #keyDialog.CreateUI.pEncStat.setValue(40)
+                email = crypt.Encryption.encrypt(self, "")
+                #keyDialog.CreateUI.pEncStat.setValue(60)
+                keylen = crypt.Encryption.encrypt(self, "4096")
+                #keyDialog.CreateUI.pEncStat.setValue(80)
+                data = {'randString':rand, 'name':name, 'emailAdd':email, 'keyLen':keylen}
+                cur.execute("INSERT INTO passwords.configs (configName, emailAddress, decryptTest, standardKeyLength) VALUES (%(name)s, %(emailAdd)s, %(randString)s, %(keyLen)s)", data)
+                connection.commit()
+                #keyDialog.CreateUI.pEncStat.setValue(100)
+            return ammount
+
         else:
             print("unable to find table to get ammount of!")
     
@@ -77,12 +117,21 @@ class DatabaseActions():
         #delete row
         print()
     
-    def testPassword(self, password):
-        #Should be finishable as soon as encrypted stuff is in the DB
-        #crypt.Encryption()
-        #dictOfRow = {'theRow':1}
-        #cur.execute("SELECT * FROM passwords.passTable WHERE prim = %(theRow)s", dictOfRow)
-        #firstPass = cur.fetchall()[0][9]
-        #print(crypt.Encryption.decrypt(self, firstPass, password))
-        return True
+    def testPassword(self, password, configRow=1):
+        crypt.Encryption()
+        passed = False
+        length = DatabaseActions.getAmmount(self, "configs")
+        if length > 0:
+            dictOfRow = {'theRow':configRow}
+            cur.execute("SELECT * FROM passwords.configs WHERE prim = %(theRow)s", dictOfRow)
+            passTest = crypt.Encryption.decrypt(self, theData=cur.fetchall()[0][3])
+            if passTest[1]:
+                return True
+            else:
+                return False
+        elif length == 0:
+            return True
+        else:
+            print("Error parsing config length while testing the password!")
+            return False
     

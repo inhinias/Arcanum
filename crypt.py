@@ -1,7 +1,8 @@
 from pathlib import Path
-import gnupg
+import gnupg, random, string
 
 class Encryption:
+    password = ""
     def __init__(self):
         global gpg
         gpg = gnupg.GPG(gnupghome = str(Path.home()))
@@ -13,18 +14,22 @@ class Encryption:
         key = gpg.gen_key(inputData)
         return key
 
-    def encrypt(self, recipient, theData, thePassphrase):
-        encrypted = str(gpg.encrypt(data=theData, recipients=None, passphrase=thePassphrase, symmetric=True))
+    def encrypt(self, theData, recipients=None):
+        encrypted = str(gpg.encrypt(data=theData, recipients=recipients, passphrase=Encryption.password, symmetric=True))
         return encrypted
     
-    def decrypt(self, theData, thePassphrase):
-        decrypted = gpg.decrypt(data=theData, passphrase=thePassphrase)
+    def decrypt(self, theData):
+        decrypted = gpg.decrypt(message=theData, passphrase=Encryption.password)
         return str(decrypted), decrypted.ok, decrypted.status
 
-    def encryptFile(self, recipients, theData, thePassphrase):
-        encrypted = str(gpg.encrypt_file(data=theData, recipients=None, passphrase=thePassphrase, symmetric=True))
+    def encryptFile(self, theData, recipients=None):
+        encrypted = str(gpg.encrypt_file(data=theData, recipients=recipients, passphrase=Encryption.password, symmetric=True))
         return encrypted
     
-    def decryptFile(self, theData, thePassphrase):
-        decrypted = str(gpg.decrypt_file(data=theData, passphrase=thePassphrase))
+    def decryptFile(self, theData):
+        decrypted = str(gpg.decrypt_file(message=theData, passphrase=Encryption.password))
         return decrypted
+
+    def randString(self, length=16):
+        letters = string.ascii_letters + string.digits
+        return ''.join(random.choice(letters) for i in range(length))
