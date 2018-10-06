@@ -37,27 +37,28 @@ class DatabaseActions():
             return ammount
 
         elif table=="categories":
-            try:
-                cur.execute("SELECT COUNT(*) FROM passwords.categories")
-                ammount = cur.fetchall()[0][0]
-            except:
+            cur.execute("SELECT COUNT(*) FROM passwords.categories")
+            ammount = cur.fetchall()[0][0]
+
+            if ammount == 0:
                 print("Adding Generic as a category")
                 name = crypt.Encryption.encrypt(self, "Generic")
                 path = crypt.Encryption.encrypt(self, "")
                 catDict = {"name":name, "path":path}
                 cur.execute("INSERT INTO passwords.categories (name, icon) VALUES (%(name)s, %(path)s)", catDict)
+                connection.commit()
             return ammount
 
         elif table=="banners":
-            try:
-                cur.execute("SELECT COUNT(*) FROM passwords.banners")
-                ammount = cur.fetchall()[0][0]
-            except:
+            cur.execute("SELECT COUNT(*) FROM passwords.banners")
+            ammount = cur.fetchall()[0][0]
+            if ammount == 0:
                 print("Adding a basic banner")
                 name = crypt.Encryption.encrypt(self, "Generic")
                 path = crypt.Encryption.encrypt(self, "./resources/icons/icon256.png")
                 banDict = {"name":name, "path":path}
                 cur.execute("INSERT INTO passwords.banners (name, path) VALUES (%(name)s, %(path)s)", banDict)
+                connection.commit()
             return ammount
 
         elif table=="configs":
@@ -95,6 +96,9 @@ class DatabaseActions():
                 return cur.fetchall()[0]
             if table == "categories":
                 cur.execute("SELECT * FROM passwords.categories WHERE prim = %(theRow)s", dictOfRow)
+                return cur.fetchall()[0]
+            if table == "banners":
+                cur.execute("SELECT * FROM passwords.banners WHERE prim = %(theRow)s", dictOfRow)
                 return cur.fetchall()[0]
 
     def insert(self, table, context):

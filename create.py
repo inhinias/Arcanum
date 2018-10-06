@@ -287,10 +287,18 @@ class CreateUI:
         chkTwoFA.setMaximumWidth(300)
         hPExtras.addWidget(chkTwoFA)
 
+        lCategory = QtWidgets.QLabel("Category")
+        lCategory.setObjectName("smallLabel")
+        hPExtras.addWidget(lCategory)
+
         global cbCategories
         cbCategories = QtWidgets.QComboBox()
         cbCategories.setMaximumWidth(300)
         hPExtras.addWidget(cbCategories)
+
+        lBanner = QtWidgets.QLabel("Banner")
+        lBanner.setObjectName("smallLabel")
+        hPExtras.addWidget(lBanner)
 
         global cbBanner
         cbBanner = QtWidgets.QComboBox()
@@ -382,19 +390,21 @@ class CreateUI:
                     column = 0
                     gPasswords.addWidget(passSlate, row, column)
                     column +=1
+            print(dab.DatabaseActions.getAmmount(self, "categories"))
             for i in range(1, dab.DatabaseActions.getAmmount(self, "categories")+1):
                 dataCat = dab.DatabaseActions.read(self, table="categories", rows=i)
+                print(str(dataCat[1])+"sdf<sdf")
                 cbCategories.addItem(crypt.Encryption.decrypt(self, dataCat[1])[0])
 
             for i in range(1, dab.DatabaseActions.getAmmount(self, "banners")+1):
                 dataBanner = dab.DatabaseActions.read(self, table="banners", rows=i)
                 cbBanner.addItem(crypt.Encryption.decrypt(self, dataBanner[1])[0])
-                
+
             print("Passwords tab data set")
 
         #Generators not needed
         elif tab == 2:
-            print("Generator need nothing to be set")
+            print("Generator tab needs nothing to be set")
 
         #Notes
         elif tab == 3:
@@ -427,26 +437,26 @@ class CreateUI:
     def addPassword(self, passName, EMAS, theUsername, thePassword, generated, twoFAEnabled, theCategory, theBanner, theComment):
         if emas:
             insertionData = {"name":passName,
-                "email":emailAddress,
-                "uname":emailAddress,
-                "lstUsed":datetime.datetime.now(), 
-                "gen":False, 
-                "crypticPass":thePassword, 
-                "twofactor":twoFAEnabled, 
-                "cat":theCategory, 
-                "ban":theBanner,
-                "comment":theComment}
+                "email":crypt.Encryption.encrypt(self, emailAddress),
+                "uname":crypt.Encryption.encrypt(self, emailAddress),
+                "lstUsed":crypt.Encryption.encrypt(self, str(datetime.datetime.now())), 
+                "gen":crypt.Encryption.encrypt(self, "False"), 
+                "crypticPass":crypt.Encryption.encrypt(self, thePassword), 
+                "twofactor":crypt.Encryption.encrypt(self, twoFAEnabled), 
+                "cat":crypt.Encryption.encrypt(self, theCategory), 
+                "ban":crypt.Encryption.encrypt(self, theBanner),
+                "comment":crypt.Encryption.encrypt(self, theComment)}
         else:
             {"name":passName,
-                "email":emailAddress,
-                "uname":theUsername,
-                "lstUsed":datetime.datetime.now(),
-                "gen":False,
-                "crypticPass":thePassword,
-                "twofactor":twoFAEnabled,
-                "cat":theCategory,
-                "ban":theBanner,
-                "comment":theComment}
+                "email":crypt.Encryption.encrypt(self, emailAddress),
+                "uname":crypt.Encryption.encrypt(self, theUsername),
+                "lstUsed":crypt.Encryption.encrypt(self, str(datetime.datetime.now())),
+                "gen":crypt.Encryption.encrypt(self, "False"),
+                "crypticPass":crypt.Encryption.encrypt(self, thePassword),
+                "twofactor":crypt.Encryption.encrypt(self, twoFAEnabled),
+                "cat":crypt.Encryption.encrypt(self, theCategory),
+                "ban":crypt.Encryption.encrypt(self, theBanner),
+                "comment":crypt.Encryption.encrypt(self, theComment)}
         dab.DatabaseActions.insert(self, "passwords", insertionData)
 
     def minimize(self):
