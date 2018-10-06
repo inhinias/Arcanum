@@ -90,7 +90,28 @@ btnCreate{
     font-size: 16px;
 }
 
+#smallLabel{
+    font-size: 12px;
+    font-family: 'Quicksand';
+    color: #f9f9f9;
+}
+
+QCheckBox{
+    font-family: 'Quicksand';
+    font-size: 16px;
+    color: #f9f9f9;
+}
+
 QLineEdit{
+    border: 1px solid #032358;
+    padding: 3px;
+    background-color: #222d32;
+    font-family: 'Quicksand';
+    font-size: 16px;
+    color: #f9f9f9;
+}
+
+QTextEdit{
     border: 1px solid #032358;
     padding: 3px;
     background-color: #222d32;
