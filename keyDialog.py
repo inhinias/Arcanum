@@ -1,14 +1,14 @@
-import os, sys, index, create, dab
+import sys, index, create, dab, crypt
 from PyQt5 import QtGui, QtCore, QtWidgets
 import qtawesome as qta
 
 class CreateUI(QtWidgets.QWidget):
     #Globals
     msg = None
-
+    pEncStat = None
     def __init__(self):
         super(CreateUI, self).__init__()
-        self.setGeometry(50,50,400,100)
+        self.setGeometry(50,50,450,100)
         self.setWindowTitle("Connect")
         self.setWindowFlags(self.windowFlags() | QtCore.Qt.FramelessWindowHint) #Use this for a frameless window. Will be used later!
         self.center()
@@ -39,7 +39,8 @@ class CreateUI(QtWidgets.QWidget):
         mainLay.addLayout(addressLay)
 
         #Connection details input
-        leHostname = QtWidgets.QLineEdit("")
+        #Note: the credentials here are just used for testing and not for real use!
+        leHostname = QtWidgets.QLineEdit("kennethmathis.ch")
         leHostname.setPlaceholderText("Hostname")
         addressLay.addWidget(leHostname,0,0)
 
@@ -48,29 +49,45 @@ class CreateUI(QtWidgets.QWidget):
         lePort.setPlaceholderText("Port")
         addressLay.addWidget(lePort,0,1)
 
-        leUsername = QtWidgets.QLineEdit("")
+        leUsername = QtWidgets.QLineEdit("galenite")
         leUsername.setPlaceholderText("Username")
         mainLay.addWidget(leUsername)
 
-        lePassword = QtWidgets.QLineEdit("")
+        lePassword = QtWidgets.QLineEdit("pnR(z*j(xp85Sqf(")
         lePassword.setPlaceholderText("Password")
         lePassword.setEchoMode(2)
         mainLay.addWidget(lePassword)
 
-        leDatabase = QtWidgets.QLineEdit("")
+        leDatabase = QtWidgets.QLineEdit("passwords")
         leDatabase.setPlaceholderText("Database")
         mainLay.addWidget(leDatabase)
 
+        global leCryptPass
         leCryptPass = QtWidgets.QLineEdit("")
         leCryptPass.setPlaceholderText("Encryption Password")
         leCryptPass.setEchoMode(2)
         mainLay.addWidget(leCryptPass)
 
+        global lWrongPass
+        lWrongPass = QtWidgets.QLabel("Wrong Password")
+        lWrongPass.setObjectName("wrongPass")
+        lWrongPass.setAlignment(QtCore.Qt.AlignHCenter)
+        mainLay.addWidget(lWrongPass)
+        lWrongPass.hide()
+
         btnConnect = QtWidgets.QPushButton("Connect")
         btnConnect.setObjectName("btnConnect")
+        btnConnect.setMinimumHeight(38)
         btnConnect.clicked.connect(lambda:CreateUI.connect(
             self, username=leUsername.text(), thePassword=lePassword.text(), address=leHostname.text(), thePort=lePort.text(), theDatabase=leDatabase.text()))
         mainLay.addWidget(btnConnect)
+
+        #Idea of a progressbar when connecting because there is some delay!
+        """
+        pEncStat = QtWidgets.QProgressBar()
+        pEncStat.hide()
+        mainLay.addWidget(pEncStat)
+        """
 
         CreateUI.msg = QtWidgets.QMessageBox()
 
@@ -78,8 +95,22 @@ class CreateUI(QtWidgets.QWidget):
 
     #Connect to the database and raise an error when failed
     def connect(self, username, thePassword, address, thePort, theDatabase):
-        dab.DatabaseActions.connect(
-            self, username, thePassword, address, thePort, theDatabase)
+        crypt.Encryption.password = leCryptPass.text()
+        if dab.DatabaseActions.connect(self, username, thePassword, address, thePort, theDatabase):
+            if dab.DatabaseActions.testPassword(self, leCryptPass.text()):
+                create.CreateUI.setData(self, 0)
+                self.hide()
+            else:
+                print("Wrong Password!")
+                if lWrongPass.isVisible():
+                    lWrongPass.setStyleSheet("color: #6c0c2b; font-size:18px;")
+                    timer = QtCore.QTimer(self)
+                    timer.setSingleShot(True)
+                    timer.setInterval(500)
+                    timer.timeout.connect(lambda:lWrongPass.setStyleSheet("color: #9b123e; font-size:16px;"))
+                    timer.start()
+                else:
+                    lWrongPass.show()
 
     #Centers the window at the start
     def center(self):
