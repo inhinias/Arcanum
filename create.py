@@ -390,7 +390,7 @@ class CreateUI:
                 crypt.Encryption.decrypt(self, data[7])[0], 
                 crypt.Encryption.decrypt(self, data[2])[0], 
                 crypt.Encryption.decrypt(self, data[3])[0], 
-                crypt.Encryption.decrypt(self, data[5])[0], 
+                crypt.Encryption.decrypt(self, data[4])[0], 
                 crypt.Encryption.decrypt(self, data[8])[0])
 
                 if column < widgetRowBreak:
@@ -402,10 +402,8 @@ class CreateUI:
                     column = 0
                     gPasswords.addWidget(passSlate, row, column)
                     column +=1
-            print(dab.DatabaseActions.getAmmount(self, "categories"))
             for i in range(1, dab.DatabaseActions.getAmmount(self, "categories")+1):
                 dataCat = dab.DatabaseActions.read(self, table="categories", rows=i)
-                print(str(dataCat[1])+"sdf<sdf")
                 cbCategories.addItem(crypt.Encryption.decrypt(self, dataCat[1])[0])
 
             for i in range(1, dab.DatabaseActions.getAmmount(self, "banners")+1):
@@ -448,7 +446,7 @@ class CreateUI:
     #PasswordsName, EMAS, Username, Password, 2fa, category, banner
     def addPassword(self, passName, EMAS, theUsername, thePassword, generated, twoFAEnabled, theCategory, theBanner, theComment):
         if EMAS:
-            insertionData = {"name":passName,
+            insertionData = {"name":crypt.Encryption.encrypt(self, passName),
                 "email":crypt.Encryption.encrypt(self, CreateUI.emailAddress),
                 "uName":crypt.Encryption.encrypt(self, CreateUI.emailAddress),
                 "lstUsed":crypt.Encryption.encrypt(self, str(datetime.datetime.now())), 

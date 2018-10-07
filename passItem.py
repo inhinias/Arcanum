@@ -3,7 +3,7 @@ import seperator, dab, create
 import qtawesome as qta
 
 class CreateUI(QtWidgets.QWidget):
-    def setup(self, passIndex, name, lastChanged, generated, password, banner="", email="", username="", category="generic", twoFa=False):
+    def setup(self, passIndex, name, lastChanged, generated, password, banner="", email="", username="", category="generic", twoFa="False"):
         #Main layouts and layout widgets
         vMain = QtWidgets.QVBoxLayout()
         wMain = QtWidgets.QWidget()
@@ -48,19 +48,21 @@ class CreateUI(QtWidgets.QWidget):
         vMain.addWidget(lCategory)
 
         lTwoFA = QtWidgets.QLabel("2FA: ")
-        if twoFa == 0:
+        if twoFa == "False":
             lTwoFA.setText("2FA: Inactive")
-        elif twoFa == 1:
+        elif twoFa == "True":
             lTwoFA.setText("2FA: Active")
         else:
             lTwoFA.setText("2FA: Error")
         vMain.addWidget(lTwoFA)
 
         lGenerated = QtWidgets.QLabel("")
-        if generated:
+        if generated == "True":
             lGenerated.setText("Generated: True")
-        else:
+        elif generated == "False":
             lGenerated.setText("Generated: False")
+        else:
+            lGenerated.setText("Generated: Error")
         vMain.addWidget(lGenerated)
 
         lDate = QtWidgets.QLabel("Last Changed: " + str(lastChanged))
