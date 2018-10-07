@@ -109,6 +109,7 @@ class DatabaseActions():
             cur.execute("INSERT INTO passwords.passTable"
             "(name, email, username, category, lastUsed, generated, banner, twoFA, encryptedPassword)"
             "VALUES (%(name)s, %(email)s, %(uName)s, %(cat)s, %(lstUsed)s, %(gen)s, %(ban)s, %(twofactor)s, %(crypticPass)s)", context)
+            connection.commit()
 
         else:
             print("Table not found!")

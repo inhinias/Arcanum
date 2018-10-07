@@ -1,7 +1,7 @@
 from PyQt5 import QtGui, QtCore, QtWidgets
 from cryptography.fernet import Fernet
 import qtawesome as qta
-import dab, passItem, seperator, crypt
+import dab, passItem, seperator, crypt, datetime
 
 class CreateUI:
     vPassList = None
@@ -258,11 +258,13 @@ class CreateUI:
         sep = seperator.MenuSeperator()
         hPExtras.addWidget(sep)
 
+        global lePassName
         lePassName = QtWidgets.QLineEdit()
         lePassName.setPlaceholderText("Name")
         lePassName.setMaximumWidth(300)
         hPExtras.addWidget(lePassName)
 
+        global chkEMAS
         chkEMAS = QtWidgets.QCheckBox("Email as username")
         chkEMAS.stateChanged.connect(lambda:CreateUI.toggleUsername(self, chkEMAS.isChecked()))
         chkEMAS.setMaximumWidth(300)
@@ -274,15 +276,18 @@ class CreateUI:
         leUsername.setMaximumWidth(300)
         hPExtras.addWidget(leUsername)
 
+        global leNewPass
         leNewPass = QtWidgets.QLineEdit()
         leNewPass.setPlaceholderText("Password")
         leNewPass.setMaximumWidth(300)
         hPExtras.addWidget(leNewPass)
 
+        global chkGen
         chkGen = QtWidgets.QCheckBox("Generated")
         chkGen.setMaximumWidth(300)
         hPExtras.addWidget(chkGen)
 
+        global chkTwoFA
         chkTwoFA = QtWidgets.QCheckBox("Uses 2FA")
         chkTwoFA.setMaximumWidth(300)
         hPExtras.addWidget(chkTwoFA)
@@ -305,6 +310,7 @@ class CreateUI:
         cbBanner.setMaximumWidth(300)
         hPExtras.addWidget(cbBanner)
 
+        global pteComment
         pteComment = QtWidgets.QTextEdit()
         pteComment.setPlaceholderText("Comment")
         pteComment.setMaximumWidth(300)
@@ -325,7 +331,7 @@ class CreateUI:
             chkTwoFA.isChecked(), 
             cbCategories.currentText(), 
             cbBanner.currentText(),
-            pteComment.text()))
+            pteComment.toPlainText()))
         hPExtras.addWidget(btnPWCreate)
 
         self.setLayout(vBack)
@@ -370,7 +376,7 @@ class CreateUI:
 
                 passSlate = passItem.CreateUI()
                 #index, name, lastChanged, generated, password, banner="", email="", username="", category="generic", twoFa=False
-                passSlate.setup(crypt.Encryption.decrypt(self, data[0])[0], 
+                passSlate.setup(str(data[0]), 
                 crypt.Encryption.decrypt(self, data[1])[0], 
                 crypt.Encryption.decrypt(self, data[5])[0], 
                 crypt.Encryption.decrypt(self, data[6])[0], 
@@ -435,29 +441,40 @@ class CreateUI:
 
     #PasswordsName, EMAS, Username, Password, 2fa, category, banner
     def addPassword(self, passName, EMAS, theUsername, thePassword, generated, twoFAEnabled, theCategory, theBanner, theComment):
-        if emas:
+        if EMAS:
             insertionData = {"name":passName,
-                "email":crypt.Encryption.encrypt(self, emailAddress),
-                "uname":crypt.Encryption.encrypt(self, emailAddress),
+                "email":crypt.Encryption.encrypt(self, CreateUI.emailAddress),
+                "uName":crypt.Encryption.encrypt(self, CreateUI.emailAddress),
                 "lstUsed":crypt.Encryption.encrypt(self, str(datetime.datetime.now())), 
                 "gen":crypt.Encryption.encrypt(self, "False"), 
                 "crypticPass":crypt.Encryption.encrypt(self, thePassword), 
-                "twofactor":crypt.Encryption.encrypt(self, twoFAEnabled), 
+                "twofactor":crypt.Encryption.encrypt(self, str(twoFAEnabled)), 
                 "cat":crypt.Encryption.encrypt(self, theCategory), 
                 "ban":crypt.Encryption.encrypt(self, theBanner),
                 "comment":crypt.Encryption.encrypt(self, theComment)}
         else:
-            {"name":passName,
-                "email":crypt.Encryption.encrypt(self, emailAddress),
-                "uname":crypt.Encryption.encrypt(self, theUsername),
+            insertionData = {"name":passName,
+                "email":crypt.Encryption.encrypt(self, CreateUI.emailAddress),
+                "uName":crypt.Encryption.encrypt(self, theUsername),
                 "lstUsed":crypt.Encryption.encrypt(self, str(datetime.datetime.now())),
                 "gen":crypt.Encryption.encrypt(self, "False"),
                 "crypticPass":crypt.Encryption.encrypt(self, thePassword),
-                "twofactor":crypt.Encryption.encrypt(self, twoFAEnabled),
+                "twofactor":crypt.Encryption.encrypt(self, str(twoFAEnabled)),
                 "cat":crypt.Encryption.encrypt(self, theCategory),
                 "ban":crypt.Encryption.encrypt(self, theBanner),
                 "comment":crypt.Encryption.encrypt(self, theComment)}
         dab.DatabaseActions.insert(self, "passwords", insertionData)
+        CreateUI.clearData(self)
+        CreateUI.setData(self, 1)
+
+    def clearData(self):
+        lePassName.setText("")
+        chkEMAS.setChecked(False)
+        leUsername.setText("")
+        leNewPass.setText("")
+        chkGen.setChecked(False)
+        chkTwoFA.setChecked(False)
+        pteComment.setText("")
 
     def minimize(self):
         self.showMinimized()
