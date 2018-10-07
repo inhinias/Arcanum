@@ -133,6 +133,15 @@ QComboBox::drop-down{
     background-color: #ff9853;
 }
 
+QProgressBar{
+    border: 1px solid #032358;
+    background-color: #222d32;
+}
+
+QProgressBar::chunk {
+    background-color: #9b123e;
+}
+
 
 /*Vertiacl Scrollbar CSS*/
 QScrollBar:vertical {

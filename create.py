@@ -152,12 +152,18 @@ class CreateUI:
         btnBunkers.clicked.connect(lambda:CreateUI.switchTab(self, 4))
         btnSettings.clicked.connect(lambda:CreateUI.switchTab(self, 5))
 
+        prgWorking = QtWidgets.QProgressBar()
+        prgWorking.setTextVisible(False)
+        prgWorking.setSizePolicy(QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Minimum))
+        prgWorking.setValue(50)
+        
         vToolRack.addWidget(btnOverview)
         vToolRack.addWidget(btnPasswords)
         vToolRack.addWidget(btnGenerate)
         vToolRack.addWidget(btnNotes)
         vToolRack.addWidget(btnBunkers)
         vToolRack.addWidget(btnSettings)
+        vToolRack.addWidget(prgWorking)
 
         #Create the overview page
         #Strength overview
