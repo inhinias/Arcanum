@@ -51,12 +51,19 @@ class CreateUI:
         hPExtras.setAlignment(QtCore.Qt.AlignTop)
         hPExtras.setSpacing(10)
 
-        #SWITCH BACK TO GRID LAYOUT LATER!
         global gPasswords 
         gPasswords = QtWidgets.QGridLayout()
         vPassMain.addLayout(hPExtras)
 
+        #Settings tab layouts
+        vSettingsMain = QtWidgets.QVBoxLayout()
+        vSettingsMain.setAlignment(QtCore.Qt.AlignTop)
+
+        wSettings = QtWidgets.QWidget()
+        wSettings.setLayout(vSettingsMain)
+
         #Layout widgets and important elements
+        #Overview
         wOverview = QtWidgets.QWidget()
         wOverview.setLayout(hOverview)
 
@@ -64,6 +71,7 @@ class CreateUI:
         """wOCenter.setSizePolicy(QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding))"""
         wOCenter.setLayout(vOCenter)
 
+        #Passwords
         passScroll = QtWidgets.QScrollArea()
         passScroll.setWidgetResizable(True)
         wPassScroll = QtWidgets.QWidget()
@@ -75,9 +83,13 @@ class CreateUI:
         wPasswords = QtWidgets.QWidget()
         wPasswords.setLayout(vPassMain)
 
+        #Settings
+        #There may be some lines here but not at the moment
+
         #Combine the pages of the sCentral layout
         self.sCentral.addWidget(wOverview)
         self.sCentral.addWidget(wPasswords)
+        self.sCentral.addWidget(wSettings)
 
         #Widget in the main layout for the background colour
         wBack = QtWidgets.QWidget()
@@ -340,6 +352,11 @@ class CreateUI:
             pteComment.toPlainText()))
         hPExtras.addWidget(btnPWCreate)
 
+        #Create the settings tab
+        leEmail = QtWidgets.QLineEdit(CreateUI.emailAddress)
+        leEmail.setPlaceholderText("Email Address")
+        vSettingsMain.addWidget(leEmail)
+
         self.setLayout(vBack)
 
     def setData(self, tab):
@@ -431,6 +448,9 @@ class CreateUI:
         #catch out of bounds
         else:
             print("The given tab index was not found!")
+
+        #general
+        CreateUI.emailAddress = crypt.Encryption.decrypt(self, dab.DatabaseActions.read(self, table="configs", rows=1)[1][0])
 
     def toggleUsername(self, state):
         if state: 
