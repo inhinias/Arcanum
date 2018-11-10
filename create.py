@@ -47,13 +47,40 @@ class CreateUI:
         #Password tab layouts
         vPassMain = QtWidgets.QHBoxLayout()
         vPassMain.setAlignment(QtCore.Qt.AlignTop | QtCore.Qt.AlignHCenter)
-        hPExtras = QtWidgets.QVBoxLayout()
-        hPExtras.setAlignment(QtCore.Qt.AlignTop)
-        hPExtras.setSpacing(10)
+        vPExtras = QtWidgets.QVBoxLayout()
+        vPExtras.setAlignment(QtCore.Qt.AlignTop)
+        vPExtras.setSpacing(10)
 
         global gPasswords 
         gPasswords = QtWidgets.QGridLayout()
-        vPassMain.addLayout(hPExtras)
+        vPassMain.addLayout(vPExtras)
+
+        #Generator tab layouts
+        vGeneratorMain = QtWidgets.QVBoxLayout()
+        vGeneratorMain.setAlignment(QtCore.Qt.AlignTop)
+
+        wGenerator = QtWidgets.QWidget()
+        wGenerator.setLayout(vGeneratorMain)
+
+        #Notes tab layouts
+        hNotesMain = QtWidgets.QHBoxLayout()
+        hNotesMain.setAlignment(QtCore.Qt.AlignTop | QtCore.Qt.AlignHCenter)
+
+        hCreateNote = QtWidgets.QHBoxLayout()
+        hCreateNote.setAlignment(QtCore.Qt.AlignTop)
+        hCreateNote.setSpacing(10)
+        hNotesMain.addLayout(hCreateNote)
+
+        wNotesMain = QtWidgets.QWidget()
+        wNotesMain.setLayout(hNotesMain)
+
+        #Bunkers tab layout
+        hBunkersMain = QtWidgets.QVBoxLayout()
+        hBunkersMain.setAlignment(QtCore.Qt.AlignTop)
+
+        wBunkersMain = QtWidgets.QWidget()
+        wBunkersMain.setLayout(hBunkersMain)
+
 
         #Settings tab layouts
         vSettingsMain = QtWidgets.QVBoxLayout()
@@ -62,7 +89,8 @@ class CreateUI:
         wSettings = QtWidgets.QWidget()
         wSettings.setLayout(vSettingsMain)
 
-        #Layout widgets and important elements
+
+        #Structural widgets and stuff from layouts
         #Overview
         wOverview = QtWidgets.QWidget()
         wOverview.setLayout(hOverview)
@@ -83,12 +111,18 @@ class CreateUI:
         wPasswords = QtWidgets.QWidget()
         wPasswords.setLayout(vPassMain)
 
+        #There may be some lines here for the following tabs but not at the moment
+        #Generator
+        #Notes
+        #Bunkers
         #Settings
-        #There may be some lines here but not at the moment
 
         #Combine the pages of the sCentral layout
         self.sCentral.addWidget(wOverview)
         self.sCentral.addWidget(wPasswords)
+        self.sCentral.addWidget(wGenerator)
+        self.sCentral.addWidget(wNotesMain)
+        self.sCentral.addWidget(wBunkersMain)
         self.sCentral.addWidget(wSettings)
 
         #Widget in the main layout for the background colour
@@ -271,62 +305,62 @@ class CreateUI:
         leSearch = QtWidgets.QLineEdit()
         leSearch.setPlaceholderText("Search")
         leSearch.setMaximumWidth(300)
-        hPExtras.addWidget(leSearch)
+        vPExtras.addWidget(leSearch)
 
         sep = seperator.MenuSeperator()
-        hPExtras.addWidget(sep)
+        vPExtras.addWidget(sep)
 
         global lePassName
         lePassName = QtWidgets.QLineEdit()
         lePassName.setPlaceholderText("Name")
         lePassName.setMaximumWidth(300)
-        hPExtras.addWidget(lePassName)
+        vPExtras.addWidget(lePassName)
 
         global chkEMAS
         chkEMAS = QtWidgets.QCheckBox("Email as username")
         chkEMAS.stateChanged.connect(lambda:CreateUI.toggleUsername(self, chkEMAS.isChecked()))
         chkEMAS.setMaximumWidth(300)
-        hPExtras.addWidget(chkEMAS)
+        vPExtras.addWidget(chkEMAS)
 
         global leUsername
         leUsername = QtWidgets.QLineEdit()
         leUsername.setPlaceholderText("Username")
         leUsername.setMaximumWidth(300)
-        hPExtras.addWidget(leUsername)
+        vPExtras.addWidget(leUsername)
 
         global leNewPass
         leNewPass = QtWidgets.QLineEdit()
         leNewPass.setPlaceholderText("Password")
         leNewPass.setMaximumWidth(300)
-        hPExtras.addWidget(leNewPass)
+        vPExtras.addWidget(leNewPass)
 
         global chkGen
         chkGen = QtWidgets.QCheckBox("Generated")
         chkGen.setMaximumWidth(300)
-        hPExtras.addWidget(chkGen)
+        vPExtras.addWidget(chkGen)
 
         global chkTwoFA
         chkTwoFA = QtWidgets.QCheckBox("Uses 2FA")
         chkTwoFA.setMaximumWidth(300)
-        hPExtras.addWidget(chkTwoFA)
+        vPExtras.addWidget(chkTwoFA)
 
         lCategory = QtWidgets.QLabel("Category")
         lCategory.setObjectName("smallLabel")
-        hPExtras.addWidget(lCategory)
+        vPExtras.addWidget(lCategory)
 
         global cbCategories
         cbCategories = QtWidgets.QComboBox()
         cbCategories.setMaximumWidth(300)
-        hPExtras.addWidget(cbCategories)
+        vPExtras.addWidget(cbCategories)
 
         lBanner = QtWidgets.QLabel("Banner")
         lBanner.setObjectName("smallLabel")
-        hPExtras.addWidget(lBanner)
+        vPExtras.addWidget(lBanner)
 
         global cbBanner
         cbBanner = QtWidgets.QComboBox()
         cbBanner.setMaximumWidth(300)
-        hPExtras.addWidget(cbBanner)
+        vPExtras.addWidget(cbBanner)
 
         global pteComment
         pteComment = QtWidgets.QTextEdit()
@@ -334,7 +368,7 @@ class CreateUI:
         pteComment.setMaximumWidth(300)
         pteComment.setMaximumHeight(100)
         pteComment.setSizePolicy(QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Minimum))
-        hPExtras.addWidget(pteComment)
+        vPExtras.addWidget(pteComment)
 
         btnPWCreate = QtWidgets.QPushButton("Create New")
         btnPWCreate.setObjectName("btncreate")
@@ -350,11 +384,15 @@ class CreateUI:
             cbCategories.currentText(), 
             cbBanner.currentText(),
             pteComment.toPlainText()))
-        hPExtras.addWidget(btnPWCreate)
+        vPExtras.addWidget(btnPWCreate)
+
+        #Create the generator tab
+
 
         #Create the settings tab
         leEmail = QtWidgets.QLineEdit(CreateUI.emailAddress)
         leEmail.setPlaceholderText("Email Address")
+        leEmail.setMaximumWidth(300)
         vSettingsMain.addWidget(leEmail)
 
         self.setLayout(vBack)

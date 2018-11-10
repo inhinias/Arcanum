@@ -63,7 +63,7 @@ class CreateUI(QtWidgets.QWidget):
         mainLay.addWidget(leDatabase)
 
         global leCryptPass
-        leCryptPass = QtWidgets.QLineEdit("")
+        leCryptPass = QtWidgets.QLineEdit("password")
         leCryptPass.setPlaceholderText("Encryption Password")
         leCryptPass.setEchoMode(2)
         mainLay.addWidget(leCryptPass)
