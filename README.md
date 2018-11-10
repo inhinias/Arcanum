@@ -1,4 +1,4 @@
-# Axon
+# Arcanum
 A small tool for generating, encrypting and saving passwords, notes and files.
 
 On startup it will show a dialog to connect to a database where the passwords and notes will be stored.
