@@ -100,6 +100,9 @@ class DatabaseActions():
             if table == "banners":
                 cur.execute("SELECT * FROM passwords.banners WHERE prim = %(theRow)s", dictOfRow)
                 return cur.fetchall()[0]
+            if table == "configs":
+                cur.execute("SELECT * FROM passwords.configs WHERE prim = %(theRow)s", dictOfRow)
+                return cur.fetchall()[0]
 
     def insert(self, table, context):
         #insert stuff

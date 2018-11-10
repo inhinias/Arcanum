@@ -15,7 +15,7 @@ def generateKey(typeOfKey="RSA", length=1024):
         return key
 
 def encrypt(theData, thePassphrase):
-    encrypted = str(gpg.encrypt(data=theData, recipients=None, passphrase=thePassphrase, symmetric=True))
+    encrypted = str(gpg.encrypt(data=theData, recipients=None, passphrase="password", symmetric=True))
     return encrypted
     
 def decrypt(theData, thePassphrase):
@@ -32,7 +32,7 @@ def decryptFile(theData, thePassphrase):
 
 
 for i in range(10):
-    theEncrypt = encrypt("A Very Secret message!", "Password")
+    theEncrypt = encrypt("test", "Password")
     print(theEncrypt)
     theDecrypt = decrypt(theEncrypt, "Password")
     print(theDecrypt)
