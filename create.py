@@ -13,7 +13,7 @@ class CreateUI:
     newPass = None
     infoEdit = None
     password = ""
-    emailAddress = "karlculomb@gmail.com"
+    emailAddress = "kenneth.mathis99@gmail.com"
     def create(self):
         #Layouts
         #Main Layouts
@@ -83,11 +83,11 @@ class CreateUI:
 
 
         #Settings tab layouts
-        vSettingsMain = QtWidgets.QVBoxLayout()
-        vSettingsMain.setAlignment(QtCore.Qt.AlignTop)
+        gSettingsMain = QtWidgets.QGridLayout()
+        gSettingsMain.setAlignment(QtCore.Qt.AlignTop)
 
         wSettings = QtWidgets.QWidget()
-        wSettings.setLayout(vSettingsMain)
+        wSettings.setLayout(gSettingsMain)
 
 
         #Structural widgets and stuff from layouts
@@ -316,11 +316,14 @@ class CreateUI:
         lePassName.setMaximumWidth(300)
         vPExtras.addWidget(lePassName)
 
-        global chkEMAS
-        chkEMAS = QtWidgets.QCheckBox("Email as username")
-        chkEMAS.stateChanged.connect(lambda:CreateUI.toggleUsername(self, chkEMAS.isChecked()))
-        chkEMAS.setMaximumWidth(300)
-        vPExtras.addWidget(chkEMAS)
+        lEmail = QtWidgets.QLabel("Email Address")
+        lEmail.setObjectName("smallLabel")
+        vPExtras.addWidget(lEmail)
+
+        global cbEmail
+        cbEmail = QtWidgets.QComboBox()
+        cbEmail.setMaximumWidth(300)
+        vPExtras.addWidget(cbEmail)
 
         global leUsername
         leUsername = QtWidgets.QLineEdit()
@@ -373,10 +376,10 @@ class CreateUI:
         btnPWCreate = QtWidgets.QPushButton("Create New")
         btnPWCreate.setObjectName("btncreate")
         btnPWCreate.setMaximumWidth(300)
-        #PasswordsName, EMAS, Username, Password, 2fa, category, banner
+        #PasswordsName, email, Username, Password, 2fa, category, banner
         btnPWCreate.clicked.connect(lambda:CreateUI.addPassword(
             self, lePassName.text(), 
-            chkEMAS.isChecked(), 
+            cbEmail.itemText(), 
             leUsername.text(), 
             leNewPass.text(), 
             chkGen.isChecked(), 
@@ -393,9 +396,25 @@ class CreateUI:
         leEmail = QtWidgets.QLineEdit(CreateUI.emailAddress)
         leEmail.setPlaceholderText("Email Address")
         leEmail.setMaximumWidth(300)
-        vSettingsMain.addWidget(leEmail)
+        gSettingsMain.addWidget(leEmail, 0, 0)
+
+        btnUpdateMail = QtWidgets.QPushButton("Add")
+        btnUpdateMail.setMaximumWidth(100)
+        btnUpdateMail.setMaximumHeight(leEmail.sizeHint().height())
+        btnUpdateMail.clicked.connect(lambda:CreateUI.addMailAddress(self, leEmail.text()))
+        gSettingsMain.addWidget(btnUpdateMail, 0, 1)
 
         self.setLayout(vBack)
+
+    def addMailAddress(self, address):
+        #name, email, dTest, keyLen, lstChanged
+        #Add option later to encryt everything even if it is empty
+        insertionData = {"name":"",
+            "email":crypt.Encryption.encrypt(self, address),
+            "dTest":"",
+            "keyLen":"", 
+            "lstChanged":""}
+        dab.DatabaseActions.insert(self, "configs", insertionData)
 
     def setData(self, tab):
         #Overview
@@ -433,15 +452,13 @@ class CreateUI:
 
             for i in range(1, dab.DatabaseActions.getAmmount(self, "passwords")+1):
                 data = dab.DatabaseActions.read(self, table="passTable", rows=i)
-                print(data)
 
                 passSlate = passItem.CreateUI()
-                #index, name, lastChanged, generated, password, banner="", email="", username="", category="generic", twoFa=False
-                passSlate.setup(str(data[0]), 
+                #index, name, lastChanged, generated, banner="", email="", username="", category="generic", twoFa=False
+                passSlate.setup(data[0], 
                 crypt.Encryption.decrypt(self, data[1])[0], 
                 crypt.Encryption.decrypt(self, data[5])[0], 
                 crypt.Encryption.decrypt(self, data[6])[0], 
-                crypt.Encryption.decrypt(self, data[9])[0], 
                 crypt.Encryption.decrypt(self, data[7])[0], 
                 crypt.Encryption.decrypt(self, data[2])[0], 
                 crypt.Encryption.decrypt(self, data[3])[0], 
@@ -457,6 +474,13 @@ class CreateUI:
                     column = 0
                     gPasswords.addWidget(passSlate, row, column)
                     column +=1
+                
+            #fill in all the comboboxes (email, categories, banners)
+            cbEmail.addItem("None")
+            for i in range(1, dab.DatabaseActions.getAmmount(self, "configs")+1):
+                dataEmail = dab.DatabaseActions.read(self, table="configs", rows=i)
+                cbEmail.addItem(crypt.Encryption.decrypt(self, dataEmail[2])[0])
+
             for i in range(1, dab.DatabaseActions.getAmmount(self, "categories")+1):
                 dataCat = dab.DatabaseActions.read(self, table="categories", rows=i)
                 cbCategories.addItem(crypt.Encryption.decrypt(self, dataCat[1])[0])
@@ -490,48 +514,29 @@ class CreateUI:
         #general
         CreateUI.emailAddress = crypt.Encryption.decrypt(self, dab.DatabaseActions.read(self, table="configs", rows=1)[1][0])
 
-    def toggleUsername(self, state):
-        if state: 
-            leUsername.hide() 
-        else: 
-            leUsername.show() 
-
     def switchTab(self, tabIndex):
         CreateUI.setData(self, tabIndex)
         self.sCentral.setCurrentIndex(tabIndex)
 
 
-    #PasswordsName, EMAS, Username, Password, 2fa, category, banner
-    def addPassword(self, passName, EMAS, theUsername, thePassword, generated, twoFAEnabled, theCategory, theBanner, theComment):
-        if EMAS:
-            insertionData = {"name":crypt.Encryption.encrypt(self, passName),
-                "email":crypt.Encryption.encrypt(self, CreateUI.emailAddress),
-                "uName":crypt.Encryption.encrypt(self, CreateUI.emailAddress),
-                "lstUsed":crypt.Encryption.encrypt(self, str(datetime.datetime.now())), 
-                "gen":crypt.Encryption.encrypt(self, "False"), 
-                "crypticPass":crypt.Encryption.encrypt(self, thePassword), 
-                "twofactor":crypt.Encryption.encrypt(self, str(twoFAEnabled)), 
-                "cat":crypt.Encryption.encrypt(self, theCategory), 
-                "ban":crypt.Encryption.encrypt(self, theBanner),
-                "comment":crypt.Encryption.encrypt(self, theComment)}
-        else:
-            insertionData = {"name":passName,
-                "email":crypt.Encryption.encrypt(self, CreateUI.emailAddress),
-                "uName":crypt.Encryption.encrypt(self, theUsername),
-                "lstUsed":crypt.Encryption.encrypt(self, str(datetime.datetime.now())),
-                "gen":crypt.Encryption.encrypt(self, "False"),
-                "crypticPass":crypt.Encryption.encrypt(self, thePassword),
-                "twofactor":crypt.Encryption.encrypt(self, str(twoFAEnabled)),
-                "cat":crypt.Encryption.encrypt(self, theCategory),
-                "ban":crypt.Encryption.encrypt(self, theBanner),
-                "comment":crypt.Encryption.encrypt(self, theComment)}
+    #PasswordsName, email, Username, Password, 2fa, category, banner
+    def addPassword(self, passName, emailAdd, theUsername, thePassword, generated, twoFAEnabled, theCategory, theBanner, theComment):
+        insertionData = {"name":crypt.Encryption.encrypt(self, passName),
+            "email":crypt.Encryption.encrypt(self, emailAdd),
+            "uName":crypt.Encryption.encrypt(self, theUsername),
+            "lstUsed":crypt.Encryption.encrypt(self, str(datetime.datetime.now())), 
+            "gen":crypt.Encryption.encrypt(self, "False"), 
+            "crypticPass":crypt.Encryption.encrypt(self, thePassword), 
+            "twofactor":crypt.Encryption.encrypt(self, str(twoFAEnabled)), 
+            "cat":crypt.Encryption.encrypt(self, theCategory), 
+            "ban":crypt.Encryption.encrypt(self, theBanner),
+            "comment":crypt.Encryption.encrypt(self, theComment)}
         dab.DatabaseActions.insert(self, "passwords", insertionData)
         CreateUI.clearData(self)
         CreateUI.setData(self, 1)
 
     def clearData(self):
         lePassName.setText("")
-        chkEMAS.setChecked(False)
         leUsername.setText("")
         leNewPass.setText("")
         chkGen.setChecked(False)

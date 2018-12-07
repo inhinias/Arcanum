@@ -40,7 +40,7 @@ class CreateUI(QtWidgets.QWidget):
 
         #Connection details input
         #Note: the credentials here are just used for testing and not for real use!
-        leHostname = QtWidgets.QLineEdit("kennethmathis.ch")
+        leHostname = QtWidgets.QLineEdit("192.168.178.61")
         leHostname.setPlaceholderText("Hostname")
         addressLay.addWidget(leHostname,0,0)
 
@@ -82,7 +82,7 @@ class CreateUI(QtWidgets.QWidget):
             self, username=leUsername.text(), thePassword=lePassword.text(), address=leHostname.text(), thePort=lePort.text(), theDatabase=leDatabase.text()))
         mainLay.addWidget(btnConnect)
 
-        #Idea of a progressbar when connecting because there is some delay!
+        #Idea of a progressbar when connecting because the thing freezes for a sec!
         """
         pEncStat = QtWidgets.QProgressBar()
         pEncStat.hide()

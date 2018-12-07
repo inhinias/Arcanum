@@ -62,19 +62,8 @@ QPushButton:hover{
     font-family: 'Quicksand';
 }
 
-#listText{
-    font-size: 20px;
-    font-weight: bold;
-    color: #f9f9f9;
-    font-family: 'Roboto';
-}
-
 #passSlate{
     background-color: #2A6D83;
-}
-
-btnCreate{
-    font-size: 16px;
 }
 
 #seperator{
@@ -94,6 +83,12 @@ btnCreate{
     font-size: 12px;
     font-family: 'Quicksand';
     color: #f9f9f9;
+}
+
+#passLabel{
+    font-size: 12px;
+    color: #f9f9f9;
+    font-family: 'Roboto';
 }
 
 QCheckBox{

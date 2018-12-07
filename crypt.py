@@ -1,6 +1,10 @@
 from pathlib import Path
 import gnupg, random, string
 
+#IMPORTANT ADD A RANDOM DEFINED LENGTH TEXT AT THE END OF THE ENCRYPTION DATA AND REMOVE IT AT DECRYPTION!
+#SORTS OUT THE PROBLEM, THAT SAME DATA STUFF IS NOT THE SAME IN TH DB!
+#Decide if the password for encryption should be hashed and if the hash should be used for encryption.
+
 class Encryption:
     password = ""
     def __init__(self):
