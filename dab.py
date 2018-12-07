@@ -20,37 +20,37 @@ class DatabaseActions():
             tables['passTable'] = (
                 "CREATE TABLE IF NOT EXISTS passTable("
                 "prim int(11) PRIMARY KEY"
-                "name TEXT"
-                "email TEXT"
-                "username TEXT"
-                "category TEXT"
-                "lastUsed TEXT"
-                "generated TEXT"
-                "banner TEXT"
-                "twoFA TEXT"
-                "encryptedPassword TEXT"
-                "comment TEXT)"
+                "name TEXT(300)"
+                "email TEXT(300)"
+                "username TEXT(300)"
+                "category TEXT(300)"
+                "lastUsed TEXT(300)"
+                "generated TEXT(300)"
+                "banner TEXT(300)"
+                "twoFA TEXT(300)"
+                "encryptedPassword TEXT(300)"
+                "comment TEXT(300))"
             )
             tables['configs'] = (
                 "CREATE TABLE IF NOT EXISTS configs("
                 "prim int(11) PRIMARY KEY"
-                "configName TEXT"
-                "emailAddress TEXT"
-                "decryptTest TEXT"
-                "standarsKeyLength TEXT"
-                "lastChanged TEXT)"
+                "configName TEXT(300)"
+                "emailAddress TEXT(300)"
+                "decryptTest TEXT(300)"
+                "standarsKeyLength TEXT(300)"
+                "lastChanged TEXT(300))"
             )
             tables['categories'] = (
                 "CREATE TABLE IF NOT EXISTS categories("
                 "prim int(11) PRIMARY KEY"
-                "name TEXT"
-                "icon TEXT)"
+                "name TEXT(300)"
+                "icon TEXT(300))"
             )
             tables['banners'] = (
                 "CREATE TABLE IF NOT EXISTS passTable("
                 "prim int(11) PRIMARY KEY"
-                "name TEXT"
-                "path TEXT)"
+                "name TEXT(300)"
+                "path TEXT(300))"
             )
 
             #Create all the tables
@@ -126,7 +126,7 @@ class DatabaseActions():
             #Populate the config if no data is present
             if ammount == 0:
                 print("THIS SHOULDNT BE ACTIVE WHEN THERE IS ALREADY SOMETHING IN IT!")
-                rand = crypt.Encryption.encrypt(self, theData=crypt.Encryption.randString(self))
+                rand = crypt.Encryption.encrypt(self, theData=crypt.Encryption.genPassword(self, True, True, length=16))
                 name = crypt.Encryption.encrypt(self, "Generic")
                 email = crypt.Encryption.encrypt(self, "")
                 keylen = crypt.Encryption.encrypt(self, "4096")
@@ -139,23 +139,40 @@ class DatabaseActions():
 
         return ammount
     
-    def read(self, table, rows):
+    def read(self, table, everything=False, rows=1):
         #Test the demand and return the according row
-        if rows >= 0:
-            print("Getting row: {0} from table: {1}".format(rows, table))
+        if everything:
+            print("Getting the everything from {0}".format(table))
             dictOfRow = {'theRow':rows}
             if table == "passTable":
-                cur.execute("SELECT * FROM passwords.passTable WHERE prim = %(theRow)s", dictOfRow)
-                return cur.fetchall()[0]
+                cur.execute("SELECT * FROM passwords.passTable")
+                return cur.fetchall()
             if table == "categories":
-                cur.execute("SELECT * FROM passwords.categories WHERE prim = %(theRow)s", dictOfRow)
-                return cur.fetchall()[0]
+                cur.execute("SELECT * FROM passwords.categories")
+                return cur.fetchall()
             if table == "banners":
-                cur.execute("SELECT * FROM passwords.banners WHERE prim = %(theRow)s", dictOfRow)
-                return cur.fetchall()[0]
+                cur.execute("SELECT * FROM passwords.banners")
+                return cur.fetchall()
             if table == "configs":
-                cur.execute("SELECT * FROM passwords.configs WHERE prim = %(theRow)s", dictOfRow)
-                return cur.fetchall()[0]
+                cur.execute("SELECT * FROM passwords.configs")
+                return cur.fetchall()
+
+        else:
+            if rows >= 0:
+                print("Getting row: {0} from table: {1}".format(rows, table))
+                dictOfRow = {'theRow':rows}
+                if table == "passTable":
+                    cur.execute("SELECT * FROM passwords.passTable WHERE prim = %(theRow)s", dictOfRow)
+                    return cur.fetchall()[0]
+                if table == "categories":
+                    cur.execute("SELECT * FROM passwords.categories WHERE prim = %(theRow)s", dictOfRow)
+                    return cur.fetchall()[0]
+                if table == "banners":
+                    cur.execute("SELECT * FROM passwords.banners WHERE prim = %(theRow)s", dictOfRow)
+                    return cur.fetchall()[0]
+                if table == "configs":
+                    cur.execute("SELECT * FROM passwords.configs WHERE prim = %(theRow)s", dictOfRow)
+                    return cur.fetchall()[0]
 
     def insert(self, table, context):
         #insert stuff

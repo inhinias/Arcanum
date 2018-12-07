@@ -1,7 +1,7 @@
 from PyQt5 import QtGui, QtCore, QtWidgets
 from cryptography.fernet import Fernet
 import qtawesome as qta
-import dab, passItem, seperator, crypt, datetime
+import dab, passItem, seperator, crypt, datetime, time
 
 class CreateUI:
     vPassList = None
@@ -198,10 +198,11 @@ class CreateUI:
         btnBunkers.clicked.connect(lambda:CreateUI.switchTab(self, 4))
         btnSettings.clicked.connect(lambda:CreateUI.switchTab(self, 5))
 
+        global prgWorking
         prgWorking = QtWidgets.QProgressBar()
         prgWorking.setTextVisible(False)
+        prgWorking.setValue(0)
         prgWorking.setSizePolicy(QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Minimum))
-        prgWorking.setValue(50)
         
         vToolRack.addWidget(btnOverview)
         vToolRack.addWidget(btnPasswords)
@@ -312,7 +313,7 @@ class CreateUI:
 
         global lePassName
         lePassName = QtWidgets.QLineEdit()
-        lePassName.setPlaceholderText("Name")
+        lePassName.setPlaceholderText("Name for Password")
         lePassName.setMaximumWidth(300)
         vPExtras.addWidget(lePassName)
 
@@ -404,6 +405,11 @@ class CreateUI:
         btnUpdateMail.clicked.connect(lambda:CreateUI.addMailAddress(self, leEmail.text()))
         gSettingsMain.addWidget(btnUpdateMail, 0, 1)
 
+        global liAddresses
+        liAddresses = QtWidgets.QListWidget()
+        liAddresses.setMaximumWidth(400)
+        gSettingsMain.addWidget(liAddresses, 1, 0)
+
         self.setLayout(vBack)
 
     def addMailAddress(self, address):
@@ -419,8 +425,10 @@ class CreateUI:
     def setData(self, tab):
         #Overview
         if tab == 0:
+            CreateUI.updateProgressBar(self, 0)
             numPass = dab.DatabaseActions.getAmmount(self, "passwords")
-            print(numPass)
+            print("Currently {0} passwords stored".format(numPass))
+            CreateUI.updateProgressBar(self, 50)
             if numPass == 0:
                 tNumPasswords.setText("000000")
             elif len(str(numPass)) >= 6:
@@ -437,36 +445,42 @@ class CreateUI:
                 tNumPasswords.setText("00000" + str(numPass))
             else:
                 print("Error with adding 0 to the numPass number")
-
+            
+            CreateUI.updateProgressBar(self, 100)
             print("Overview data set")
 
         #Passwords
         elif tab == 1:
+            CreateUI.updateProgressBar(self, 0)
             for i in reversed(range(gPasswords.count())):
                 gPasswords.itemAt(i).widget().setParent(None)
+            
+            CreateUI.updateProgressBar(self, 5)
 
             row = 0
             column = 0
             #Ajust to the ammount of horizontal widgets
             widgetRowBreak = 4
 
-            for i in range(1, dab.DatabaseActions.getAmmount(self, "passwords")+1):
-                data = dab.DatabaseActions.read(self, table="passTable", rows=i)
-
+            data = dab.DatabaseActions.read(self, table="passTable", everything=True)
+            slateProgressIncrement = 80/len(data)
+            startTime = time.time()
+            for i in range(len(data)):
                 passSlate = passItem.CreateUI()
+                print("Decrypting password N°: {0}".format(i+1))
                 #index, name, lastChanged, generated, banner="", email="", username="", category="generic", twoFa=False
-                passSlate.setup(data[0], 
-                crypt.Encryption.decrypt(self, data[1])[0], 
-                crypt.Encryption.decrypt(self, data[5])[0], 
-                crypt.Encryption.decrypt(self, data[6])[0], 
-                crypt.Encryption.decrypt(self, data[7])[0], 
-                crypt.Encryption.decrypt(self, data[2])[0], 
-                crypt.Encryption.decrypt(self, data[3])[0], 
-                crypt.Encryption.decrypt(self, data[4])[0], 
-                crypt.Encryption.decrypt(self, data[8])[0])
+                passSlate.setup(data[i][0], 
+                crypt.Encryption.decrypt(self, data[i][1])[0], 
+                crypt.Encryption.decrypt(self, data[i][5])[0], 
+                crypt.Encryption.decrypt(self, data[i][6])[0], 
+                crypt.Encryption.decrypt(self, data[i][7])[0], 
+                crypt.Encryption.decrypt(self, data[i][2])[0], 
+                crypt.Encryption.decrypt(self, data[i][3])[0], 
+                crypt.Encryption.decrypt(self, data[i][4])[0], 
+                crypt.Encryption.decrypt(self, data[i][8])[0])
 
                 if column < widgetRowBreak:
-                    print("Row: {0}; Column: {1}".format(row, column))
+                    print("Adding slate at Row: {0}; Column: {1}".format(row, column))
                     gPasswords.addWidget(passSlate, row, column)
                     column += 1
                 else:
@@ -474,20 +488,31 @@ class CreateUI:
                     column = 0
                     gPasswords.addWidget(passSlate, row, column)
                     column +=1
+            
+                CreateUI.updateProgressBar(self, prgWorking.value()+slateProgressIncrement)
+            endTime = time.time()
+            print("Time taken for decryption: {0}".format(round(endTime-startTime, 3)))
                 
             #fill in all the comboboxes (email, categories, banners)
+            startTime = time.time()
+            print("Decrypting combobox data")
             cbEmail.addItem("None")
-            for i in range(1, dab.DatabaseActions.getAmmount(self, "configs")+1):
-                dataEmail = dab.DatabaseActions.read(self, table="configs", rows=i)
-                cbEmail.addItem(crypt.Encryption.decrypt(self, dataEmail[2])[0])
+            dataEmail = dab.DatabaseActions.read(self, table="configs", everything=True)
+            for i in range(len(dataEmail)):
+                cbEmail.addItem(crypt.Encryption.decrypt(self, dataEmail[i][2])[0])
+            CreateUI.updateProgressBar(self, prgWorking.value()+5)
 
-            for i in range(1, dab.DatabaseActions.getAmmount(self, "categories")+1):
-                dataCat = dab.DatabaseActions.read(self, table="categories", rows=i)
-                cbCategories.addItem(crypt.Encryption.decrypt(self, dataCat[1])[0])
+            dataCat = dab.DatabaseActions.read(self, table="categories", everything=True)
+            for i in range(len(dataCat)):
+                cbCategories.addItem(crypt.Encryption.decrypt(self, dataCat[i][1])[0])
+            CreateUI.updateProgressBar(self, prgWorking.value()+5)
 
-            for i in range(1, dab.DatabaseActions.getAmmount(self, "banners")+1):
-                dataBanner = dab.DatabaseActions.read(self, table="banners", rows=i)
-                cbBanner.addItem(crypt.Encryption.decrypt(self, dataBanner[1])[0])
+            dataBanner = dab.DatabaseActions.read(self, table="banners", everything=True)
+            for i in range(len(dataBanner)):
+                cbBanner.addItem(crypt.Encryption.decrypt(self, dataBanner[i][1])[0])
+            CreateUI.updateProgressBar(self, 100)
+            endTime = time.time()
+            print("Time taken for decryption: {0}".format(round(endTime-startTime, 3)))
 
             print("Passwords tab data set")
 
@@ -505,6 +530,14 @@ class CreateUI:
 
         #Settings
         elif tab == 5:
+            liAddresses.clear()
+            dataEmail = dab.DatabaseActions.read(self, table="configs", everything=True)
+            for i in range(len(dataEmail)):
+                liAddresses.addItem(crypt.Encryption.decrypt(self, dataEmail[i][2])[0])
+                if i == 0:
+                    CreateUI.updateProgressBar(self, 0)
+                else:
+                    CreateUI.updateProgressBar(self, (len(dataEmail))/i*100)
             print("Settings tab set")
 
         #catch out of bounds
@@ -513,6 +546,25 @@ class CreateUI:
 
         #general
         CreateUI.emailAddress = crypt.Encryption.decrypt(self, dab.DatabaseActions.read(self, table="configs", rows=1)[1][0])
+
+    def updateProgressBar(self, value):
+        prgWorking.setVisible(True)
+        if value == 100:
+            prgWorking.setValue(value)
+            timer = QtCore.QTimer(self)
+            timer.setSingleShot(True)
+            timer.setInterval(1000)
+            timer.timeout.connect(lambda:prgWorking.setVisible(False))
+            timer.start()
+        else:
+            prgWorking.setValue(value)
+
+
+        timer = QtCore.QTimer(self)
+        timer.setSingleShot(True)
+        timer.setInterval(500)
+        timer.timeout.connect(lambda:CreateUI.updateProgressBar(self, 100))
+        timer.start()
 
     def switchTab(self, tabIndex):
         CreateUI.setData(self, tabIndex)
