@@ -1,9 +1,10 @@
-from PyQt5 import QtGui, QtCore, QtWidgets
-import seperator, dab, create
 import qtawesome as qta
+from PyQt5 import QtGui, QtCore, QtWidgets
+from components import crypt, dab
+from components.uiElements import seperator
 
 class CreateUI(QtWidgets.QWidget):
-    def setup(self, passIndex, name, lastChanged, generated, password, banner="", email="", username="", category="generic", twoFa="False"):
+    def setup(self, passIndex, name, lastChanged, generated, banner="", email="", username="", category="generic", twoFa="False"):
         #Main layouts and layout widgets
         lMain = QtWidgets.QGridLayout()
         lMain.setContentsMargins(0,0,0,0)
@@ -43,42 +44,63 @@ class CreateUI(QtWidgets.QWidget):
 
         #Create the widgets to display the main data
         lPassIndexLabel = QtWidgets.QLabel("Index:")
+        lPassIndexLabel.setObjectName("passLabel")
         gMain.addWidget(lPassIndexLabel, 1, 0)
-        lPassIndex = QtWidgets.QLabel(passIndex)
+        lPassIndex = QtWidgets.QLabel(str(passIndex))
+        lPassIndex.setObjectName("passLabel")
         gMain.addWidget(lPassIndex, 1, 1)
 
         lNameLabel = QtWidgets.QLabel("Name:")
+        lNameLabel.setObjectName("passLabel")
         gMain.addWidget(lNameLabel, 2, 0)
         lName = QtWidgets.QLabel(name)
+        lName.setObjectName("passLabel")
         gMain.addWidget(lName, 2, 1)
 
         if email != "":
             lEmailLabel = QtWidgets.QLabel("Email:")
+            lEmailLabel.setObjectName("passLabel")
             gMain.addWidget(lEmailLabel, 3, 0)
             lEmail = QtWidgets.QLabel("")
             lEmail.setText(email)
+            lEmail.setObjectName("passLabel")
             gMain.addWidget(lEmail, 3, 1)
 
         if username != "":
             lUsernameLabel = QtWidgets.QLabel("Email:")
+            lUsernameLabel.setObjectName("passLabel")
             gMain.addWidget(lUsernameLabel, 4, 0)
             lUsername = QtWidgets.QLabel("")
             lUsername.setText(username)
+            lUsername.setObjectName("passLabel")
             gMain.addWidget(lUsername, 4, 1)
         
         lPasswordLabel = QtWidgets.QLabel("Password:")
+        lPasswordLabel.setObjectName("passLabel")
         gMain.addWidget(lPasswordLabel, 5, 0)
-        lPassword = QtWidgets.QLabel(password)
+        data = dab.DatabaseActions.read(self, table="passTable", rows=passIndex)
+        lPassword = QtWidgets.QLabel(crypt.Encryption.decrypt(self, data[9])[0] )
         gMain.addWidget(lPassword, 5, 1)
 
+        #Use later to decrypt the password on demand
+        """
+        passBtn = passButton()
+        passBtn.setup(passIndex)
+        gMain.addWidget(passBtn, 5, 1)
+        """
+
         lCategoryLabel = QtWidgets.QLabel("Category")
+        lCategoryLabel.setObjectName("passLabel")
         gMain.addWidget(lCategoryLabel, 6, 0)
         lCategory = QtWidgets.QLabel(str(category))
+        lCategory.setObjectName("passLabel")
         gMain.addWidget(lCategory, 6, 1)
 
         lTwoFALabel = QtWidgets.QLabel("2FA")
+        lTwoFALabel.setObjectName("passLabel")
         gMain.addWidget(lTwoFALabel, 7, 0)
         lTwoFA = QtWidgets.QLabel("2FA: ")
+        lTwoFA.setObjectName("passLabel")
         if twoFa == "False":
             lTwoFA.setText("2FA: Inactive")
         elif twoFa == "True":
@@ -88,8 +110,10 @@ class CreateUI(QtWidgets.QWidget):
         gMain.addWidget(lTwoFA, 7, 1)
 
         lGeneratedLabel = QtWidgets.QLabel("Generated:")
+        lGeneratedLabel.setObjectName("passLabel")
         gMain.addWidget(lGeneratedLabel, 8, 0)
         lGenerated = QtWidgets.QLabel()
+        lGenerated.setObjectName("passLabel")
         if generated == "True":
             lGenerated.setText("True")
         elif generated == "False":
@@ -99,8 +123,10 @@ class CreateUI(QtWidgets.QWidget):
         gMain.addWidget(lGenerated, 8, 1)
 
         lDateLabel = QtWidgets.QLabel("Last Changed:")
+        lDateLabel.setObjectName("passLabel")
         gMain.addWidget(lDateLabel, 9, 0)       
         lDate = QtWidgets.QLabel(str(lastChanged).split(".")[0])
+        lDate.setObjectName("passLabel")
         gMain.addWidget(lDate, 9, 1)
 
         wMain.setLayout(lMain)
@@ -108,3 +134,35 @@ class CreateUI(QtWidgets.QWidget):
 
         self.setLayout(vBack)
         self.setSizePolicy(QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Maximum, QtWidgets.QSizePolicy.Maximum))
+
+class passButton(QtWidgets.QWidget):
+    def setup(self, index = 0):
+        passIndex = index
+        #Main layouts and layout widgets
+        global lBtnMain
+        lBtnMain = QtWidgets.QStackedLayout()
+        lBtnMain.setContentsMargins(0,0,0,0)
+
+        btnReveal = QtWidgets.QPushButton("Reveal Password")
+        btnReveal.clicked.connect(lambda:passButton.reveal(self, passIndex))
+        lBtnMain.addWidget(btnReveal)
+        
+        self.setLayout(lBtnMain)
+    
+    def reveal(self, theIndex):
+        data = dab.DatabaseActions.read(self, table="passTable", rows=theIndex)        
+        global lPassword
+        lPassword = QtWidgets.QLabel(crypt.Encryption.decrypt(self, data[9])[0])
+        lBtnMain.addWidget(lPassword)
+
+        lBtnMain.setCurrentIndex(1)
+
+        timer = QtCore.QTimer(self)
+        timer.setSingleShot(True)
+        timer.setInterval(15000)
+        timer.timeout.connect(lambda:passButton.clear(self))
+        timer.start()
+    
+    def clear(self):
+        lPassword.setText("")
+        lBtnMain.setCurrentIndex(0)

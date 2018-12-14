@@ -1,13 +1,13 @@
-import sys, index, create, dab, crypt
+import sys, index, qtawesome as qta
+from components import create, dab, crypt
 from PyQt5 import QtGui, QtCore, QtWidgets
-import qtawesome as qta
 
 class CreateUI(QtWidgets.QWidget):
     #Globals
     msg = None
     pEncStat = None
     def __init__(self):
-        super(CreateUI, self).__init__()
+        super(CreateUI, self).__init__(flags=QtCore.Qt.FramelessWindowHint)
         self.setGeometry(50,50,450,100)
         self.setWindowTitle("Connect")
         self.setWindowFlags(self.windowFlags() | QtCore.Qt.FramelessWindowHint) #Use this for a frameless window. Will be used later!
@@ -82,7 +82,7 @@ class CreateUI(QtWidgets.QWidget):
             self, username=leUsername.text(), thePassword=lePassword.text(), address=leHostname.text(), thePort=lePort.text(), theDatabase=leDatabase.text()))
         mainLay.addWidget(btnConnect)
 
-        #Idea of a progressbar when connecting because there is some delay!
+        #Idea of a progressbar when connecting because the thing freezes for a sec!
         """
         pEncStat = QtWidgets.QProgressBar()
         pEncStat.hide()
