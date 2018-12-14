@@ -1,7 +1,9 @@
-import sys, os, create, keyDialog
+import sys, os
 import qtawesome as qta
-import create, sip
+import sip
 from PyQt5 import QtGui, QtCore, QtWidgets, Qt
+from components import create
+from components.uiElements import keyDialog
 
 #This is the MAIN file of the app. Its used for handeling hte diffrent scripts within this programm.
 #Debug prints are as formatted like this: FILE; CLASS; METHOD: MESSAGE

@@ -1,7 +1,8 @@
-import os, create, crypt, datetime, keyDialog
+import os, datetime
 import mysql.connector as connector
+from components import create, crypt
+from components.uiElements import keyDialog
 from PyQt5 import QtGui, QtCore, QtWidgets
-from cryptography.fernet import Fernet
 
 class DatabaseActions():
     #Connect to the database with the information given from the keyDialog

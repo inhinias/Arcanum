@@ -1,7 +1,8 @@
+import  datetime, time, qtawesome as qta
 from PyQt5 import QtGui, QtCore, QtWidgets
-from cryptography.fernet import Fernet
-import qtawesome as qta
-import dab, passItem, seperator, crypt, datetime, time
+from components.uiElements.tabs import overview, passwords
+from components import dab, crypt
+from components.uiElements import passItem, seperator
 
 class CreateUI:
     vPassList = None

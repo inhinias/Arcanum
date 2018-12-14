@@ -1,6 +1,6 @@
-import sys, index, create, dab, crypt
+import sys, index, qtawesome as qta
+from components import create, dab, crypt
 from PyQt5 import QtGui, QtCore, QtWidgets
-import qtawesome as qta
 
 class CreateUI(QtWidgets.QWidget):
     #Globals

@@ -1,6 +1,7 @@
-from PyQt5 import QtGui, QtCore, QtWidgets
-import seperator, dab, create, crypt
 import qtawesome as qta
+from PyQt5 import QtGui, QtCore, QtWidgets
+from components import crypt, dab
+from components.uiElements import seperator
 
 class CreateUI(QtWidgets.QWidget):
     def setup(self, passIndex, name, lastChanged, generated, banner="", email="", username="", category="generic", twoFa="False"):
