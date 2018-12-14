@@ -7,7 +7,7 @@ class CreateUI(QtWidgets.QWidget):
     msg = None
     pEncStat = None
     def __init__(self):
-        super(CreateUI, self).__init__()
+        super(CreateUI, self).__init__(flags=QtCore.Qt.FramelessWindowHint)
         self.setGeometry(50,50,450,100)
         self.setWindowTitle("Connect")
         self.setWindowFlags(self.windowFlags() | QtCore.Qt.FramelessWindowHint) #Use this for a frameless window. Will be used later!
@@ -40,7 +40,7 @@ class CreateUI(QtWidgets.QWidget):
 
         #Connection details input
         #Note: the credentials here are just used for testing and not for real use!
-        leHostname = QtWidgets.QLineEdit("192.168.178.61")
+        leHostname = QtWidgets.QLineEdit("kennethmathis.ch")
         leHostname.setPlaceholderText("Hostname")
         addressLay.addWidget(leHostname,0,0)
 

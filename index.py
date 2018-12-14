@@ -1,7 +1,7 @@
 import sys, os, create, keyDialog
 import qtawesome as qta
-import create
-from PyQt5 import QtGui, QtCore, QtWidgets
+import create, sip
+from PyQt5 import QtGui, QtCore, QtWidgets, Qt
 
 #This is the MAIN file of the app. Its used for handeling hte diffrent scripts within this programm.
 #Debug prints are as formatted like this: FILE; CLASS; METHOD: MESSAGE
@@ -12,7 +12,10 @@ class Window(QtWidgets.QWidget):
     #Global stuff (none I guess?!)
 
     def __init__(self):
-        super(Window, self).__init__()
+        super(Window, self).__init__(flags=QtCore.Qt.FramelessWindowHint)
+        print("Qt version:", QtCore.QT_VERSION_STR)
+        print("PyQt version:", Qt.PYQT_VERSION_STR)
+        print("SIP version:", sip.SIP_VERSION_STR)
         self.setGeometry(50,50,1320,700)
         self.setWindowTitle("Arcanum")
         self.setWindowFlags(self.windowFlags() | QtCore.Qt.FramelessWindowHint) #Use this for a frameless window. Will be used later!

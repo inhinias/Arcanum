@@ -20,37 +20,37 @@ class DatabaseActions():
             tables['passTable'] = (
                 "CREATE TABLE IF NOT EXISTS passTable("
                 "prim int(11) PRIMARY KEY"
-                "name TEXT(300)"
-                "email TEXT(300)"
-                "username TEXT(300)"
-                "category TEXT(300)"
-                "lastUsed TEXT(300)"
-                "generated TEXT(300)"
-                "banner TEXT(300)"
-                "twoFA TEXT(300)"
-                "encryptedPassword TEXT(300)"
-                "comment TEXT(300))"
+                "name VARCHAR(300)"
+                "email VARCHAR(300)"
+                "username VARCHAR(300)"
+                "category VARCHAR(300)"
+                "lastUsed VARCHAR(300)"
+                "generated VARCHAR(300)"
+                "banner VARCHAR(300)"
+                "twoFA VARCHAR(300)"
+                "encryptedPassword VARCHAR(300)"
+                "comment VARCHAR(300))"
             )
             tables['configs'] = (
                 "CREATE TABLE IF NOT EXISTS configs("
                 "prim int(11) PRIMARY KEY"
-                "configName TEXT(300)"
-                "emailAddress TEXT(300)"
-                "decryptTest TEXT(300)"
-                "standarsKeyLength TEXT(300)"
-                "lastChanged TEXT(300))"
+                "configName VARCHAR(300)"
+                "emailAddress VARCHAR(300)"
+                "decryptTest VARCHAR(300)"
+                "standarsKeyLength VARCHAR(300)"
+                "lastChanged VARCHAR(300))"
             )
             tables['categories'] = (
                 "CREATE TABLE IF NOT EXISTS categories("
                 "prim int(11) PRIMARY KEY"
-                "name TEXT(300)"
-                "icon TEXT(300))"
+                "name VARCHAR(300)"
+                "icon VARCHAR(300))"
             )
             tables['banners'] = (
                 "CREATE TABLE IF NOT EXISTS passTable("
                 "prim int(11) PRIMARY KEY"
-                "name TEXT(300)"
-                "path TEXT(300))"
+                "name VARCHAR(300)"
+                "path VARCHAR(300))"
             )
 
             #Create all the tables
