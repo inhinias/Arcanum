@@ -3,10 +3,11 @@ import qtawesome as qta
 import sip
 from PyQt5 import QtGui, QtCore, QtWidgets, Qt
 from components import create
-from components.uiElements import keyDialog
+from components.uiElements import connectionDialog
 
 #This is the MAIN file of the app. Its used for handeling hte diffrent scripts within this programm.
-#Debug prints are as formatted like this: FILE; CLASS; METHOD: MESSAGE
+#It creates the main window and the connection dialog, sets the main window size and position, the app icon & stylesheet and the window moving
+#Debug prints are as formatted like this: FILE; CLASS; METHOD: MESSAGE (Its the idea, I may have actually forgotten about it sofar!)
 
 #Variables
 
@@ -21,7 +22,7 @@ class Window(QtWidgets.QWidget):
         self.setGeometry(50,50,1320,700)
         self.setWindowTitle("Arcanum")
         self.setWindowFlags(self.windowFlags() | QtCore.Qt.FramelessWindowHint) #Use this for a frameless window. Will be used later!
-        dial = keyDialog.CreateUI()
+        dial = connectionDialog.CreateUI()
         #dab.Database.create(self)
         create.CreateUI.create(self)
         self.icon()

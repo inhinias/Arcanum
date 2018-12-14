@@ -1,11 +1,13 @@
 import os, datetime
 import mysql.connector as connector
 from components import create, crypt
-from components.uiElements import keyDialog
+from components.uiElements import connectionDialog
 from PyQt5 import QtGui, QtCore, QtWidgets
 
+#This is the main file for all database stuff connections and all SQL is handled within this file.
+
 class DatabaseActions():
-    #Connect to the database with the information given from the keyDialog
+    #Connect to the database with the information given from the connectionDialog
     #Add table creation here!!!
     def connect(self, username, thePassword, address, thePort=3306, theDatabase="passwords"):
         success = False

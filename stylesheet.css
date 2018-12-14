@@ -91,6 +91,11 @@ QPushButton:hover{
     font-family: 'Roboto';
 }
 
+#passwordArea{
+    border: 1px solid #032358;
+    background-color: #2d2d2d;
+}
+
 QCheckBox{
     font-family: 'Quicksand';
     font-size: 16px;
@@ -128,6 +133,12 @@ QComboBox::drop-down{
     background-color: #ff9853;
 }
 
+QCheckBox{
+    color: #f9f9f9;
+    border: 1px solid #032358;
+    background-color: #222d32;
+}
+
 QProgressBar{
     border: 1px solid #032358;
     background-color: #222d32;
@@ -137,6 +148,15 @@ QProgressBar::chunk {
     background-color: #9b123e;
 }
 
+QListWidget{
+    border: 1px solid #032358;
+    background-color: #2d2d2d;
+}
+
+QScrollArea{
+    color: #032358;
+    background-color: #032358;
+}
 
 /*Vertiacl Scrollbar CSS*/
 QScrollBar:vertical {
@@ -158,7 +178,6 @@ QScrollBar::down-arrow:vertical{
     background-color: #032358;
     border-style: solid;
 }
-
 
 QScrollBar::add-line:vertical {
     border: 0px solid;
