@@ -34,14 +34,16 @@ class Encryption:
         decrypted = str(gpg.decrypt_file(message=theData, passphrase=Encryption.password))
         return decrypted
 
-    def genPassword(self, letters=False, digits=False, symbols=False, safeSymbols=False,length=16, ):
+    def genPassword(self, letters="both", digits=False, symbols=False, safeSymbols=False, length=16 ):
         if length > 0:
-            if letters or digits or symbols or safeSymbols:
-                print("Cannot create password due to invalid conditions!")
-            else:
-                charlist = None
-                if letters: charlist = charlist + string.ascii_letters
-                if digits: charlist = charlist + string.digits
-                if symbols: charlist = charlist + string.punctuation
-                if safeSymbols: charlist = charlist + "!#$%*+-=?@^_|äöüèéà"
+            charlist = ""
+            if letters == "both": charlist = charlist + string.ascii_letters
+            if letters == "lowercase": charlist = charlist + string.ascii_lowercase
+            if letters == "uppercase": charlist = charlist + string.ascii_uppercase
+            if digits: charlist = charlist + string.digits
+            if safeSymbols: charlist = charlist + "!#$%*+-=?@^_|äöüèéà"
+            elif symbols: charlist = charlist + string.punctuation
+            if charlist != "":
                 return ''.join(random.choice(charlist) for i in range(length))
+            else:
+                print("Cannot create password, invalid configuration!")

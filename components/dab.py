@@ -129,7 +129,7 @@ class DatabaseActions():
             #Populate the config if no data is present
             if ammount == 0:
                 print("THIS SHOULDNT BE ACTIVE WHEN THERE IS ALREADY SOMETHING IN IT!")
-                rand = crypt.Encryption.encrypt(self, theData=crypt.Encryption.genPassword(self, True, True, length=16))
+                rand = crypt.Encryption.encrypt(self, theData=crypt.Encryption.genPassword(self, letters="both", digits=True, length=16))
                 name = crypt.Encryption.encrypt(self, "Generic")
                 email = crypt.Encryption.encrypt(self, "")
                 keylen = crypt.Encryption.encrypt(self, "4096")
