@@ -133,8 +133,9 @@ class DatabaseActions():
                 name = crypt.Encryption.encrypt(self, "Generic")
                 email = crypt.Encryption.encrypt(self, "")
                 keylen = crypt.Encryption.encrypt(self, "4096")
-                data = {'randString':rand, 'name':name, 'emailAdd':email, 'keyLen':keylen}
-                cur.execute("INSERT INTO passwords.configs (configName, emailAddress, decryptTest, standardKeyLength) VALUES (%(name)s, %(emailAdd)s, %(randString)s, %(keyLen)s)", data)
+                cryptAll = crypt.Encryption.encrypt(self, "False")
+                data = {'randString':rand, 'name':name, 'emailAdd':email, 'keyLen':keylen, "encLen":cryptAll}
+                cur.execute("INSERT INTO passwords.configs (configName, emailAddress, decryptTest, standardKeyLength, encryptAll) VALUES (%(name)s, %(emailAdd)s, %(randString)s, %(keyLen)s, %(encAll)s)", data)
                 connection.commit()
         else:
             print("unable to find table to get ammount of!")

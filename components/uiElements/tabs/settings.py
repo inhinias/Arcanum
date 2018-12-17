@@ -9,6 +9,11 @@ class Settings(QtWidgets.QWidget):
         gSettingsMain = QtWidgets.QGridLayout()
         gSettingsMain.setAlignment(QtCore.Qt.AlignTop)
 
+        #Read the database for the settings and decrypt them
+        config = dab.DatabaseActions.read(self, "configs")
+        for i in range(1, len(config)):
+            config[i] = crypt.Encryption.decrypt(self, config[i])
+
         #Create the settings tab
         leEmail = QtWidgets.QLineEdit(create.CreateUI.emailAddress)
         leEmail.setPlaceholderText("Email Address")
@@ -25,6 +30,14 @@ class Settings(QtWidgets.QWidget):
         liAddresses = QtWidgets.QListWidget()
         liAddresses.setMaximumWidth(400)
         gSettingsMain.addWidget(liAddresses, 1, 0)
+
+        chkEncryptAll = QtWidgets.QCheckBox("Encrypt evertything (slow!)")
+        chkEncryptAll.setChecked(bool(config[6]))
+        gSettingsMain.addWidget(chkEncryptAll, 0, 2)
+
+        chkSaltedEncrypt = QtWidgets.QCheckBox("Encrypt with salt")
+        chkEncryptAll.setChecked(False)
+        gSettingsMain.addWidget(chkEncryptAll, 0, 2)
 
         self.setLayout(gSettingsMain)
 

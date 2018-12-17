@@ -51,6 +51,7 @@ class Passwords(QtWidgets.QWidget):
 
         global cbEmail
         cbEmail = QtWidgets.QComboBox()
+        cbEmail.setEditable(True)
         cbEmail.setMaximumWidth(300)
         vPExtras.addWidget(cbEmail)
 
@@ -106,7 +107,7 @@ class Passwords(QtWidgets.QWidget):
         btnPWCreate.setObjectName("btncreate")
         btnPWCreate.setMaximumWidth(300)
         #PasswordsName, email, Username, Password, 2fa, category, banner
-        btnPWCreate.clicked.connect(lambda:create.CreateUI.addPassword(
+        btnPWCreate.clicked.connect(lambda:Passwords.addPassword(
             self, lePassName.text(), 
             cbEmail.itemText(), 
             leUsername.text(), 
@@ -119,6 +120,32 @@ class Passwords(QtWidgets.QWidget):
         vPExtras.addWidget(btnPWCreate)
 
         self.setLayout(vPassMain)
+
+        #PasswordsName, email, Username, Password, 2fa, category, banner
+    def addPassword(self, passName, emailAdd, theUsername, thePassword, generated, twoFAEnabled, theCategory, theBanner, theComment):
+        #Check if the given email is already in the databse an add it if not
+        duplicate = False
+        emailData = dab.DatabaseActions.read(self, "configs", True)
+        for i in range(len(emailData)):
+            if emailData[i][2] == crypt.Encryption.encrypt(self, emailAdd):
+                duplicate = True
+        if not(duplicate):
+            dab.DatabaseActions.insert(self, "configs", {'email':crypt.Encryption.encrypt(self, emailAdd)})
+
+        insertionData = {"name":crypt.Encryption.encrypt(self, passName),
+            "email":crypt.Encryption.encrypt(self, emailAdd),
+            "uName":crypt.Encryption.encrypt(self, theUsername),
+            "lstUsed":crypt.Encryption.encrypt(self, str(datetime.datetime.now())), 
+            "gen":crypt.Encryption.encrypt(self, "False"), 
+            "crypticPass":crypt.Encryption.encrypt(self, thePassword), 
+            "twofactor":crypt.Encryption.encrypt(self, str(twoFAEnabled)), 
+            "cat":crypt.Encryption.encrypt(self, theCategory), 
+            "ban":crypt.Encryption.encrypt(self, theBanner),
+            "comment":crypt.Encryption.encrypt(self, theComment)}
+        dab.DatabaseActions.insert(self, "passwords", insertionData)
+        CreateUI.clearData(self)
+        CreateUI.setData(self, 1)
+
 
     def createPassSlates(self):
         create.CreateUI.updateProgressBar(self, 0)

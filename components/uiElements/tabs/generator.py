@@ -67,6 +67,7 @@ class Generator(QtWidgets.QWidget):
 
         global lPassword
         lPassword = QtWidgets.QLabel("Password will be shown here!")
+        lPassword.setTextInteractionFlags(QtCore.Qt.TextSelectableByMouse)
         vMain.addWidget(lPassword)
 
         self.setLayout(vMain)

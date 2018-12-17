@@ -217,23 +217,6 @@ class CreateUI:
         CreateUI.setData(self, tabIndex)
         self.sCentral.setCurrentIndex(tabIndex)
 
-
-    #PasswordsName, email, Username, Password, 2fa, category, banner
-    def addPassword(self, passName, emailAdd, theUsername, thePassword, generated, twoFAEnabled, theCategory, theBanner, theComment):
-        insertionData = {"name":crypt.Encryption.encrypt(self, passName),
-            "email":crypt.Encryption.encrypt(self, emailAdd),
-            "uName":crypt.Encryption.encrypt(self, theUsername),
-            "lstUsed":crypt.Encryption.encrypt(self, str(datetime.datetime.now())), 
-            "gen":crypt.Encryption.encrypt(self, "False"), 
-            "crypticPass":crypt.Encryption.encrypt(self, thePassword), 
-            "twofactor":crypt.Encryption.encrypt(self, str(twoFAEnabled)), 
-            "cat":crypt.Encryption.encrypt(self, theCategory), 
-            "ban":crypt.Encryption.encrypt(self, theBanner),
-            "comment":crypt.Encryption.encrypt(self, theComment)}
-        dab.DatabaseActions.insert(self, "passwords", insertionData)
-        CreateUI.clearData(self)
-        CreateUI.setData(self, 1)
-
     def clearData(self):
         Passwords.lePassName.setText("")
         leUsername.setText("")
