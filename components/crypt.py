@@ -23,7 +23,7 @@ class Encryption:
         return encrypted
     
     def decrypt(self, theData):
-        decrypted = gpg.decrypt(message=theData, passphrase=Encryption.password)
+        decrypted = gpg.decrypt(message=str(theData), passphrase=Encryption.password)
         return str(decrypted), decrypted.ok, decrypted.status
 
     def encryptFile(self, theData, recipients=None):

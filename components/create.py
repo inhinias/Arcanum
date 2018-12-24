@@ -1,4 +1,4 @@
-import  datetime, time, qtawesome as qta
+import qtawesome as qta
 from PyQt5 import QtGui, QtCore, QtWidgets
 from components.uiElements.tabs import overview, passwords, generator, notes, keys, settings
 from components import dab, crypt
@@ -216,14 +216,6 @@ class CreateUI:
     def switchTab(self, tabIndex):
         CreateUI.setData(self, tabIndex)
         self.sCentral.setCurrentIndex(tabIndex)
-
-    def clearData(self):
-        Passwords.lePassName.setText("")
-        leUsername.setText("")
-        leNewPass.setText("")
-        chkGen.setChecked(False)
-        chkTwoFA.setChecked(False)
-        pteComment.setText("")
 
     def minimize(self):
         self.showMinimized()

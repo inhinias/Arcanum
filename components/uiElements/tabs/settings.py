@@ -9,11 +9,6 @@ class Settings(QtWidgets.QWidget):
         gSettingsMain = QtWidgets.QGridLayout()
         gSettingsMain.setAlignment(QtCore.Qt.AlignTop)
 
-        #Read the database for the settings and decrypt them
-        config = dab.DatabaseActions.read(self, "configs")
-        for i in range(1, len(config)):
-            config[i] = crypt.Encryption.decrypt(self, config[i])
-
         #Create the settings tab
         leEmail = QtWidgets.QLineEdit(create.CreateUI.emailAddress)
         leEmail.setPlaceholderText("Email Address")
@@ -31,17 +26,22 @@ class Settings(QtWidgets.QWidget):
         liAddresses.setMaximumWidth(400)
         gSettingsMain.addWidget(liAddresses, 1, 0)
 
-        chkEncryptAll = QtWidgets.QCheckBox("Encrypt evertything (slow!)")
-        chkEncryptAll.setChecked(bool(config[6]))
-        gSettingsMain.addWidget(chkEncryptAll, 0, 2)
-
+        global chkSaltedEncrypt
         chkSaltedEncrypt = QtWidgets.QCheckBox("Encrypt with salt")
-        chkEncryptAll.setChecked(False)
-        gSettingsMain.addWidget(chkEncryptAll, 0, 2)
+        chkSaltedEncrypt.setChecked(False)
+        gSettingsMain.addWidget(chkSaltedEncrypt, 0, 2)
 
         self.setLayout(gSettingsMain)
 
     def createData(self):
+        #Read the database for the settings and decrypt them
+        config = dab.DatabaseActions.read(self, "configs")
+        decryptedConfig = []
+        for i in range(1, len(config)):
+            decryptedConfig.append(crypt.Encryption.decrypt(self, config[i])[0])
+        if decryptedConfig[5] == "False": chkSaltedEncrypt.setChecked(False)
+        else: chkSaltedEncrypt.setChecked(True)
+
         liAddresses.clear()
         dataEmail = dab.DatabaseActions.read(self, table="configs", everything=True)
         for i in range(len(dataEmail)):

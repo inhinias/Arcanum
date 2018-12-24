@@ -22,7 +22,7 @@ class Generator(QtWidgets.QWidget):
 
         sbLength = QtWidgets.QSpinBox()
         sbLength.setMinimum(8)
-        sbLength.setMaximum(120)
+        sbLength.setMaximum(128)
         gGeneratorMain.addWidget(sbLength, 0, 1)
 
         lSymbols = QtWidgets.QLabel("Include Symbols:")
@@ -53,7 +53,7 @@ class Generator(QtWidgets.QWidget):
         chkUppercase = QtWidgets.QCheckBox("( e.g. IOERJDG )")
         gGeneratorMain.addWidget(chkUppercase, 4, 1)
 
-        lAmbiguous = QtWidgets.QLabel("Exclude Ambiguous Characters:")
+        lAmbiguous = QtWidgets.QLabel("Symbols Without Ambiguous Characters:")
         lAmbiguous.setMinimumHeight(height)
         gGeneratorMain.addWidget(lAmbiguous, 5, 0)
 

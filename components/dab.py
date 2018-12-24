@@ -1,4 +1,4 @@
-import os, datetime
+import datetime
 import mysql.connector as connector
 from components import create, crypt
 from components.uiElements import connectionDialog
@@ -128,14 +128,14 @@ class DatabaseActions():
             
             #Populate the config if no data is present
             if ammount == 0:
-                print("THIS SHOULDNT BE ACTIVE WHEN THERE IS ALREADY SOMETHING IN IT!")
-                rand = crypt.Encryption.encrypt(self, theData=crypt.Encryption.genPassword(self, letters="both", digits=True, length=16))
-                name = crypt.Encryption.encrypt(self, "Generic")
-                email = crypt.Encryption.encrypt(self, "")
-                keylen = crypt.Encryption.encrypt(self, "4096")
-                cryptAll = crypt.Encryption.encrypt(self, "False")
-                data = {'randString':rand, 'name':name, 'emailAdd':email, 'keyLen':keylen, "encLen":cryptAll}
-                cur.execute("INSERT INTO passwords.configs (configName, emailAddress, decryptTest, standardKeyLength, encryptAll) VALUES (%(name)s, %(emailAdd)s, %(randString)s, %(keyLen)s, %(encAll)s)", data)
+                data = {'randString':crypt.Encryption.encrypt(self, theData=crypt.Encryption.genPassword(self, letters="both", digits=True, length=16)),
+                'name':crypt.Encryption.encrypt(self, "Generic"), 
+                'emailAdd':"", 
+                'keyLen':crypt.Encryption.encrypt(self, "4096"), 
+                "lastChgd":crypt.Encryption.encrypt(self, str(datetime.datetime.now())), 
+                "useSalt":crypt.Encryption.encrypt(self, "True")}
+                cur.execute("INSERT INTO passwords.configs (configName, emailAddress, decryptTest, standardKeyLength, lastChanged, useSaltedEnc)"
+                "VALUES (%(name)s, %(emailAdd)s, %(randString)s, %(keyLen)s, %(lastChgd)s, %(useSalt)s)", data)
                 connection.commit()
         else:
             print("unable to find table to get ammount of!")

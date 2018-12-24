@@ -55,6 +55,7 @@ class CreateUI(QtWidgets.QWidget):
         gMain.addWidget(lNameLabel, 2, 0)
         lName = QtWidgets.QLabel(name)
         lName.setObjectName("passLabel")
+        lName.setTextInteractionFlags(QtCore.Qt.TextSelectableByMouse)
         gMain.addWidget(lName, 2, 1)
 
         if email != "":
@@ -64,15 +65,17 @@ class CreateUI(QtWidgets.QWidget):
             lEmail = QtWidgets.QLabel("")
             lEmail.setText(email)
             lEmail.setObjectName("passLabel")
+            lEmail.setTextInteractionFlags(QtCore.Qt.TextSelectableByMouse)
             gMain.addWidget(lEmail, 3, 1)
 
         if username != "":
-            lUsernameLabel = QtWidgets.QLabel("Email:")
+            lUsernameLabel = QtWidgets.QLabel("Username:")
             lUsernameLabel.setObjectName("passLabel")
             gMain.addWidget(lUsernameLabel, 4, 0)
             lUsername = QtWidgets.QLabel("")
             lUsername.setText(username)
             lUsername.setObjectName("passLabel")
+            lUsername.setTextInteractionFlags(QtCore.Qt.TextSelectableByMouse)
             gMain.addWidget(lUsername, 4, 1)
         
         lPasswordLabel = QtWidgets.QLabel("Password:")
@@ -80,6 +83,7 @@ class CreateUI(QtWidgets.QWidget):
         gMain.addWidget(lPasswordLabel, 5, 0)
         data = dab.DatabaseActions.read(self, table="passTable", rows=passIndex)
         lPassword = QtWidgets.QLabel(crypt.Encryption.decrypt(self, data[9])[0] )
+        lPassword.setTextInteractionFlags(QtCore.Qt.TextSelectableByMouse)
         gMain.addWidget(lPassword, 5, 1)
 
         #Use later to decrypt the password on demand
@@ -94,6 +98,7 @@ class CreateUI(QtWidgets.QWidget):
         gMain.addWidget(lCategoryLabel, 6, 0)
         lCategory = QtWidgets.QLabel(str(category))
         lCategory.setObjectName("passLabel")
+        lCategory.setTextInteractionFlags(QtCore.Qt.TextSelectableByMouse)
         gMain.addWidget(lCategory, 6, 1)
 
         lTwoFALabel = QtWidgets.QLabel("2FA")
@@ -101,6 +106,7 @@ class CreateUI(QtWidgets.QWidget):
         gMain.addWidget(lTwoFALabel, 7, 0)
         lTwoFA = QtWidgets.QLabel("2FA: ")
         lTwoFA.setObjectName("passLabel")
+        lTwoFA.setTextInteractionFlags(QtCore.Qt.TextSelectableByMouse)
         if twoFa == "False":
             lTwoFA.setText("2FA: Inactive")
         elif twoFa == "True":
@@ -114,6 +120,7 @@ class CreateUI(QtWidgets.QWidget):
         gMain.addWidget(lGeneratedLabel, 8, 0)
         lGenerated = QtWidgets.QLabel()
         lGenerated.setObjectName("passLabel")
+        lGenerated.setTextInteractionFlags(QtCore.Qt.TextSelectableByMouse)
         if generated == "True":
             lGenerated.setText("True")
         elif generated == "False":
@@ -127,6 +134,7 @@ class CreateUI(QtWidgets.QWidget):
         gMain.addWidget(lDateLabel, 9, 0)       
         lDate = QtWidgets.QLabel(str(lastChanged).split(".")[0])
         lDate.setObjectName("passLabel")
+        lDate.setTextInteractionFlags(QtCore.Qt.TextSelectableByMouse)
         gMain.addWidget(lDate, 9, 1)
 
         wMain.setLayout(lMain)
@@ -135,6 +143,7 @@ class CreateUI(QtWidgets.QWidget):
         self.setLayout(vBack)
         self.setSizePolicy(QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Maximum, QtWidgets.QSizePolicy.Maximum))
 
+#Idea, that the password is reveald only for a certain ammount of time when a button is pressed
 class passButton(QtWidgets.QWidget):
     def setup(self, index = 0):
         passIndex = index
