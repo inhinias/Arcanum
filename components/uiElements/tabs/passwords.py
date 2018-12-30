@@ -107,7 +107,8 @@ class Passwords(QtWidgets.QWidget):
         pteComment.setMaximumHeight(100)
         pteComment.setSizePolicy(QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Minimum))
         vPExtras.addWidget(pteComment)
-
+        
+        global btnPWCreate
         btnPWCreate = QtWidgets.QPushButton("Create New")
         btnPWCreate.setObjectName("btncreate")
         btnPWCreate.setMaximumWidth(300)
@@ -125,10 +126,30 @@ class Passwords(QtWidgets.QWidget):
             chkEncAll.isChecked()))
         vPExtras.addWidget(btnPWCreate)
 
+        global btnPWUpdate
+        btnPWUpdate = QtWidgets.QPushButton("Update")
+        btnPWUpdate.setObjectName("btncreate")
+        btnPWUpdate.setMaximumWidth(300)
+        btnPWUpdate.setHidden(True)
+        #PasswordsName, email, Username, Password, 2fa, category, banner
+        btnPWUpdate.clicked.connect(lambda:Passwords.addPassword(
+            self, lePassName.text(), 
+            cbEmail.currentText(), 
+            leUsername.text(), 
+            leNewPass.text(), 
+            chkGen.isChecked(), 
+            chkTwoFA.isChecked(), 
+            cbCategories.currentText(), 
+            cbBanner.currentText(),
+            pteComment.toPlainText(),
+            chkEncAll.isChecked()),
+            True)
+        vPExtras.addWidget(btnPWUpdate)
+
         self.setLayout(vPassMain)
 
         #PasswordsName, email, Username, Password, 2fa, category, banner
-    def addPassword(self, passName, emailAdd, theUsername, thePassword, generated, twoFAEnabled, theCategory, theBanner, theComment, encEverything):
+    def addPassword(self, passName, emailAdd, theUsername, thePassword, generated, twoFAEnabled, theCategory, theBanner, theComment, encEverything, update=False, index=0):
         #Check if the given email is already in the databse an add it if not
         duplicate = False
         emailData = dab.DatabaseActions.read(self, "configs", True)
@@ -154,7 +175,8 @@ class Passwords(QtWidgets.QWidget):
                 "twofactor":crypt.Encryption.encrypt(self, str(twoFAEnabled)), 
                 "cat":crypt.Encryption.encrypt(self, theCategory), 
                 "ban":crypt.Encryption.encrypt(self, theBanner),
-                "comment":crypt.Encryption.encrypt(self, theComment)}
+                "comment":crypt.Encryption.encrypt(self, theComment),
+                "index":currentPassIndex}
         else:
             insertionData = {"name":crypt.Encryption.encrypt(self, passName),
                 "email":crypt.Encryption.encrypt(self, emailAdd),
@@ -165,12 +187,49 @@ class Passwords(QtWidgets.QWidget):
                 "twofactor":str(twoFAEnabled), 
                 "cat":str(theCategory), 
                 "ban":str(theBanner),
-                "comment":str(theComment)}
-        dab.DatabaseActions.insert(self, "passwords", insertionData)
+                "comment":str(theComment),
+                "index":currentPassIndex}
+        if update:
+            dab.DatabaseActions.update(self, "passwords", insertionData)
+        else:
+            dab.DatabaseActions.insert(self, "passwords", insertionData)
 
         #Clear everything and repopulate, change later to only adding the new item!
         Passwords.clearData(self)
         Passwords.createPassSlates(self)
+
+    def editPassword(self):
+        """
+        Rundown of all the data present
+        self.index = passIndex
+        self.name = name
+        self.lastChanged = lastChanged
+        self.generated = generated
+        self.banner = banner
+        self.email = email
+        self.username = username
+        self.category = category
+        self.twoFa = twoFa
+        """
+        btnPWCreate.setHidden(True)
+        btnPWUpdate.setHidden(False)
+        global currentPassIndex
+        currentPassIndex = self.index
+        data = dab.DatabaseActions.read(self, table="passTable", rows=self.index)
+        lPassword = crypt.Encryption.decrypt(self, data[9])[0]
+
+        lePassName.setText(self.name)
+        cbEmail.setCurrentIndex(cbEmail.findText(self.email))
+        leUsername.setText(self.username)
+        leNewPass.setText(lPassword)
+        if self.generated == "True": chkGen.setChecked(True)
+        else: chkGen.setChecked(False)
+        if self.twoFa == "True": chkTwoFA.setChecked(True)
+        else: chkTwoFA.setChecked(False)
+        #chkEncAll needs to be implemented the long way because the variable isnt passed on!
+        cbCategories.setCurrentIndex(cbCategories.findText(self.category))
+        cbBanner.setCurrentIndex(cbBanner.findText(self.banner))
+        pteComment.setText(self.comment)
 
     #Clears the list of the passwords
     def clearData(self):
@@ -205,7 +264,7 @@ class Passwords(QtWidgets.QWidget):
 
             #Array and tuple for keeping the order on the slate and for storing everything decrypted of an index
             decData = []
-            readOrder = (0,1,5,6,7,2,3,4,8)
+            readOrder = (0,1,5,6,7,2,3,4,8,10)
 
             #Loop for decrypting everything and testing if it actually needs to be decrypted
             for j in range(len(readOrder)):
@@ -216,10 +275,12 @@ class Passwords(QtWidgets.QWidget):
                     decData.append(data[i][readOrder[j]])
 
             #Note the password is fetched and decrypted in the passSlate widget based on the given index!
-            passSlate.setup(decData[0], decData[1], decData[2], decData[3], decData[4], decData[5], decData[6], decData[7], decData[8])
+            passSlate.setup(decData[0], decData[1], decData[2], decData[3], decData[4], decData[5], decData[6], decData[7], decData[8], decData[9])
 
             #decide where in the grid the new slate should be added.
             #Needs some math to base it on the width of the passScroll widget
+            #Atm its just horizontal with scrolling
+            """
             if column < widgetRowBreak:
                 print("Adding slate at Row: {0}; Column: {1}".format(row, column))
                 Passwords.gPasswords.addWidget(passSlate, row, column)
@@ -229,6 +290,8 @@ class Passwords(QtWidgets.QWidget):
                 column = 0
                 Passwords.gPasswords.addWidget(passSlate, row, column)
                 column +=1
+            """
+            Passwords.gPasswords.addWidget(passSlate, 0, i)
             
             create.CreateUI.updateProgressBar(self, create.CreateUI.getProgressValue(self)+slateProgressIncrement)
         endTime = time.time()

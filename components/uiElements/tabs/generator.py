@@ -22,6 +22,7 @@ class Generator(QtWidgets.QWidget):
 
         sbLength = QtWidgets.QSpinBox()
         sbLength.setMinimum(8)
+        sbLength.setValue(16)
         sbLength.setMaximum(128)
         gGeneratorMain.addWidget(sbLength, 0, 1)
 

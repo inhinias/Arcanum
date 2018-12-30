@@ -2,9 +2,10 @@ import qtawesome as qta
 from PyQt5 import QtGui, QtCore, QtWidgets
 from components import crypt, dab
 from components.uiElements import seperator
+from components.uiElements.tabs import passwords
 
 class CreateUI(QtWidgets.QWidget):
-    def setup(self, passIndex, name, lastChanged, generated, banner="", email="", username="", category="generic", twoFa="False"):
+    def setup(self, passIndex, name, lastChanged, generated, banner="", email="", username="", category="generic", twoFa="False", comment=""):
         #Main layouts and layout widgets
         lMain = QtWidgets.QGridLayout()
         lMain.setContentsMargins(0,0,0,0)
@@ -15,6 +16,18 @@ class CreateUI(QtWidgets.QWidget):
         wMain.setObjectName("passSlate")
         vBack = QtWidgets.QVBoxLayout()
         vBack.setContentsMargins(0,0,0,0)
+
+        #put everything into self so it can be acessed independantly form other passItems
+        self.index = passIndex
+        self.name = name
+        self.lastChanged = lastChanged
+        self.generated = generated
+        self.banner = banner
+        self.email = email
+        self.username = username
+        self.category = category
+        self.twoFa = twoFa
+        self.comment = comment
 
         #Banner to the Password currently only in placeholder version!
         iBanner = QtWidgets.QLabel()
@@ -34,10 +47,19 @@ class CreateUI(QtWidgets.QWidget):
         vQuit = QtWidgets.QVBoxLayout()
         vQuit.setAlignment(QtCore.Qt.AlignTop | QtCore.Qt.AlignRight)
         vQuit.setContentsMargins(0,0,0,0)
+
+        #Delete and Edit buttons
         btnDel = QtWidgets.QPushButton(qta.icon("fa.times", color="#f9f9f9"), "")
         btnDel.setObjectName("quitBtn")
         btnDel.setMinimumSize(QtCore.QSize(30,30))
+        btnDel.clicked.connect(lambda:CreateUI.delPassword(self))
         vQuit.addWidget(btnDel)
+
+        btnEdit = QtWidgets.QPushButton(qta.icon("fa.edit", color="#f9f9f9"), "")
+        btnEdit.setMinimumSize(QtCore.QSize(30,30))
+        btnEdit.clicked.connect(lambda:passwords.Passwords.editPassword(self))
+        vQuit.addWidget(btnEdit)
+
         wQuit = QtWidgets.QWidget()
         wQuit.setLayout(vQuit)
         lMain.addWidget(wQuit, 0, 1)
@@ -46,6 +68,7 @@ class CreateUI(QtWidgets.QWidget):
         lPassIndexLabel = QtWidgets.QLabel("Index:")
         lPassIndexLabel.setObjectName("passLabel")
         gMain.addWidget(lPassIndexLabel, 1, 0)
+        global lPassIndex
         lPassIndex = QtWidgets.QLabel(str(passIndex))
         lPassIndex.setObjectName("passLabel")
         gMain.addWidget(lPassIndex, 1, 1)
@@ -137,11 +160,28 @@ class CreateUI(QtWidgets.QWidget):
         lDate.setTextInteractionFlags(QtCore.Qt.TextSelectableByMouse)
         gMain.addWidget(lDate, 9, 1)
 
+        lCommentLabel = QtWidgets.QLabel("Comment:")
+        gMain.addWidget(lCommentLabel, 10, 0)
+        lComment = QtWidgets.QLabel(comment)
+        lComment.setTextInteractionFlags(QtCore.Qt.TextSelectableByMouse)
+        gMain.addWidget(lComment, 10, 1)
+
         wMain.setLayout(lMain)
         vBack.addWidget(wMain)
 
         self.setLayout(vBack)
         self.setSizePolicy(QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Maximum, QtWidgets.QSizePolicy.Maximum))
+    
+    #Works! Sortof! The password gets removed but only in a temporary local manner. The db still contains the item. Probably a permission issue
+    def delPassword(self):
+        print(self.index)
+        text, ok = QtWidgets.QInputDialog.getText(self, 'Delete?', 'Confirm deletion by typing delete:')
+        if ok:
+            if text=="delete":
+                dab.DatabaseActions.delete(self, "passwords", self.index)
+                passwords.Passwords.createPassSlates(self)
+            else:
+                CreateUI.delPassword(self)
 
 #Idea, that the password is reveald only for a certain ammount of time when a button is pressed
 class passButton(QtWidgets.QWidget):

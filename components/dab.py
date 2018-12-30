@@ -205,13 +205,29 @@ class DatabaseActions():
         data = cur.fetchall()
         print(data)
     
-    def update(self, table, row, columns, context):
-        #Change stuff
-        print()
+    def update(self, table, context, row=0):
+        #update row
+        if table == "passwords":
+            print("Updating password")
+            cur.execute("UPDATE passwords.passTable "
+            "SET (name = %(name)s, email = %(email)s, username = %(uName)s, category = %(cat)s, lastUsed = %(lstUsed)s, "
+            "generated = %(gen)s, banner = %(ban)s, twoFA = %(twofactor)s, encryptedPassword = %(crypticPass)s)"
+            "WHERE prim = %(index)s", context)
+            connection.commit()
+        else:
+            print("Invalid table name for deletion")
 
     def delete(self, table, row):
         #delete row
-        print()
+        thisRow = { "theRow":row}
+        if table == "passwords":
+            print("Removing row {0} from {1}".format(row, table))
+            cur.execute("DELETE FROM passwords.passTable WHERE prim = %(theRow)s", thisRow)
+        elif table == "configs":
+            print("Removing row {0} from {1}".format(row, table))
+            cur.execute("DELETE FROM passwords.passTable WHERE prim = %(theRow)s", thisRow)
+        else:
+            print("Invalid table name for deletion")
     
     def testPassword(self, password, configRow=1):
         crypt.Encryption()
