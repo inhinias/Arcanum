@@ -189,7 +189,7 @@ class DatabaseActions():
             connection.commit()
         
         elif table == "configs":
-            print("Inserting password")
+            print("Inserting config")
             cur.execute("INSERT INTO passwords.configs"
             "(configName, emailAddress, decryptTest, standardKeyLength, lastChanged)"
             "VALUES (%(name)s, %(email)s, %(dTest)s, %(keyLen)s, %(lstChanged)s)", context)
@@ -210,8 +210,8 @@ class DatabaseActions():
         if table == "passwords":
             print("Updating password")
             cur.execute("UPDATE passwords.passTable "
-            "SET (name = %(name)s, email = %(email)s, username = %(uName)s, category = %(cat)s, lastUsed = %(lstUsed)s, "
-            "generated = %(gen)s, banner = %(ban)s, twoFA = %(twofactor)s, encryptedPassword = %(crypticPass)s)"
+            "SET name = %(name)s, email = %(email)s, username = %(uName)s, category = %(cat)s, lastUsed = %(lstUsed)s, "
+            "generated = %(gen)s, banner = %(ban)s, twoFA = %(twofactor)s, encryptedPassword = %(crypticPass)s"
             "WHERE prim = %(index)s", context)
             connection.commit()
         else:

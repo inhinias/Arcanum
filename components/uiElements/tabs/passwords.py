@@ -142,8 +142,8 @@ class Passwords(QtWidgets.QWidget):
             cbCategories.currentText(), 
             cbBanner.currentText(),
             pteComment.toPlainText(),
-            chkEncAll.isChecked()),
-            True)
+            chkEncAll.isChecked(),
+            True))
         vPExtras.addWidget(btnPWUpdate)
 
         self.setLayout(vPassMain)
@@ -189,6 +189,7 @@ class Passwords(QtWidgets.QWidget):
                 "ban":str(theBanner),
                 "comment":str(theComment),
                 "index":currentPassIndex}
+        print(update)
         if update:
             dab.DatabaseActions.update(self, "passwords", insertionData)
         else:
