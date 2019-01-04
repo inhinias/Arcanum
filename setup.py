@@ -3,8 +3,8 @@ import os
 import sys
 from setuptools import setup
 
-if sys.version_info < (3, 3):
-    sys.exit('Python 3 is required to run Lutris')
+if sys.version_info < (3, 5):
+    sys.exit('Python 3.5 is required to run arcanum')
 
 data_files = []
 
