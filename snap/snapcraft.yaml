@@ -15,7 +15,7 @@
     arcanum:
       plugin: python
       python-version: python3
-      source: git@github.com:JFK422/Arcanum.git
+      source: .
       python-packages:
         - mysql-connector
         - PyQt5
