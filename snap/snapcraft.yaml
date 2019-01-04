@@ -18,11 +18,11 @@
       source: https://github.com/JFK422/Arcanum
       requirements: requirements.txt
       python-packages:
-        -mysql-connector
-        -PyQt5
-        -sip
-        -python-gnupg
-        -QtAwesome
-        -QtPy
-        -six
-        -pytest
+        - mysql-connector
+        - PyQt5
+        - sip
+        - python-gnupg
+        - QtAwesome
+        - QtPy
+        - six
+        - pytest
