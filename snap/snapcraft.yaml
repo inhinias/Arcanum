@@ -10,11 +10,19 @@
 
   grade: devel # must be 'stable' to release into candidate/stable channels
   confinement: devmode # use 'strict' once you have the right plugs and slots
-  
-  requirements: requirements.txt
 
   parts:
-    my-part:
-      # See 'snapcraft plugins'
-      plugin: nil
-  
+    arcanum:
+      plugin: python
+      python-version: python3
+      source: https://github.com/JFK422/Arcanum
+      requirements: requirements.txt
+      python-packages:
+        -mysql-connector
+        -PyQt5
+        -sip
+        -python-gnupg
+        -QtAwesome
+        -QtPy
+        -six
+        -pytest
