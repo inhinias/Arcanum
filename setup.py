@@ -20,7 +20,7 @@ for directory, _, filenames in os.walk(u'share'):
 
 setup(
     name='arcanum',
-    version=VERSION,
+    version='0.0.1',
     license='GPL-3',
     author='JFK422',
     author_email='galenite@protonmail.com',
