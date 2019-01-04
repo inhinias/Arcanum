@@ -13,10 +13,9 @@
 
   parts:
     arcanum:
-      plugin: python
+      plugin: python3
       python-version: python3
       source: https://github.com/JFK422/Arcanum
-      requirements: requirements.txt
       python-packages:
         - mysql-connector
         - PyQt5
