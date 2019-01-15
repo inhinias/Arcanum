@@ -164,6 +164,10 @@ class Passwords(QtWidgets.QWidget):
         if theUsername == "":
             theUsername = emailAdd
 
+        #Get the setting if the passwords should be salted
+        config = dab.DatabaseActions.read(self, "configs", rows=1)
+        decryptedData = crypt.Encryption.decrypt(self, config[0])
+
         #decide if everything or just the name, email, username and password should be encrypted and inserted
         if encEverything:
             insertionData = {"name":crypt.Encryption.encrypt(self, passName),
@@ -176,7 +180,8 @@ class Passwords(QtWidgets.QWidget):
                 "cat":crypt.Encryption.encrypt(self, theCategory), 
                 "ban":crypt.Encryption.encrypt(self, theBanner),
                 "comment":crypt.Encryption.encrypt(self, theComment),
-                "index":currentPassIndex}
+                "index":currentPassIndex,
+                "salt":decryptedData[5]}
         else:
             insertionData = {"name":crypt.Encryption.encrypt(self, passName),
                 "email":crypt.Encryption.encrypt(self, emailAdd),
@@ -188,7 +193,8 @@ class Passwords(QtWidgets.QWidget):
                 "cat":str(theCategory), 
                 "ban":str(theBanner),
                 "comment":str(theComment),
-                "index":currentPassIndex}
+                "index":currentPassIndex,
+                "salt":decryptedData[5]}
         print(update)
         if update:
             dab.DatabaseActions.update(self, "passwords", insertionData)
@@ -265,7 +271,7 @@ class Passwords(QtWidgets.QWidget):
 
             #Array and tuple for keeping the order on the slate and for storing everything decrypted of an index
             decData = []
-            readOrder = (0,1,5,6,7,2,3,4,8,10)
+            readOrder = (0,1,5,6,7,2,3,4,8,10,11)
 
             #Loop for decrypting everything and testing if it actually needs to be decrypted
             for j in range(len(readOrder)):
@@ -276,7 +282,7 @@ class Passwords(QtWidgets.QWidget):
                     decData.append(data[i][readOrder[j]])
 
             #Note the password is fetched and decrypted in the passSlate widget based on the given index!
-            passSlate.setup(decData[0], decData[1], decData[2], decData[3], decData[4], decData[5], decData[6], decData[7], decData[8], decData[9])
+            passSlate.setup(decData[0], decData[1], decData[2], decData[3], decData[4], decData[5], decData[6], decData[7], decData[8], decData[9], decData[10])
 
             #decide where in the grid the new slate should be added.
             #Needs some math to base it on the width of the passScroll widget

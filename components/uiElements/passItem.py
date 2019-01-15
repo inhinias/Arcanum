@@ -5,7 +5,7 @@ from components.uiElements import seperator
 from components.uiElements.tabs import passwords
 
 class CreateUI(QtWidgets.QWidget):
-    def setup(self, passIndex, name, lastChanged, generated, banner="", email="", username="", category="generic", twoFa="False", comment=""):
+    def setup(self, passIndex, name, lastChanged, generated, banner="", email="", username="", category="generic", twoFa="False", comment="", salted=False):
         #Main layouts and layout widgets
         lMain = QtWidgets.QGridLayout()
         lMain.setContentsMargins(0,0,0,0)
@@ -105,8 +105,12 @@ class CreateUI(QtWidgets.QWidget):
         lPasswordLabel.setObjectName("passLabel")
         gMain.addWidget(lPasswordLabel, 5, 0)
         data = dab.DatabaseActions.read(self, table="passTable", rows=passIndex)
-        lPassword = QtWidgets.QLabel(crypt.Encryption.decrypt(self, data[9])[0] )
+        lPassword = QtWidgets.QLabel("")
         lPassword.setTextInteractionFlags(QtCore.Qt.TextSelectableByMouse)
+        if str(salted) == "True":
+            lPassword.setText(str(crypt.Encryption.decrypt(self, data[9])[0])[:-3])
+        else:
+            lPassword.setText(str(crypt.Encryption.decrypt(self, data[9])[0]))
         gMain.addWidget(lPassword, 5, 1)
 
         #Use later to decrypt the password on demand
@@ -152,19 +156,28 @@ class CreateUI(QtWidgets.QWidget):
             lGenerated.setText("Error")
         gMain.addWidget(lGenerated, 8, 1)
 
+        lSaltedLabel = QtWidgets.QLabel("Salted:")
+        lSaltedLabel.setObjectName("passLabel")
+        gMain.addWidget(lSaltedLabel, 9, 0)
+        lSalted = QtWidgets.QLabel(str(salted))
+        lSalted.setObjectName("passLabel")
+        gMain.addWidget(lSalted, 9, 1)
+
         lDateLabel = QtWidgets.QLabel("Last Changed:")
         lDateLabel.setObjectName("passLabel")
-        gMain.addWidget(lDateLabel, 9, 0)       
+        gMain.addWidget(lDateLabel, 10, 0)       
         lDate = QtWidgets.QLabel(str(lastChanged).split(".")[0])
         lDate.setObjectName("passLabel")
         lDate.setTextInteractionFlags(QtCore.Qt.TextSelectableByMouse)
-        gMain.addWidget(lDate, 9, 1)
+        gMain.addWidget(lDate, 10, 1)
 
         lCommentLabel = QtWidgets.QLabel("Comment:")
-        gMain.addWidget(lCommentLabel, 10, 0)
+        lCommentLabel.setObjectName("passLabel")
+        gMain.addWidget(lCommentLabel, 11, 0)
         lComment = QtWidgets.QLabel(comment)
+        lComment.setObjectName("passLabel")
         lComment.setTextInteractionFlags(QtCore.Qt.TextSelectableByMouse)
-        gMain.addWidget(lComment, 10, 1)
+        gMain.addWidget(lComment, 11, 1)
 
         wMain.setLayout(lMain)
         vBack.addWidget(wMain)
@@ -172,7 +185,8 @@ class CreateUI(QtWidgets.QWidget):
         self.setLayout(vBack)
         self.setSizePolicy(QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Maximum, QtWidgets.QSizePolicy.Maximum))
     
-    #Works! Sortof! The password gets removed but only in a temporary local manner. The db still contains the item. Probably a permission issue
+    #Works! Kinda! The password gets removed but only in a temporary local manner.
+    #The db still contains the item. Probably a permission issue!
     def delPassword(self):
         print(self.index)
         text, ok = QtWidgets.QInputDialog.getText(self, 'Delete?', 'Confirm deletion by typing delete:')

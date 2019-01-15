@@ -38,8 +38,12 @@ class Settings(QtWidgets.QWidget):
         config = dab.DatabaseActions.read(self, "configs")
         decryptedConfig = []
         for i in range(1, len(config)):
-            decryptedConfig.append(crypt.Encryption.decrypt(self, config[i])[0])
-        if decryptedConfig[5] == "False": chkSaltedEncrypt.setChecked(False)
+            decryptedData = crypt.Encryption.decrypt(self, config[i])
+            if decryptedData[1]:
+                decryptedConfig.append(decryptedData[0])
+            else:
+                decryptedConfig.append(config[i])
+        if decryptedConfig[5] == 1: chkSaltedEncrypt.setChecked(False)
         else: chkSaltedEncrypt.setChecked(True)
 
         liAddresses.clear()
