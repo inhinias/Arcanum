@@ -11,6 +11,10 @@
     - amd64
   grade: devel # must be 'stable' to release into candidate/stable channels
   confinement: devmode # use 'strict' once you have the right plugs and slots
+  
+  apps:
+    arcanum:
+      command: python3 index.py
 
   parts:
     arcanum:
