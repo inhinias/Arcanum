@@ -34,22 +34,18 @@ class Settings(QtWidgets.QWidget):
         self.setLayout(gSettingsMain)
 
     def createData(self):
-        #Read the database for the settings and decrypt them
-        config = dab.DatabaseActions.read(self, "configs")
-        decryptedConfig = []
-        for i in range(1, len(config)):
-            decryptedData = crypt.Encryption.decrypt(self, config[i])
-            if decryptedData[1]:
-                decryptedConfig.append(decryptedData[0])
-            else:
-                decryptedConfig.append(config[i])
-        if decryptedConfig[5] == 1: chkSaltedEncrypt.setChecked(False)
-        else: chkSaltedEncrypt.setChecked(True)
+        #Check if salt is used and tick the checkbox if needed
+        salt = False
+        if dab.DatabaseActions.read(self, "configs", rows=1)[6] == 1: salt=True
 
+        if salt: chkSaltedEncrypt.setChecked(False)
+        else: chkSaltedEncrypt.setChecked(True)
+        
+        #Add all the email adresses!
         liAddresses.clear()
         dataEmail = dab.DatabaseActions.read(self, table="configs", everything=True)
-        for i in range(len(dataEmail)):
-            liAddresses.addItem(crypt.Encryption.decrypt(self, dataEmail[i][2])[0])
+        for i in range(1, len(dataEmail)):
+            liAddresses.addItem(crypt.Encryption.decrypt(self, dataEmail[i][2], salt)[0])
             if i == 0:
                 create.CreateUI.updateProgressBar(self, 0)
             else:

@@ -1,4 +1,5 @@
 from PyQt5 import QtCore, QtWidgets
+from components import dab
 
 class Overview(QtWidgets.QWidget):
     def __init__(self):
@@ -73,7 +74,7 @@ class Overview(QtWidgets.QWidget):
         tNumPasswords.setObjectName("numPasswords")
         vOCenter.addWidget(tNumPasswords)
 
-        statTexts = ["Reused","Forgotten","Generated","2FA","In RockYou","Leaked"]
+        statTexts = ["Reused","Lost","Generated","2FA","EMail","Leaked"]
         for j in range(len(statTexts)):
             sStats = QtWidgets.QLabel(statTexts[j] + ":")
             sStats.setObjectName("oText")
@@ -90,9 +91,9 @@ class Overview(QtWidgets.QWidget):
         tReused.setObjectName("oText")
         gStats.addWidget(tReused,0,1)
 
-        tForgotten = QtWidgets.QLabel("0")
-        tForgotten.setObjectName("oText")
-        gStats.addWidget(tForgotten,1,1)
+        tLost = QtWidgets.QLabel("0")
+        tLost.setObjectName("oText")
+        gStats.addWidget(tLost,1,1)
 
         tGen = QtWidgets.QLabel("0")
         tGen.setObjectName("oText")
@@ -102,9 +103,9 @@ class Overview(QtWidgets.QWidget):
         tTwoFA.setObjectName("oText")
         gStats.addWidget(tTwoFA,3,1)
 
-        tRockYou = QtWidgets.QLabel("0")
-        tRockYou.setObjectName("oText")
-        gStats.addWidget(tRockYou,4,1)
+        tEmailAdresses = QtWidgets.QLabel(str(dab.DatabaseActions.getAmmount(self, "configs")-1))
+        tEmailAdresses.setObjectName("oText")
+        gStats.addWidget(tEmailAdresses,4,1)
 
         tLeaked = QtWidgets.QLabel("0")
         tLeaked.setObjectName("oText")
@@ -113,6 +114,9 @@ class Overview(QtWidgets.QWidget):
         hOverview.addLayout(gStrength)
         hOverview.addWidget(wOCenter)
         hOverview.addLayout(gStats)
+
+        dab.DatabaseActions.getAmmount(self, "banners")
+        dab.DatabaseActions.getAmmount(self, "categories")
 
         self.setLayout(hOverview)
     

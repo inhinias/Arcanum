@@ -106,8 +106,8 @@ class DatabaseActions():
 
             if ammount == 0:
                 print("Adding Generic as a category")
-                name = crypt.Encryption.encrypt(self, "Generic")
-                path = crypt.Encryption.encrypt(self, "")
+                name = "Generic"
+                path = ""
                 catDict = {"name":name, "path":path}
                 cur.execute("INSERT INTO passwords.categories (name, icon) VALUES (%(name)s, %(path)s)", catDict)
                 connection.commit()
@@ -117,8 +117,8 @@ class DatabaseActions():
             ammount = cur.fetchall()[0][0]
             if ammount == 0:
                 print("Adding a basic banner")
-                name = crypt.Encryption.encrypt(self, "Generic")
-                path = crypt.Encryption.encrypt(self, "./resources/icons/icon256.png")
+                name = "Generic"
+                path = "./resources/icons/icon256.png"
                 banDict = {"name":name, "path":path}
                 cur.execute("INSERT INTO passwords.banners (name, path) VALUES (%(name)s, %(path)s)", banDict)
                 connection.commit()
@@ -133,7 +133,7 @@ class DatabaseActions():
                 'name':"Generic", 
                 'emailAdd':"", 
                 'keyLen':4096, 
-                "lastChgd":crypt.Encryption.encrypt(self, str(datetime.datetime.now())), 
+                "lastChgd":str(datetime.datetime.now()), 
                 "useSalt":True}
                 cur.execute("INSERT INTO passwords.configs (configName, emailAddress, decryptTest, standardKeyLength, lastChanged, useSaltedEnc)"
                 "VALUES (%(name)s, %(emailAdd)s, %(randString)s, %(keyLen)s, %(lastChgd)s, %(useSalt)s)", data)

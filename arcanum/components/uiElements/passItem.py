@@ -40,6 +40,9 @@ class CreateUI(QtWidgets.QWidget):
         else:
         """
 
+        if str(salted) == "True": salted = True
+        else: salted = False
+
         #There is a layout (lmain) which holds the banner and the delete button so the delet btn can be directly in the corner
         iBanner.setPixmap(QtGui.QPixmap("./resources/icons/icon256.png").scaled(128, 128, QtCore.Qt.KeepAspectRatio))
         lMain.addWidget(iBanner, 0, 0)
@@ -107,10 +110,10 @@ class CreateUI(QtWidgets.QWidget):
         data = dab.DatabaseActions.read(self, table="passTable", rows=passIndex)
         lPassword = QtWidgets.QLabel("")
         lPassword.setTextInteractionFlags(QtCore.Qt.TextSelectableByMouse)
-        if str(salted) == "True":
-            lPassword.setText(str(crypt.Encryption.decrypt(self, data[9])[0])[:-3])
+        if salted:
+            lPassword.setText(str(crypt.Encryption.decrypt(self, data[9], salted)[0]))
         else:
-            lPassword.setText(str(crypt.Encryption.decrypt(self, data[9])[0]))
+            lPassword.setText(str(crypt.Encryption.decrypt(self, data[9], salted)[0]))
         gMain.addWidget(lPassword, 5, 1)
 
         #Use later to decrypt the password on demand
@@ -139,7 +142,7 @@ class CreateUI(QtWidgets.QWidget):
         elif twoFa == "True":
             lTwoFA.setText("2FA: Active")
         else:
-            lTwoFA.setText("2FA: Error")
+            lTwoFA.setText("2FA: Error:{0}".format(twoFa))
         gMain.addWidget(lTwoFA, 7, 1)
 
         lGeneratedLabel = QtWidgets.QLabel("Generated:")

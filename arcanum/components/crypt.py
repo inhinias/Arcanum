@@ -19,22 +19,24 @@ class Encryption:
         key = gpg.gen_key(inputData)
         return key
 
-    def encrypt(self, theData, recipients=None):
+    def encrypt(self, theData, recipients=None, useSymmetric=True):
         config = dab.DatabaseActions.read(self, "configs", rows=1)
-        decryptedData = Encryption.decrypt(self, config[0])
-        print(decryptedData[5])
-        if decryptedData[5] == 1: 
+        if config[6] == 1: 
             #Use Salt for encryption
             encrypted = str(gpg.encrypt(data=str(theData) + Encryption.genPassword(self, salt=True),
-                recipients=recipients, passphrase=Encryption.password, symmetric=True))
+                recipients=recipients, passphrase=Encryption.password, symmetric=useSymmetric))
         else:
             #Dont use salt for encryption
-            encrypted = str(gpg.encrypt(data=str(theData), recipients=recipients, passphrase=Encryption.password, symmetric=True))
+            encrypted = str(gpg.encrypt(data=str(theData), recipients=recipients, passphrase=Encryption.password, symmetric=useSymmetric))
         return encrypted
     
-    def decrypt(self, theData):
-        decrypted = gpg.decrypt(message=str(theData), passphrase=Encryption.password)
-        return str(decrypted), decrypted.ok, decrypted.status
+    def decrypt(self, theData, salt=False):
+        if salt:
+            decrypted = gpg.decrypt(message=str(theData), passphrase=Encryption.password)
+            return str(decrypted)[:-3], decrypted.ok, decrypted.status
+        else:
+            decrypted = gpg.decrypt(message=str(theData), passphrase=Encryption.password)
+            return str(decrypted), decrypted.ok, decrypted.status
 
     def encryptFile(self, theData, recipients=None):
         encrypted = str(gpg.encrypt_file(data=theData, recipients=recipients, passphrase=Encryption.password, symmetric=True))
