@@ -260,6 +260,7 @@ class Passwords(QtWidgets.QWidget):
         salted = dab.DatabaseActions.read(self, "configs", rows=1)[6]
         if salted == 1: salted = True
         else: salted = False
+        print("Salted: {0}".format(salted))
         create.CreateUI.updateProgressBar(self, 5)
 
         row = 0
@@ -288,9 +289,19 @@ class Passwords(QtWidgets.QWidget):
                     decData.append(decrypt[0])
                 else:
                     decData.append(data[i][readOrder[j]])
-
+            print(decData)
             #Note the password is fetched and decrypted in the passSlate widget based on the given index!
-            passSlate.setup(decData[0], decData[1], decData[2], decData[3], decData[4], decData[5], decData[6], decData[7], decData[8], decData[9], decData[10])
+            passSlate.setup(passIndex = decData[0],
+                            name = decData[1],
+                            lastChanged = decData[2],
+                            generated = decData[3],
+                            banner = decData[4],
+                            email = decData[5],
+                            username = decData[6],
+                            category = decData[7], 
+                            twoFa  = decData[8],
+                            comment = decData[9],
+                            salted = decData[10])
 
             #decide where in the grid the new slate should be added.
             #Needs some math to base it on the width of the passScroll widget
@@ -317,7 +328,7 @@ class Passwords(QtWidgets.QWidget):
         cbEmail.addItem("None")
         dataEmail = dab.DatabaseActions.read(self, table="configs", everything=True)
         for i in range(1, len(dataEmail)):
-            cbEmail.addItem(crypt.Encryption.decrypt(self, dataEmail[i][2])[0], salted)
+            cbEmail.addItem(crypt.Encryption.decrypt(self, dataEmail[i][2], salted)[0])
         create.CreateUI.updateProgressBar(self, create.CreateUI.getProgressValue(self)+5)
 
         dataCat = dab.DatabaseActions.read(self, table="categories", everything=True)

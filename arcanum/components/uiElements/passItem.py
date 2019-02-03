@@ -42,6 +42,7 @@ class CreateUI(QtWidgets.QWidget):
 
         if str(salted) == "True": salted = True
         else: salted = False
+        print("Salted {0}".format(salted))
 
         #There is a layout (lmain) which holds the banner and the delete button so the delet btn can be directly in the corner
         iBanner.setPixmap(QtGui.QPixmap("./resources/icons/icon256.png").scaled(128, 128, QtCore.Qt.KeepAspectRatio))
