@@ -14,7 +14,7 @@
   
   apps:
     arcanum:
-      command: python3 index.py
+      command: python3 ./arcanum/index.py
 
   parts:
     arcanum:
