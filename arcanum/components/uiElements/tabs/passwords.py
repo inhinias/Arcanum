@@ -150,6 +150,9 @@ class Passwords(QtWidgets.QWidget):
 
         #PasswordsName, email, Username, Password, 2fa, category, banner
     def addPassword(self, passName, emailAdd, theUsername, thePassword, generated, twoFAEnabled, theCategory, theBanner, theComment, encEverything, update=False, index=0):
+        #Get the setting if the passwords should be salted
+        salted = dab.DatabaseActions.read(self, "configs", rows=1)[6]
+
         #Check if the given email is already in the databse an add it if not
         duplicate = False
         emailData = dab.DatabaseActions.read(self, "configs", True)
@@ -176,11 +179,12 @@ class Passwords(QtWidgets.QWidget):
                 "cat":crypt.Encryption.encrypt(self, theCategory), 
                 "ban":crypt.Encryption.encrypt(self, theBanner),
                 "comment":crypt.Encryption.encrypt(self, theComment),
-                "index":currentPassIndex}
+                "index":currentPassIndex,
+                "salt":salted}
         else:
             insertionData = {"name":crypt.Encryption.encrypt(self, passName),
                 "email":crypt.Encryption.encrypt(self, emailAdd),
-                "uName":crypt.Encryption.encrypt(self, theUsername),
+                "uName":theUsername,
                 "lstUsed":str(datetime.datetime.now()), 
                 "gen":str(generated), 
                 "crypticPass":crypt.Encryption.encrypt(self, thePassword), 
@@ -188,7 +192,8 @@ class Passwords(QtWidgets.QWidget):
                 "cat":str(theCategory), 
                 "ban":str(theBanner),
                 "comment":str(theComment),
-                "index":currentPassIndex}
+                "index":currentPassIndex,
+                "salt":salted}
         print(update)
         if update:
             dab.DatabaseActions.update(self, "passwords", insertionData)
@@ -212,12 +217,17 @@ class Passwords(QtWidgets.QWidget):
         self.category = category
         self.twoFa = twoFa
         """
+        #Get the setting if the passwords should be salted
+        salted = dab.DatabaseActions.read(self, "configs", rows=1)[6]
+        if salted == 1: salted = True
+        else: salted = False
+
         btnPWCreate.setHidden(True)
         btnPWUpdate.setHidden(False)
         global currentPassIndex
         currentPassIndex = self.index
         data = dab.DatabaseActions.read(self, table="passTable", rows=self.index)
-        lPassword = crypt.Encryption.decrypt(self, data[9])[0]
+        lPassword = crypt.Encryption.decrypt(self, data[9], salted)[0]
 
         lePassName.setText(self.name)
         cbEmail.setCurrentIndex(cbEmail.findText(self.email))
@@ -243,10 +253,14 @@ class Passwords(QtWidgets.QWidget):
 
     #Refine, that if nothing has changed nothing will be regenerated
     def createPassSlates(self):
+        #Set the progressbar to 0, clear the passwords grid, get config for salt and update progress to 5%
         create.CreateUI.updateProgressBar(self, 0)
         for i in reversed(range(Passwords.gPasswords.count())):
             Passwords.gPasswords.itemAt(i).widget().setParent(None)
-            
+        salted = dab.DatabaseActions.read(self, "configs", rows=1)[6]
+        if salted == 1: salted = True
+        else: salted = False
+        print("Salted: {0}".format(salted))
         create.CreateUI.updateProgressBar(self, 5)
 
         row = 0
@@ -254,6 +268,7 @@ class Passwords(QtWidgets.QWidget):
         #Ajust to the ammount of horizontal widgets
         widgetRowBreak = 4
 
+        #Get every password entry and save the time for calculating decrypt time
         data = dab.DatabaseActions.read(self, table="passTable", everything=True)
         slateProgressIncrement = 80/len(data)
         startTime = time.time()
@@ -265,18 +280,28 @@ class Passwords(QtWidgets.QWidget):
 
             #Array and tuple for keeping the order on the slate and for storing everything decrypted of an index
             decData = []
-            readOrder = (0,1,5,6,7,2,3,4,8,10)
+            readOrder = (0,1,5,6,7,2,3,4,8,10,11)
 
             #Loop for decrypting everything and testing if it actually needs to be decrypted
             for j in range(len(readOrder)):
-                decrypt = crypt.Encryption.decrypt(self, data[i][readOrder[j]])
+                decrypt = crypt.Encryption.decrypt(self, data[i][readOrder[j]], salted)
                 if decrypt[1]:
                     decData.append(decrypt[0])
                 else:
                     decData.append(data[i][readOrder[j]])
-
+            print(decData)
             #Note the password is fetched and decrypted in the passSlate widget based on the given index!
-            passSlate.setup(decData[0], decData[1], decData[2], decData[3], decData[4], decData[5], decData[6], decData[7], decData[8], decData[9])
+            passSlate.setup(passIndex = decData[0],
+                            name = decData[1],
+                            lastChanged = decData[2],
+                            generated = decData[3],
+                            banner = decData[4],
+                            email = decData[5],
+                            username = decData[6],
+                            category = decData[7], 
+                            twoFa  = decData[8],
+                            comment = decData[9],
+                            salted = decData[10])
 
             #decide where in the grid the new slate should be added.
             #Needs some math to base it on the width of the passScroll widget
@@ -299,23 +324,21 @@ class Passwords(QtWidgets.QWidget):
         print("Time taken for decryption: {0}".format(round(endTime-startTime, 3)))
                 
         #fill in all the comboboxes (email, categories, banners)
-        startTime = time.time()
         print("Decrypting combobox data")
         cbEmail.addItem("None")
         dataEmail = dab.DatabaseActions.read(self, table="configs", everything=True)
-        for i in range(len(dataEmail)):
-            cbEmail.addItem(crypt.Encryption.decrypt(self, dataEmail[i][2])[0])
+        for i in range(1, len(dataEmail)):
+            cbEmail.addItem(crypt.Encryption.decrypt(self, dataEmail[i][2], salted)[0])
         create.CreateUI.updateProgressBar(self, create.CreateUI.getProgressValue(self)+5)
 
         dataCat = dab.DatabaseActions.read(self, table="categories", everything=True)
+        print(dataCat)
         for i in range(len(dataCat)):
-            cbCategories.addItem(crypt.Encryption.decrypt(self, dataCat[i][1])[0])
+            cbCategories.addItem(dataCat[i][1])
         create.CreateUI.updateProgressBar(self, create.CreateUI.getProgressValue(self)+5)
 
         dataBanner = dab.DatabaseActions.read(self, table="banners", everything=True)
         for i in range(len(dataBanner)):
-            cbBanner.addItem(crypt.Encryption.decrypt(self, dataBanner[i][1])[0])
+            cbBanner.addItem(dataBanner[i][1])
         create.CreateUI.updateProgressBar(self, 100)
-        endTime = time.time()
-        print("Time taken for decryption: {0}".format(round(endTime-startTime, 3)))
         print("Passwords tab data set")

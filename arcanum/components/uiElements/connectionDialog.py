@@ -98,8 +98,9 @@ class CreateUI(QtWidgets.QWidget):
         crypt.Encryption.password = leCryptPass.text()
         if dab.DatabaseActions.connect(self, username, thePassword, address, thePort, theDatabase):
             if dab.DatabaseActions.testPassword(self, leCryptPass.text()):
-                create.CreateUI.setData(self, 0)
                 self.hide()
+                index.Window.createMain(self)
+
             else:
                 print("Wrong Password!")
                 if lWrongPass.isVisible():
@@ -127,8 +128,6 @@ class CreateUI(QtWidgets.QWidget):
     #Method for minimizing the dialog
     def minimize(self):
         self.showMinimized()
-    
-
 
     #Methods for moving the window with a custom titlebar
     def mousePressEvent(self, event):
@@ -147,6 +146,8 @@ class CreateUI(QtWidgets.QWidget):
         global clickPos
         if dragging and clickPos.y() < 121:
             self.move(self.pos() + (event.pos() - clickPos))
+    
+
 
 #For executing this file standalone
 if __name__ == '__main__':

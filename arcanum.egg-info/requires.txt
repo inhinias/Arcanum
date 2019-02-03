@@ -1,7 +1,0 @@
-mysql-connector
-PyQt5
-PyQt5-sip
-python-gnupg
-QtAwesome
-QtPy
-six

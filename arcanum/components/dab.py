@@ -21,7 +21,7 @@ class DatabaseActions():
             #Defina all the necessary tables
             tables = {}
             tables['passTable'] = (
-                "CREATE TABLE IF NOT EXISTS passTable("
+                "CREATE TABLE IF NOT EXISTS passwords.passTable("
                 "prim int(11) PRIMARY KEY"
                 "name VARCHAR(300)"
                 "email VARCHAR(300)"
@@ -35,22 +35,23 @@ class DatabaseActions():
                 "comment VARCHAR(300))"
             )
             tables['configs'] = (
-                "CREATE TABLE IF NOT EXISTS configs("
+                "CREATE TABLE IF NOT EXISTS passwords.configs("
                 "prim int(11) PRIMARY KEY"
                 "configName VARCHAR(300)"
                 "emailAddress VARCHAR(300)"
                 "decryptTest VARCHAR(300)"
                 "standarsKeyLength VARCHAR(300)"
-                "lastChanged VARCHAR(300))"
+                "lastChanged VARCHAR(300)"
+                "useSaltedEnc BOOL"
             )
             tables['categories'] = (
-                "CREATE TABLE IF NOT EXISTS categories("
+                "CREATE TABLE IF NOT EXISTS passwords.categories("
                 "prim int(11) PRIMARY KEY"
                 "name VARCHAR(300)"
                 "icon VARCHAR(300))"
             )
             tables['banners'] = (
-                "CREATE TABLE IF NOT EXISTS passTable("
+                "CREATE TABLE IF NOT EXISTS passwords.passTable("
                 "prim int(11) PRIMARY KEY"
                 "name VARCHAR(300)"
                 "path VARCHAR(300))"
@@ -105,8 +106,8 @@ class DatabaseActions():
 
             if ammount == 0:
                 print("Adding Generic as a category")
-                name = crypt.Encryption.encrypt(self, "Generic")
-                path = crypt.Encryption.encrypt(self, "")
+                name = "Generic"
+                path = ""
                 catDict = {"name":name, "path":path}
                 cur.execute("INSERT INTO passwords.categories (name, icon) VALUES (%(name)s, %(path)s)", catDict)
                 connection.commit()
@@ -116,8 +117,8 @@ class DatabaseActions():
             ammount = cur.fetchall()[0][0]
             if ammount == 0:
                 print("Adding a basic banner")
-                name = crypt.Encryption.encrypt(self, "Generic")
-                path = crypt.Encryption.encrypt(self, "./resources/icons/icon256.png")
+                name = "Generic"
+                path = "./resources/icons/icon256.png"
                 banDict = {"name":name, "path":path}
                 cur.execute("INSERT INTO passwords.banners (name, path) VALUES (%(name)s, %(path)s)", banDict)
                 connection.commit()
@@ -129,11 +130,11 @@ class DatabaseActions():
             #Populate the config if no data is present
             if ammount == 0:
                 data = {'randString':crypt.Encryption.encrypt(self, theData=crypt.Encryption.genPassword(self, letters="both", digits=True, length=16)),
-                'name':crypt.Encryption.encrypt(self, "Generic"), 
+                'name':"Generic", 
                 'emailAdd':"", 
-                'keyLen':crypt.Encryption.encrypt(self, "4096"), 
-                "lastChgd":crypt.Encryption.encrypt(self, str(datetime.datetime.now())), 
-                "useSalt":crypt.Encryption.encrypt(self, "True")}
+                'keyLen':4096, 
+                "lastChgd":str(datetime.datetime.now()), 
+                "useSalt":True}
                 cur.execute("INSERT INTO passwords.configs (configName, emailAddress, decryptTest, standardKeyLength, lastChanged, useSaltedEnc)"
                 "VALUES (%(name)s, %(emailAdd)s, %(randString)s, %(keyLen)s, %(lastChgd)s, %(useSalt)s)", data)
                 connection.commit()

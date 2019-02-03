@@ -14,13 +14,13 @@
   
   apps:
     arcanum:
-      command: python3 ./arcanum/index.py
+      command: python3 ./index.py
 
   parts:
     arcanum:
       plugin: python
       python-version: python3
-      source: .
+      source: ./arcanum
       python-packages:
         - mysql-connector
         - PyQt5
