@@ -82,24 +82,6 @@ class Passwords(QtWidgets.QWidget):
         chkTwoFA.setMaximumWidth(300)
         vPExtras.addWidget(chkEncAll)
 
-        lCategory = QtWidgets.QLabel("Category")
-        lCategory.setObjectName("smallLabel")
-        vPExtras.addWidget(lCategory)
-
-        global cbCategories
-        cbCategories = QtWidgets.QComboBox()
-        cbCategories.setMaximumWidth(300)
-        vPExtras.addWidget(cbCategories)
-
-        lBanner = QtWidgets.QLabel("Banner")
-        lBanner.setObjectName("smallLabel")
-        vPExtras.addWidget(lBanner)
-
-        global cbBanner
-        cbBanner = QtWidgets.QComboBox()
-        cbBanner.setMaximumWidth(300)
-        vPExtras.addWidget(cbBanner)
-
         global pteComment
         pteComment = QtWidgets.QTextEdit()
         pteComment.setPlaceholderText("Comment")
@@ -112,16 +94,15 @@ class Passwords(QtWidgets.QWidget):
         btnPWCreate = QtWidgets.QPushButton("Create New")
         btnPWCreate.setObjectName("btncreate")
         btnPWCreate.setMaximumWidth(300)
-        #PasswordsName, email, Username, Password, 2fa, category, banner
+
+        #PasswordsName, email, Username, Password, 2fa
         btnPWCreate.clicked.connect(lambda:Passwords.addPassword(
             self, lePassName.text(), 
             cbEmail.currentText(), 
             leUsername.text(), 
             leNewPass.text(), 
             chkGen.isChecked(), 
-            chkTwoFA.isChecked(), 
-            cbCategories.currentText(), 
-            cbBanner.currentText(),
+            chkTwoFA.isChecked(),
             pteComment.toPlainText(),
             chkEncAll.isChecked()))
         vPExtras.addWidget(btnPWCreate)
@@ -131,16 +112,14 @@ class Passwords(QtWidgets.QWidget):
         btnPWUpdate.setObjectName("btncreate")
         btnPWUpdate.setMaximumWidth(300)
         btnPWUpdate.setHidden(True)
-        #PasswordsName, email, Username, Password, 2fa, category, banner
+        #PasswordsName, email, Username, Password, 2fa
         btnPWUpdate.clicked.connect(lambda:Passwords.addPassword(
             self, lePassName.text(), 
             cbEmail.currentText(), 
             leUsername.text(), 
             leNewPass.text(), 
             chkGen.isChecked(), 
-            chkTwoFA.isChecked(), 
-            cbCategories.currentText(), 
-            cbBanner.currentText(),
+            chkTwoFA.isChecked(),
             pteComment.toPlainText(),
             chkEncAll.isChecked(),
             True))
@@ -148,11 +127,8 @@ class Passwords(QtWidgets.QWidget):
 
         self.setLayout(vPassMain)
 
-        #PasswordsName, email, Username, Password, 2fa, category, banner
-    def addPassword(self, passName, emailAdd, theUsername, thePassword, generated, twoFAEnabled, theCategory, theBanner, theComment, encEverything, update=False, index=0):
-        #Get the setting if the passwords should be salted
-        salted = dab.DatabaseActions.read(self, "configs", rows=1)[6]
-
+        #PasswordsName, email, Username, Password, 2fa
+    def addPassword(self, passName, emailAdd, theUsername, thePassword, generated, twoFAEnabled, theComment, encEverything, update=False, index=0):
         #Check if the given email is already in the databse an add it if not
         duplicate = False
         emailData = dab.DatabaseActions.read(self, "configs", True)
@@ -175,12 +151,9 @@ class Passwords(QtWidgets.QWidget):
                 "lstUsed":crypt.Encryption.encrypt(self, str(datetime.datetime.now())), 
                 "gen":crypt.Encryption.encrypt(self, generated), 
                 "crypticPass":crypt.Encryption.encrypt(self, thePassword), 
-                "twofactor":crypt.Encryption.encrypt(self, str(twoFAEnabled)), 
-                "cat":crypt.Encryption.encrypt(self, theCategory), 
-                "ban":crypt.Encryption.encrypt(self, theBanner),
+                "twofactor":crypt.Encryption.encrypt(self, str(twoFAEnabled)),
                 "comment":crypt.Encryption.encrypt(self, theComment),
-                "index":currentPassIndex,
-                "salt":salted}
+                "index":currentPassIndex}
         else:
             insertionData = {"name":crypt.Encryption.encrypt(self, passName),
                 "email":crypt.Encryption.encrypt(self, emailAdd),
@@ -188,12 +161,9 @@ class Passwords(QtWidgets.QWidget):
                 "lstUsed":str(datetime.datetime.now()), 
                 "gen":str(generated), 
                 "crypticPass":crypt.Encryption.encrypt(self, thePassword), 
-                "twofactor":str(twoFAEnabled), 
-                "cat":str(theCategory), 
-                "ban":str(theBanner),
+                "twofactor":str(twoFAEnabled),
                 "comment":str(theComment),
-                "index":currentPassIndex,
-                "salt":salted}
+                "index":currentPassIndex}
         print(update)
         if update:
             dab.DatabaseActions.update(self, "passwords", insertionData)
@@ -211,23 +181,17 @@ class Passwords(QtWidgets.QWidget):
         self.name = name
         self.lastChanged = lastChanged
         self.generated = generated
-        self.banner = banner
         self.email = email
         self.username = username
-        self.category = category
         self.twoFa = twoFa
         """
-        #Get the setting if the passwords should be salted
-        salted = dab.DatabaseActions.read(self, "configs", rows=1)[6]
-        if salted == 1: salted = True
-        else: salted = False
 
         btnPWCreate.setHidden(True)
         btnPWUpdate.setHidden(False)
         global currentPassIndex
         currentPassIndex = self.index
         data = dab.DatabaseActions.read(self, table="passTable", rows=self.index)
-        lPassword = crypt.Encryption.decrypt(self, data[9], salted)[0]
+        lPassword = crypt.Encryption.decrypt(self, data[9])[0]
 
         lePassName.setText(self.name)
         cbEmail.setCurrentIndex(cbEmail.findText(self.email))
@@ -238,8 +202,6 @@ class Passwords(QtWidgets.QWidget):
         if self.twoFa == "True": chkTwoFA.setChecked(True)
         else: chkTwoFA.setChecked(False)
         #chkEncAll needs to be implemented the long way because the variable isnt passed on!
-        cbCategories.setCurrentIndex(cbCategories.findText(self.category))
-        cbBanner.setCurrentIndex(cbBanner.findText(self.banner))
         pteComment.setText(self.comment)
 
     #Clears the list of the passwords
@@ -253,14 +215,10 @@ class Passwords(QtWidgets.QWidget):
 
     #Refine, that if nothing has changed nothing will be regenerated
     def createPassSlates(self):
-        #Set the progressbar to 0, clear the passwords grid, get config for salt and update progress to 5%
+        #Set the progressbar to 0, clear the passwords grid and update progress to 5%
         create.CreateUI.updateProgressBar(self, 0)
         for i in reversed(range(Passwords.gPasswords.count())):
             Passwords.gPasswords.itemAt(i).widget().setParent(None)
-        salted = dab.DatabaseActions.read(self, "configs", rows=1)[6]
-        if salted == 1: salted = True
-        else: salted = False
-        print("Salted: {0}".format(salted))
         create.CreateUI.updateProgressBar(self, 5)
 
         row = 0
@@ -284,7 +242,7 @@ class Passwords(QtWidgets.QWidget):
 
             #Loop for decrypting everything and testing if it actually needs to be decrypted
             for j in range(len(readOrder)):
-                decrypt = crypt.Encryption.decrypt(self, data[i][readOrder[j]], salted)
+                decrypt = crypt.Encryption.decrypt(self, data[i][readOrder[j]])
                 if decrypt[1]:
                     decData.append(decrypt[0])
                 else:
@@ -295,13 +253,10 @@ class Passwords(QtWidgets.QWidget):
                             name = decData[1],
                             lastChanged = decData[2],
                             generated = decData[3],
-                            banner = decData[4],
-                            email = decData[5],
-                            username = decData[6],
-                            category = decData[7], 
-                            twoFa  = decData[8],
-                            comment = decData[9],
-                            salted = decData[10])
+                            email = decData[4],
+                            username = decData[5],
+                            twoFa  = decData[6],
+                            comment = decData[7])
 
             #decide where in the grid the new slate should be added.
             #Needs some math to base it on the width of the passScroll widget
@@ -323,22 +278,11 @@ class Passwords(QtWidgets.QWidget):
         endTime = time.time()
         print("Time taken for decryption: {0}".format(round(endTime-startTime, 3)))
                 
-        #fill in all the comboboxes (email, categories, banners)
+        #fill in the combobox for the email addresses
         print("Decrypting combobox data")
         cbEmail.addItem("None")
         dataEmail = dab.DatabaseActions.read(self, table="configs", everything=True)
         for i in range(1, len(dataEmail)):
-            cbEmail.addItem(crypt.Encryption.decrypt(self, dataEmail[i][2], salted)[0])
-        create.CreateUI.updateProgressBar(self, create.CreateUI.getProgressValue(self)+5)
-
-        dataCat = dab.DatabaseActions.read(self, table="categories", everything=True)
-        print(dataCat)
-        for i in range(len(dataCat)):
-            cbCategories.addItem(dataCat[i][1])
-        create.CreateUI.updateProgressBar(self, create.CreateUI.getProgressValue(self)+5)
-
-        dataBanner = dab.DatabaseActions.read(self, table="banners", everything=True)
-        for i in range(len(dataBanner)):
-            cbBanner.addItem(dataBanner[i][1])
+            cbEmail.addItem(crypt.Encryption.decrypt(self, dataEmail[i][2])[0])
         create.CreateUI.updateProgressBar(self, 100)
         print("Passwords tab data set")

@@ -1,0 +1,28 @@
+**This is just a file to help me with test as I am unfamiliar with them!**
+
+#Check the output of a function
+assert stuff == WhatItShouldBe
+
+#Skip Tests
+@pytest.mark.skip(reason="I dont care!")
+@pytest.mark.skipif(conditionToSkip, reason="I do care!")
+
+#Test
+Name a function/method
+    test_... to run tests on it. (Same for the file!)
+    setup_... to run it before the tests.
+    teardown_... to run it after the tests.
+
+#Fixtures
+@pytest.fixture
+def someting():
+    return WhateverIsNeeded
+
+    yield WhateverIsNeeded
+    Execute a teardown_...
+
+def thing(someting):
+    WhateverIsNeeded.exec()
+
+Setup only once!
+@pytest.fixture(scope="module")

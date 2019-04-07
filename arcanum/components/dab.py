@@ -8,7 +8,7 @@ from PyQt5 import QtGui, QtCore, QtWidgets
 
 class DatabaseActions():
     #Connect to the database with the information given from the connectionDialog
-    #Add table creation here!!!
+    #Create all the necessary tables if needed
     def connect(self, username, thePassword, address, thePort=3306, theDatabase="passwords"):
         success = False
         try:
@@ -18,79 +18,96 @@ class DatabaseActions():
             global cur 
             cur = connection.cursor()
 
-            #Defina all the necessary tables
-            tables = {}
-            tables['passTable'] = (
-                "CREATE TABLE IF NOT EXISTS passwords.passTable("
-                "prim int(11) PRIMARY KEY"
-                "name VARCHAR(300)"
-                "email VARCHAR(300)"
-                "username VARCHAR(300)"
-                "category VARCHAR(300)"
-                "lastUsed VARCHAR(300)"
-                "generated VARCHAR(300)"
-                "banner VARCHAR(300)"
-                "twoFA VARCHAR(300)"
-                "encryptedPassword VARCHAR(300)"
-                "comment VARCHAR(300))"
-            )
-            tables['configs'] = (
-                "CREATE TABLE IF NOT EXISTS passwords.configs("
-                "prim int(11) PRIMARY KEY"
-                "configName VARCHAR(300)"
-                "emailAddress VARCHAR(300)"
-                "decryptTest VARCHAR(300)"
-                "standarsKeyLength VARCHAR(300)"
-                "lastChanged VARCHAR(300)"
-                "useSaltedEnc BOOL"
-            )
-            tables['categories'] = (
-                "CREATE TABLE IF NOT EXISTS passwords.categories("
-                "prim int(11) PRIMARY KEY"
-                "name VARCHAR(300)"
-                "icon VARCHAR(300))"
-            )
-            tables['banners'] = (
-                "CREATE TABLE IF NOT EXISTS passwords.passTable("
-                "prim int(11) PRIMARY KEY"
-                "name VARCHAR(300)"
-                "path VARCHAR(300))"
-            )
-
-            #Create all the tables
-            for table_name in tables:
-                table_description = tables[table_name]
-                try:
-                    print("Creating table {}: ".format(table_name), end='')
-                    cur.execute(table_description)
-                except connector.Error as err:
-                    if err.errno == connector.errorcode.ER_TABLE_EXISTS_ERROR:
-                        print("already exists.")
-                    else:
-                        print(err.msg)
-                else:
-                    print("OK")
-
-            #Report success
-            success = True
-
-        #Catch any error    
+        #Catch any error and retrn them to the connection dialog to dislpay
         except connector.Error as err:
             if err.errno == connector.errorcode.ER_ACCESS_DENIED_ERROR:
-                print("Access denied, wrong credentials?")
+                print("Access to the DB denied. Wrong credentials?")
+                return "Access to the DB denied. Wrong credentials?"
             elif err.errno == connector.errorcode.ER_BAD_DB_ERROR:
-                print("Database not found!")
+                print("Bad DB error. Does the database exist?")
+                return "Bad DB error. Does the database exist?"
             else:
                 print(err)
-            print("Unable to connect")
-        return success
+            return err
+        
+        #Return true if no error occurred otherwise the error code will be returned
+        else: return True
 
-    #Close the connection and the cursor
+    def createTables(self, databaseName):
+        #Define a tables dictionary. The table name 
+        tables = {}
+        tables['passTable'] = (
+            "CREATE TABLE IF NOT EXISTS " + databaseName + ".passTable("
+            "prim int(11) PRIMARY KEY,"
+            #Where the password is from
+            "`name` VARCHAR(300),"
+            #An email address with the account
+            "email VARCHAR(300),"
+            #The username to the password
+            "username VARCHAR(300),"
+            #When the password got last decrypted
+            "lastUsed VARCHAR(300),"
+            #If the pw got generated
+            "generated VARCHAR(300),"
+            #Is two factor authentication enabled
+            "twoFA VARCHAR(300),"
+            #The password in its encrypted form
+            "encryptedPassword VARCHAR(300),"
+            #Got anything to add? Put it here!
+            "`comment` VARCHAR(300));"
+        )
+        tables['configs'] = (
+            "CREATE TABLE IF NOT EXISTS " + databaseName + ".configs("
+            "prim int(11) PRIMARY KEY,"
+            #The standard email address. Further addresses are added in the rows after with the rest set to NULL.
+            "emailAddress VARCHAR(300),"
+            #This will be set at the first launch and used to test  if password/keys are correct.
+            "decryptTest VARCHAR(300),"
+            #How strong the asymmetic key length shold be
+            "keyLength 4096,"
+            #The last time the config got changed
+            "lastChanged VARCHAR(300));"
+        )
+
+        #For RSA encryption to maybe speed up the de/encryption process.
+        """
+        tables['keys'] = (
+            "CREATE TABLE IF NOT EXISTS " + databaseName + ".keys("
+            "prim int(11) PRIMARY KEY,"
+            #They keys value
+            "key VARCHAR(600),"
+            #How strong the key is
+            "keyLength 4096,"
+            #When the key got changed
+            "lastRotation VARCHAR(300)),"
+            #0=None, 1=AES256, 2=RSA
+            #Pub Key arent encrypted, Private keys are either AES or RSA encrypted.
+            "encryption INT"
+        )
+        """
+
+        #Create all the tables
+        for table_name in tables:
+            table_description = tables[table_name]
+            try:
+                print("Creating table {}: ".format(table_name), end='')
+                cur.execute(table_description)
+            except connector.Error as err:
+                if err.errno == connector.errorcode.ER_TABLE_EXISTS_ERROR:
+                    print("The wanted table already exists.")
+                else:
+                    print(err.msg)
+        print("All tables were create/exist!")
+
+    #Close the connection to the database and its cursor object
     def closeEverything(self):
         cur.close()
         connection.close()
 
     #Returns the length of a given table
+    #The wanted table gets determined with an if statment comparing the given table name string to a predetermined one here.
+    #This way of sieving out table names needs more lines but adds mor flexibilty for diffrent tables.
+    #It helps also to have less work with the database and keep everything in python.
     def getAmmount(self, table):
         ammount = 0
         if table=="passwords":
@@ -100,102 +117,62 @@ class DatabaseActions():
             except:
                 ammount = 0
 
-        elif table=="categories":
-            cur.execute("SELECT COUNT(*) FROM passwords.categories")
-            ammount = cur.fetchall()[0][0]
-
-            if ammount == 0:
-                print("Adding Generic as a category")
-                name = "Generic"
-                path = ""
-                catDict = {"name":name, "path":path}
-                cur.execute("INSERT INTO passwords.categories (name, icon) VALUES (%(name)s, %(path)s)", catDict)
-                connection.commit()
-
-        elif table=="banners":
-            cur.execute("SELECT COUNT(*) FROM passwords.banners")
-            ammount = cur.fetchall()[0][0]
-            if ammount == 0:
-                print("Adding a basic banner")
-                name = "Generic"
-                path = "./resources/icons/icon256.png"
-                banDict = {"name":name, "path":path}
-                cur.execute("INSERT INTO passwords.banners (name, path) VALUES (%(name)s, %(path)s)", banDict)
-                connection.commit()
-
         elif table=="configs":
             cur.execute("SELECT COUNT(*) FROM passwords.configs")
             ammount = cur.fetchall()[0][0]
-            
-            #Populate the config if no data is present
-            if ammount == 0:
-                data = {'randString':crypt.Encryption.encrypt(self, theData=crypt.Encryption.genPassword(self, letters="both", digits=True, length=16)),
-                'name':"Generic", 
-                'emailAdd':"", 
-                'keyLen':4096, 
-                "lastChgd":str(datetime.datetime.now()), 
-                "useSalt":True}
-                cur.execute("INSERT INTO passwords.configs (configName, emailAddress, decryptTest, standardKeyLength, lastChanged, useSaltedEnc)"
-                "VALUES (%(name)s, %(emailAdd)s, %(randString)s, %(keyLen)s, %(lastChgd)s, %(useSalt)s)", data)
-                connection.commit()
+
+        #The given table was not found, return nothing.
         else:
             print("unable to find table to get ammount of!")
-
+            ammount = None
 
         return ammount
     
+    #Read a table from the database
+    #If everything from the table is wanted: everything=True
+    #Else the wanted row needs to be given
     def read(self, table, everything=False, rows=1):
-        #Test the demand and return the according row
+        #Test if everything is wanted and return the according table
         if everything:
             print("Getting the everything from {0}".format(table))
             dictOfRow = {'theRow':rows}
             if table == "passTable":
                 cur.execute("SELECT * FROM passwords.passTable")
                 return cur.fetchall()
-            if table == "categories":
-                cur.execute("SELECT * FROM passwords.categories")
-                return cur.fetchall()
-            if table == "banners":
-                cur.execute("SELECT * FROM passwords.banners")
-                return cur.fetchall()
             if table == "configs":
                 cur.execute("SELECT * FROM passwords.configs")
                 return cur.fetchall()
 
+        #A row is wanted! Return the wanted one from the table
         else:
-            if rows >= 0:
+            if rows > 0:
                 print("Getting row: {0} from table: {1}".format(rows, table))
                 dictOfRow = {'theRow':rows}
                 if table == "passTable":
                     cur.execute("SELECT * FROM passwords.passTable WHERE prim = %(theRow)s", dictOfRow)
                     return cur.fetchall()[0]
-                if table == "categories":
-                    cur.execute("SELECT * FROM passwords.categories WHERE prim = %(theRow)s", dictOfRow)
-                    return cur.fetchall()[0]
-                if table == "banners":
-                    cur.execute("SELECT * FROM passwords.banners WHERE prim = %(theRow)s", dictOfRow)
-                    return cur.fetchall()[0]
                 if table == "configs":
                     cur.execute("SELECT * FROM passwords.configs WHERE prim = %(theRow)s", dictOfRow)
                     return cur.fetchall()[0]
 
+    #Insert data into the database
     def insert(self, table, context):
-        #insert stuff
-        #PasswordsName, email, Username, Password, 2fa, category, banner
+        #PasswordsName, email, Username, Password, 2fa
         if table == "passwords":
             print("Inserting password")
             cur.execute("INSERT INTO passwords.passTable"
-            "(name, email, username, category, lastUsed, generated, banner, twoFA, encryptedPassword)"
-            "VALUES (%(name)s, %(email)s, %(uName)s, %(cat)s, %(lstUsed)s, %(gen)s, %(ban)s, %(twofactor)s, %(crypticPass)s)", context)
+            "(name, email, username, category, lastUsed, generated, twoFA, encryptedPassword)"
+            "VALUES (%(name)s, %(email)s, %(uName)s, %(lstUsed)s, %(gen)s, %(twofactor)s, %(crypticPass)s)", context)
             connection.commit()
         
         elif table == "configs":
             print("Inserting config")
             cur.execute("INSERT INTO passwords.configs"
-            "(configName, emailAddress, decryptTest, standardKeyLength, lastChanged)"
-            "VALUES (%(name)s, %(email)s, %(dTest)s, %(keyLen)s, %(lstChanged)s)", context)
+            "(emailAddress, decryptTest, standardKeyLength, lastChanged)"
+            "VALUES (%(email)s, %(passTest)s, %(keyLen)s, %(lstChanged)s)", context)
             connection.commit()
-
+        
+        #The wanted table wasnt found. Doing nothing!
         else:
             print("Table not found!")
 
@@ -206,20 +183,23 @@ class DatabaseActions():
         data = cur.fetchall()
         print(data)
     
+    #Update a row in the given table
     def update(self, table, context, row=0):
-        #update row
+        #Atm there is only the passwords table, may be expanded further
         if table == "passwords":
             print("Updating password")
             cur.execute("UPDATE passwords.passTable "
-            "SET name = %(name)s, email = %(email)s, username = %(uName)s, category = %(cat)s, lastUsed = %(lstUsed)s, "
-            "generated = %(gen)s, banner = %(ban)s, twoFA = %(twofactor)s, encryptedPassword = %(crypticPass)s"
+            "SET name = %(name)s, email = %(email)s, username = %(uName)s, lastUsed = %(lstUsed)s, "
+            "generated = %(gen)s, twoFA = %(twofactor)s, encryptedPassword = %(crypticPass)s"
             "WHERE prim = %(index)s", context)
             connection.commit()
+        
+        #Do nothing upon a false table given
         else:
             print("Invalid table name for deletion")
 
+    #Delete a row in a given table
     def delete(self, table, row):
-        #delete row
         thisRow = { "theRow":row}
         if table == "passwords":
             print("Removing row {0} from {1}".format(row, table))
@@ -229,22 +209,4 @@ class DatabaseActions():
             cur.execute("DELETE FROM passwords.passTable WHERE prim = %(theRow)s", thisRow)
         else:
             print("Invalid table name for deletion")
-    
-    def testPassword(self, password, configRow=1):
-        crypt.Encryption()
-        passed = False
-        length = DatabaseActions.getAmmount(self, "configs")
-        if length > 0:
-            dictOfRow = {'theRow':configRow}
-            cur.execute("SELECT * FROM passwords.configs WHERE prim = %(theRow)s", dictOfRow)
-            passTest = crypt.Encryption.decrypt(self, theData=cur.fetchall()[0][3])
-            if passTest[1]:
-                return True
-            else:
-                return False
-        elif length == 0:
-            return True
-        else:
-            print("Error parsing config length while testing the password!")
-            return False
     

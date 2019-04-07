@@ -18,7 +18,6 @@ class CreateUI:
     newPass = None
     infoEdit = None
     password = ""
-    emailAddress = "kenneth.mathis99@gmail.com"
     def create(self):
         #Layouts
         #Main Layouts
@@ -136,6 +135,7 @@ class CreateUI:
 
         self.setLayout(vBack)
 
+    #Set all the data in the wanted tab
     def setData(self, tab):
         #Overview
         if tab == 0:
@@ -187,9 +187,6 @@ class CreateUI:
         #catch out of bounds
         else:
             print("The given tab index was not found!")
-
-        #general
-        CreateUI.emailAddress = crypt.Encryption.decrypt(self, dab.DatabaseActions.read(self, table="configs", rows=1)[1][0])
 
     def updateProgressBar(self, value):
         prgWorking.setVisible(True)

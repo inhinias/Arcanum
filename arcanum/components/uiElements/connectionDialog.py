@@ -3,14 +3,12 @@ from components import create, dab, crypt
 from PyQt5 import QtGui, QtCore, QtWidgets
 
 class CreateUI(QtWidgets.QWidget):
-    #Globals
-    msg = None
-    pEncStat = None
+    #Create the dialog window for the connection data
     def __init__(self):
         super(CreateUI, self).__init__(flags=QtCore.Qt.FramelessWindowHint)
         self.setGeometry(50,50,450,100)
         self.setWindowTitle("Connect")
-        self.setWindowFlags(self.windowFlags() | QtCore.Qt.FramelessWindowHint) #Use this for a frameless window. Will be used later!
+        self.setWindowFlags(self.windowFlags() | QtCore.Qt.FramelessWindowHint)
         self.center()
 
         tbLay = QtWidgets.QHBoxLayout()
@@ -20,12 +18,14 @@ class CreateUI(QtWidgets.QWidget):
         tbWid.setObjectName("titlebar")
         tbWid.setLayout(tbLay)
 
+        #Minimize button in the top left
         mini = QtWidgets.QPushButton(qta.icon("fa.minus", color="#f9f9f9"), "")
         mini.setObjectName("minimize")
         mini.setMinimumSize(QtCore.QSize(30,30))
         #mini.clicked.connect(CreateUI.minimize(self))
         tbLay.addWidget(mini)
 
+        #Quit button in the top left
         quitBtn = QtWidgets.QPushButton(qta.icon("fa.times", color="#f9f9f9"), "")
         quitBtn.setObjectName("quitBtn")
         quitBtn.setMinimumSize(QtCore.QSize(30,30))
@@ -82,36 +82,65 @@ class CreateUI(QtWidgets.QWidget):
             self, username=leUsername.text(), thePassword=lePassword.text(), address=leHostname.text(), thePort=lePort.text(), theDatabase=leDatabase.text()))
         mainLay.addWidget(btnConnect)
 
-        #Idea of a progressbar when connecting because the thing freezes for a sec!
-        """
-        pEncStat = QtWidgets.QProgressBar()
-        pEncStat.hide()
-        mainLay.addWidget(pEncStat)
-        """
-
-        CreateUI.msg = QtWidgets.QMessageBox()
-
         self.setLayout(mainLay)
 
     #Connect to the database and raise an error when failed
     def connect(self, username, thePassword, address, thePort, theDatabase):
+        #Store the password in the encryption class as a global variable
         crypt.Encryption.password = leCryptPass.text()
-        if dab.DatabaseActions.connect(self, username, thePassword, address, thePort, theDatabase):
-            if dab.DatabaseActions.testPassword(self, leCryptPass.text()):
+
+        #Connect to the database with the given data and test if we're connected.
+        connectionStatus = dab.DatabaseActions.connect(self, username, thePassword, address, thePort, theDatabase)
+        if connectionStatus == True:
+            #Test if the decryption password is correct. If not, show a text, that it is wrong.
+            if CreateUI.testPassword(self, leCryptPass.text()):
                 self.hide()
                 index.Window.createMain(self)
 
+            #The text about the wrong password here need to be replaced with a message dialog to make the message more clear.
+            #This message dialog can be combined with error messages from the database connection. 
             else:
                 print("Wrong Password!")
-                if lWrongPass.isVisible():
-                    lWrongPass.setStyleSheet("color: #6c0c2b; font-size:18px;")
-                    timer = QtCore.QTimer(self)
-                    timer.setSingleShot(True)
-                    timer.setInterval(500)
-                    timer.timeout.connect(lambda:lWrongPass.setStyleSheet("color: #9b123e; font-size:16px;"))
-                    timer.start()
-                else:
-                    lWrongPass.show()
+                CreateUI.raiseError(self, "Wrong Decryption Password", "Password Error")
+        
+        #An error occured while connecting. This is what happend! N° 2 Will shock you! °-°
+        else:
+            CreateUI.raiseError(self, connectionStatus, "Database Connection Error")
+
+    #Show a message box giving more infromation about the current error
+    def raiseError(self, errorMessage, title):
+        msg = QtWidgets.QMessageBox()
+        msg.setIcon(QtWidgets.QMessageBox.Warning)
+        msg.setText(str(errorMessage))
+        msg.setWindowTitle(title)
+        msg.setStandardButtons(QtWidgets.QMessageBox.Ok)
+        retval = msg.exec_()
+
+    #When connecting to the database this metho is called to test the given decrypting password.
+    #The given password is used to decrypt the decryptTest from the config table. If this fails the given password is wrong.
+    def testPassword(self, password):
+        #Init the encryption class
+        crypt.Encryption()
+
+        if length > 0:
+            passTest = crypt.Encryption.decrypt(self, theData=dab.DatabaseActions.read(self, "configs")[3])
+
+            if passTest[0] != "":
+                #The Password is correct
+                if passTest[1]: return True
+                else: return False
+
+            #Add some initial data the config table because no data is present so far.
+            else:
+                #This is the dictionary to contain all the data to be added to the database
+                data = {'passTest':crypt.Encryption.encrypt(self, theData=crypt.Encryption.genPassword(self, letters="both", digits=True, length=16)),
+                'emailAdd':"", 
+                'keyLen':4096, 
+                "lastChgd":str(datetime.datetime.now())}
+                
+                #Insert the data into the database and return true because its the first launch.
+                dab.DatabaseActions.insert(self, "configs", data)
+                return True
 
     #Centers the window at the start
     def center(self):
@@ -146,8 +175,6 @@ class CreateUI(QtWidgets.QWidget):
         global clickPos
         if dragging and clickPos.y() < 121:
             self.move(self.pos() + (event.pos() - clickPos))
-    
-
 
 #For executing this file standalone
 if __name__ == '__main__':
