@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.com/JFK422/Arcanum.svg?branch=dev)](https://travis-ci.com/JFK422/Arcanum)
+[![Build Status](https://travis-ci.com/JFK422/Arcanum.svg?branch=master)](https://travis-ci.com/JFK422/Arcanum)
 [![Snap Status](https://build.snapcraft.io/badge/JFK422/Arcanum.svg)](https://build.snapcraft.io/user/JFK422/Arcanum)
 # Arcanum
 A small tool for generating, encrypting and saving passwords, notes and files.
