@@ -13,7 +13,7 @@ class DatabaseActions():
         success = False
         try:
             global connection 
-            connection = connector.connect(user=username, host=address, password=thePassword, port=int(thePort), database=theDatabase, buffered=True)
+            connection = connector.connect(user=username, host=address, password=thePassword, port=int(thePort), buffered=True)
             print("Connection established!")
             global cur 
             cur = connection.cursor()
@@ -31,9 +31,14 @@ class DatabaseActions():
             return err
         
         #Return true if no error occurred otherwise the error code will be returned
-        else: return True
+        else:
+            DatabaseActions.createTables(self, theDatabase) 
+            return True
 
     def createTables(self, databaseName):
+
+        schema = "CREATE SCHEMA IF NOT EXISTS " + databaseName + " DEFAULT CHARACTER SET utf8;"
+
         #Define a tables dictionary. The table name 
         tables = {}
         tables['passTable'] = (
@@ -64,7 +69,7 @@ class DatabaseActions():
             #This will be set at the first launch and used to test  if password/keys are correct.
             "decryptTest VARCHAR(300),"
             #How strong the asymmetic key length shold be
-            "keyLength 4096,"
+            "keyLength INT,"
             #The last time the config got changed
             "lastChanged VARCHAR(300));"
         )
@@ -85,6 +90,9 @@ class DatabaseActions():
             "encryption INT"
         )
         """
+
+        #Creat a new schema if needed
+        cur.execute(schema)
 
         #Create all the tables
         for table_name in tables:
@@ -126,12 +134,12 @@ class DatabaseActions():
             print("unable to find table to get ammount of!")
             ammount = None
 
-        return ammount
+        return int(ammount)
     
     #Read a table from the database
     #If everything from the table is wanted: everything=True
     #Else the wanted row needs to be given
-    def read(self, table, everything=False, rows=1):
+    def read(self, table, everything=False, rows=0):
         #Test if everything is wanted and return the according table
         if everything:
             print("Getting the everything from {0}".format(table))
@@ -145,7 +153,8 @@ class DatabaseActions():
 
         #A row is wanted! Return the wanted one from the table
         else:
-            if rows > 0:
+            if rows >= 0:
+                print(rows)
                 print("Getting row: {0} from table: {1}".format(rows, table))
                 dictOfRow = {'theRow':rows}
                 if table == "passTable":
@@ -153,7 +162,9 @@ class DatabaseActions():
                     return cur.fetchall()[0]
                 if table == "configs":
                     cur.execute("SELECT * FROM passwords.configs WHERE prim = %(theRow)s", dictOfRow)
-                    return cur.fetchall()[0]
+                    ret = cur.fetchall()[0]
+                    print(ret)
+                    return ret
 
     #Insert data into the database
     def insert(self, table, context):
@@ -168,7 +179,7 @@ class DatabaseActions():
         elif table == "configs":
             print("Inserting config")
             cur.execute("INSERT INTO passwords.configs"
-            "(emailAddress, decryptTest, standardKeyLength, lastChanged)"
+            "(emailAddress, decryptTest, keyLength, lastChanged)"
             "VALUES (%(email)s, %(passTest)s, %(keyLen)s, %(lstChanged)s)", context)
             connection.commit()
         

@@ -34,7 +34,7 @@ if __name__ == '__main__':
     app_icon.addFile('./resources/icons/icon128.png', QtCore.QSize(128,128))
     app_icon.addFile('./resources/icons/icon256.png', QtCore.QSize(256,256))
     app.setWindowIcon(app_icon)
-
+    
     #Set the main styling of the app
     with open("./stylesheet.css") as f:
         theme = f.read()

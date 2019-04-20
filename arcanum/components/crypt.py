@@ -21,9 +21,10 @@ class Encryption:
         return key
 
     #Symmetrically encrypt a string
-    def encrypt(self, theData, password, recipients=None, useSymmetric=True):
+    def encrypt(self, theData, password=None, recipients=None, useSymmetric=True):
         if password == None: passThing = Encryption.password
         else: passThing = password
+        return str(gpg.encrypt(data=theData, recipients=recipients, passphrase=passThing, symmetric=True))
         
     def decrypt(self, theData):
         decrypted = gpg.decrypt(message=str(theData), passphrase=Encryption.password)

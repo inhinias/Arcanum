@@ -30,6 +30,10 @@ QPushButton:hover{
     background-color: #6c0c2b;
 }
 
+#backgroundColor{
+    background-color: #222d32;
+}
+
 #titlebar{
     background-color: #2A836D;
 }
@@ -155,6 +159,10 @@ QProgressBar::chunk {
 QListWidget{
     border: 1px solid #032358;
     background-color: #2d2d2d;
+}
+
+QMessageBox{
+    background-color: #222d32;
 }
 
 QScrollArea{
