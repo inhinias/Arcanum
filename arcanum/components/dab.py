@@ -1,7 +1,7 @@
-import datetime
+import datetime, logging
 import mysql.connector as connector
 from components import create, crypt
-from components.uiElements import connectionDialog
+from components.uiElements import connectionDialog, crashDialog
 from PyQt5 import QtGui, QtCore, QtWidgets
 
 #This is the main file for all database stuff connections and all SQL is handled within this file.
@@ -14,30 +14,34 @@ class DatabaseActions():
         try:
             global connection 
             connection = connector.connect(user=username, host=address, password=thePassword, port=int(thePort), database=theDatabase, buffered=True)
-            print("Connection established!")
+            logging.info("Connection to database established")
             global cur 
             cur = connection.cursor()
+            DatabaseActions.createTables(self)
+            if DatabaseActions.read(self, "configs") == None:
+                DatabaseActions.addInitData(self)
+
 
         #Catch any error and retrn them to the connection dialog to dislpay
         except connector.Error as err:
             if err.errno == connector.errorcode.ER_ACCESS_DENIED_ERROR:
                 print("Access to the DB denied. Wrong credentials?")
-                return "Access to the DB denied. Wrong credentials?"
+                return 1
             elif err.errno == connector.errorcode.ER_BAD_DB_ERROR:
                 print("Bad DB error. Does the database exist?")
-                return "Bad DB error. Does the database exist?"
+                return 2
             else:
                 print(err)
-            return err
+                return err
         
         #Return true if no error occurred otherwise the error code will be returned
-        else: return True
+        else: return 0
 
-    def createTables(self, databaseName):
+    def createTables(self):
         #Define a tables dictionary. The table name 
         tables = {}
         tables['passTable'] = (
-            "CREATE TABLE IF NOT EXISTS " + databaseName + ".passTable("
+            "CREATE TABLE IF NOT EXISTS passwords.passTable("
             "prim int(11) PRIMARY KEY,"
             #Where the password is from
             "`name` VARCHAR(300),"
@@ -57,14 +61,14 @@ class DatabaseActions():
             "`comment` VARCHAR(300));"
         )
         tables['configs'] = (
-            "CREATE TABLE IF NOT EXISTS " + databaseName + ".configs("
+            "CREATE TABLE IF NOT EXISTS passwords.configs("
             "prim int(11) PRIMARY KEY,"
             #The standard email address. Further addresses are added in the rows after with the rest set to NULL.
             "emailAddress VARCHAR(300),"
             #This will be set at the first launch and used to test  if password/keys are correct.
             "decryptTest VARCHAR(300),"
             #How strong the asymmetic key length shold be
-            "keyLength 4096,"
+            "keyLength int,"
             #The last time the config got changed
             "lastChanged VARCHAR(300));"
         )
@@ -72,7 +76,7 @@ class DatabaseActions():
         #For RSA encryption to maybe speed up the de/encryption process.
         """
         tables['keys'] = (
-            "CREATE TABLE IF NOT EXISTS " + databaseName + ".keys("
+            "CREATE TABLE IF NOT EXISTS passwords.keys("
             "prim int(11) PRIMARY KEY,"
             #They keys value
             "key VARCHAR(600),"
@@ -86,23 +90,39 @@ class DatabaseActions():
         )
         """
 
-        #Create all the tables
+        #Create all the tables if they dont exist
         for table_name in tables:
             table_description = tables[table_name]
             try:
-                print("Creating table {}: ".format(table_name), end='')
                 cur.execute(table_description)
+                logging.info("Created table {}: ".format(table_name))
             except connector.Error as err:
                 if err.errno == connector.errorcode.ER_TABLE_EXISTS_ERROR:
-                    print("The wanted table already exists.")
+                    logging.info("Table {} already exists.".format(table_name))
                 else:
                     print(err.msg)
-        print("All tables were create/exist!")
+                    logging.critical(err.msg)
+                    crashDialog(self, err.msg)
+
+        logging.info("All tables were created/exist!")
+
+    #Upon first start fill the database with the needed initial data
+    def addInitData(self):
+        #This is the dictionary to contain all the data to be added to the database
+        data = {'passTest':crypt.Encryption.encrypt(self, theData=crypt.Encryption.genPassword(self, letters="both", digits=True, length=16)),
+            'emailAdd':"", 
+            'keyLen':4096, 
+            "lastChgd":str(datetime.datetime.now())}
+                
+        #Insert the data into the database and return true because its the first launch.
+        DatabaseActions.insert(self, "configs", data)
+        logging.info("Created initial config data")
 
     #Close the connection to the database and its cursor object
     def closeEverything(self):
         cur.close()
         connection.close()
+        logging.info("Connection to database closed")
 
     #Returns the length of a given table
     #The wanted table gets determined with an if statment comparing the given table name string to a predetermined one here.
@@ -131,29 +151,49 @@ class DatabaseActions():
     #Read a table from the database
     #If everything from the table is wanted: everything=True
     #Else the wanted row needs to be given
-    def read(self, table, everything=False, rows=1):
+    def read(self, table, everything=True, row=1):
         #Test if everything is wanted and return the according table
         if everything:
-            print("Getting the everything from {0}".format(table))
-            dictOfRow = {'theRow':rows}
+            logging.info("Getting everything from {0}".format(table))
+            dictOfRow = {'theRow':row}
             if table == "passTable":
                 cur.execute("SELECT * FROM passwords.passTable")
-                return cur.fetchall()
+                result = cur.fetchall()
+                try:
+                    test = result[0]
+                    return result
+                except:
+                    return None
+                    logging.info("Returning nothing from row {0} from table: {1}".format(row, table))
             if table == "configs":
                 cur.execute("SELECT * FROM passwords.configs")
-                return cur.fetchall()
+                result = cur.fetchall()
+                try:
+                    test = result[0]
+                    return result
+                except:
+                    return None
+                    logging.info("Returning nothing from row {0} from table: {1}".format(row, table))
 
         #A row is wanted! Return the wanted one from the table
         else:
-            if rows > 0:
-                print("Getting row: {0} from table: {1}".format(rows, table))
-                dictOfRow = {'theRow':rows}
+            if row >= 0: #catch if wrong rows are asked for
+                logging.info("Getting row: {0} from table: {1}".format(row, table))
+                dictOfRow = {'theRow':row} #A Dictionary for arranging the rows to fit the SQL
                 if table == "passTable":
                     cur.execute("SELECT * FROM passwords.passTable WHERE prim = %(theRow)s", dictOfRow)
-                    return cur.fetchall()[0]
+                    try: return cur.fetchall()[0]
+                    except:
+                        return None
+                        logging.info("Returning nothing from row {0} from table: {1}".format(row, table))
                 if table == "configs":
                     cur.execute("SELECT * FROM passwords.configs WHERE prim = %(theRow)s", dictOfRow)
-                    return cur.fetchall()[0]
+                    try: return cur.fetchall()[0]
+                    except:
+                        logging.info("Returning nothing from row {0} from table: {1}".format(row, table))
+                        return None
+            else:
+                logging.error("Wrong row {0}".format(row))
 
     #Insert data into the database
     def insert(self, table, context):
@@ -164,13 +204,14 @@ class DatabaseActions():
             "(name, email, username, category, lastUsed, generated, twoFA, encryptedPassword)"
             "VALUES (%(name)s, %(email)s, %(uName)s, %(lstUsed)s, %(gen)s, %(twofactor)s, %(crypticPass)s)", context)
             connection.commit()
+            logging.info("Inserted data into passwords table")
         
         elif table == "configs":
-            print("Inserting config")
             cur.execute("INSERT INTO passwords.configs"
-            "(emailAddress, decryptTest, standardKeyLength, lastChanged)"
-            "VALUES (%(email)s, %(passTest)s, %(keyLen)s, %(lstChanged)s)", context)
+            "(emailAddress, decryptTest, keyLength, lastChanged)"
+            "VALUES (%(emailAdd)s, %(passTest)s, %(keyLen)s, %(lastChgd)s)", context)
             connection.commit()
+            logging.info("Inserted data into configs table")
         
         #The wanted table wasnt found. Doing nothing!
         else:

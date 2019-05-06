@@ -10,7 +10,7 @@ class Settings(QtWidgets.QWidget):
         gSettingsMain.setAlignment(QtCore.Qt.AlignTop)
 
         #Create the settings tab
-        leEmail = QtWidgets.QLineEdit(crypt.Encryption.decrypt(self, dab.DatabaseActions.read(self, table="configs", rows=1)[1][0]))
+        leEmail = QtWidgets.QLineEdit(crypt.Encryption.decrypt(self, dab.DatabaseActions.read(self, "configs", False, 0)[1])[0])
         leEmail.setPlaceholderText("Email Address")
         leEmail.setMaximumWidth(300)
         gSettingsMain.addWidget(leEmail, 0, 0)

@@ -1,5 +1,6 @@
-import sys, index, qtawesome as qta
+import sys, index, logging, qtawesome as qta
 from components import create, dab, crypt
+from components.uiElements import crashDialog
 from PyQt5 import QtGui, QtCore, QtWidgets
 
 class CreateUI(QtWidgets.QWidget):
@@ -58,9 +59,11 @@ class CreateUI(QtWidgets.QWidget):
         lePassword.setEchoMode(2)
         mainLay.addWidget(lePassword)
 
+        """
         leDatabase = QtWidgets.QLineEdit("passwords")
         leDatabase.setPlaceholderText("Database")
         mainLay.addWidget(leDatabase)
+        """
 
         global leCryptPass
         leCryptPass = QtWidgets.QLineEdit("password")
@@ -79,7 +82,7 @@ class CreateUI(QtWidgets.QWidget):
         btnConnect.setObjectName("btnConnect")
         btnConnect.setMinimumHeight(38)
         btnConnect.clicked.connect(lambda:CreateUI.connect(
-            self, username=leUsername.text(), thePassword=lePassword.text(), address=leHostname.text(), thePort=lePort.text(), theDatabase=leDatabase.text()))
+            self, username=leUsername.text(), thePassword=lePassword.text(), address=leHostname.text(), thePort=lePort.text(), theDatabase="passwords"))
         mainLay.addWidget(btnConnect)
 
         self.setLayout(mainLay)
@@ -88,10 +91,12 @@ class CreateUI(QtWidgets.QWidget):
     def connect(self, username, thePassword, address, thePort, theDatabase):
         #Store the password in the encryption class as a global variable
         crypt.Encryption.password = leCryptPass.text()
+        #Init the encryption class
+        crypt.Encryption()
 
         #Connect to the database with the given data and test if we're connected.
         connectionStatus = dab.DatabaseActions.connect(self, username, thePassword, address, thePort, theDatabase)
-        if connectionStatus == True:
+        if connectionStatus == 0:
             #Test if the decryption password is correct. If not, show a text, that it is wrong.
             if CreateUI.testPassword(self, leCryptPass.text()):
                 self.hide()
@@ -100,12 +105,20 @@ class CreateUI(QtWidgets.QWidget):
             #The text about the wrong password here need to be replaced with a message dialog to make the message more clear.
             #This message dialog can be combined with error messages from the database connection. 
             else:
-                print("Wrong Password!")
+                logging.warning("Entered wrong decryption password")
                 CreateUI.raiseError(self, "Wrong Decryption Password", "Password Error")
         
         #An error occured while connecting. This is what happend! N° 2 Will shock you! °-°
+        elif connectionStatus == 1:
+            CreateUI.raiseError(self, "Access to the DB denied. Wrong credentials?", "Database Connection Error")
+            logging.warning("Access to the DB denied. Wrong credentials?")
+        elif connectionStatus == 2:
+            CreateUI.raiseError(self, "Bad DB error. Does the database exist?", "Database Connection Error")
+            logging.warning("Bad DB error. Does the database exist?")
         else:
-            CreateUI.raiseError(self, connectionStatus, "Database Connection Error")
+            logging.critical(connectionStatus)
+            print(connectionStatus)
+            #crashDialog(self, connectionStatus)
 
     #Show a message box giving more infromation about the current error
     def raiseError(self, errorMessage, title):
@@ -119,28 +132,12 @@ class CreateUI(QtWidgets.QWidget):
     #When connecting to the database this metho is called to test the given decrypting password.
     #The given password is used to decrypt the decryptTest from the config table. If this fails the given password is wrong.
     def testPassword(self, password):
-        #Init the encryption class
-        crypt.Encryption()
+        passTest = crypt.Encryption.decrypt(self, theData=dab.DatabaseActions.read(self, "configs", False, 0)[2])
 
-        if length > 0:
-            passTest = crypt.Encryption.decrypt(self, theData=dab.DatabaseActions.read(self, "configs")[3])
-
-            if passTest[0] != "":
-                #The Password is correct
-                if passTest[1]: return True
-                else: return False
-
-            #Add some initial data the config table because no data is present so far.
-            else:
-                #This is the dictionary to contain all the data to be added to the database
-                data = {'passTest':crypt.Encryption.encrypt(self, theData=crypt.Encryption.genPassword(self, letters="both", digits=True, length=16)),
-                'emailAdd':"", 
-                'keyLen':4096, 
-                "lastChgd":str(datetime.datetime.now())}
-                
-                #Insert the data into the database and return true because its the first launch.
-                dab.DatabaseActions.insert(self, "configs", data)
-                return True
+        print(passTest)
+        if passTest[0] != "":
+            if passTest[1]: return True
+            else: return False
 
     #Centers the window at the start
     def center(self):

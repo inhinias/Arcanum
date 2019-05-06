@@ -1,5 +1,4 @@
-import sys
-import sip
+import sys, sip, logging, datetime
 from PyQt5 import QtCore, QtGui, QtWidgets, Qt
 from components.uiElements import connectionDialog, mainWindow
 
@@ -12,10 +11,6 @@ from components.uiElements import connectionDialog, mainWindow
 class Window():
     def __init__(self):
         super(Window, self).__init__()
-        print("Qt version:", QtCore.QT_VERSION_STR)
-        print("PyQt version:", Qt.PYQT_VERSION_STR)
-        print("SIP version:", sip.SIP_VERSION_STR)
-        
         dial = connectionDialog.CreateUI()
         dial.show()
     
@@ -23,6 +18,29 @@ class Window():
         main = mainWindow.Window()
 
 if __name__ == '__main__':
+    logging.basicConfig(format='%(asctime)s:%(levelname)s:%(message)s',
+    datefmt='%Y/%m/%d %I:%M:%S %p',
+    filename='./logs/' + str(datetime.datetime.now()).split(".")[0] + 'arcanum.log',
+    level=logging.DEBUG)
+    log = logging.getLogger()
+
+    # create console handler and set level to info
+    handler = logging.StreamHandler()
+    handler.setLevel(logging.INFO)
+    formatter = logging.Formatter("%(asctime)s:%(levelname)s:%(message)s")
+    handler.setFormatter(formatter)
+    log.addHandler(handler)
+
+    log.info("Qt version:" + str(QtCore.QT_VERSION_STR))
+    log.info("PyQt version:" + str(Qt.PYQT_VERSION_STR))
+    log.info("SIP version:"+ str(sip.SIP_VERSION_STR))
+
+    """
+    print("Qt version:", QtCore.QT_VERSION_STR)
+    print("PyQt version:", Qt.PYQT_VERSION_STR)
+    print("SIP version:", sip.SIP_VERSION_STR)
+    """
+
     #Creating the QApplication
     app = QtWidgets.QApplication(sys.argv)
 

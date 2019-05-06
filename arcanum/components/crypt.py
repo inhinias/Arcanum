@@ -10,7 +10,7 @@ class Encryption:
     password = ""
     def __init__(self):
         global gpg
-        gpg = gnupg.GPG(gnupghome = str(Path.home()))
+        gpg = gnupg.GPG(gnupghome = "gpg")
         gpg.encoding = 'utf-8'
     
     #Generate a key pair with a keyName, the key type and its strength.
@@ -21,12 +21,20 @@ class Encryption:
         return key
 
     #Symmetrically encrypt a string
-    def encrypt(self, theData, password, recipients=None, useSymmetric=True):
-        if password == None: passThing = Encryption.password
+    def encrypt(self, theData, password = None, recipients=None, useSymmetric=True):
+        #Test if a password was provided otherwise use the one defined by the encryption class
+        if password == None or password == "": passThing = Encryption.password
+        else: passThing = password
+
+        encrypted = str(gpg.encrypt(data=theData, recipients=recipients, passphrase=passThing, symmetric=True))
+        return encrypted
+        
+    def decrypt(self, theData, password=None):
+        #Test if a password was provided otherwise use the one defined by the encryption class
+        if password == None or password == "": passThing = Encryption.password
         else: passThing = password
         
-    def decrypt(self, theData):
-        decrypted = gpg.decrypt(message=str(theData), passphrase=Encryption.password)
+        decrypted = gpg.decrypt(message=str(theData), passphrase=passThing)
         return str(decrypted), decrypted.ok, decrypted.status
 
     #May be used later!
