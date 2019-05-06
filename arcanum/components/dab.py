@@ -207,7 +207,7 @@ class DatabaseActions():
         if table == "passwords":
             print("Inserting password")
             cur.execute("INSERT INTO passwords.passTable"
-            "(name, email, username, category, lastUsed, generated, twoFA, encryptedPassword)"
+            "(name, email, username, lastUsed, generated, twoFA, encryptedPassword)"
             "VALUES (%(name)s, %(email)s, %(uName)s, %(lstUsed)s, %(gen)s, %(twofactor)s, %(crypticPass)s)", context)
             connection.commit()
             logging.info("Inserted data into passwords table")

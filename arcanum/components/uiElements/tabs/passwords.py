@@ -142,10 +142,13 @@ class Passwords(QtWidgets.QWidget):
         emailData = dab.DatabaseActions.read(self, "configs", True)
         encMailAdd = crypt.Encryption.encrypt(self, emailAdd)
         for i in range(len(emailData)):
-            if emailData[i][2] == encMailAdd:
+            if emailData[i][2] == encMailAdd or emailAdd:
                 duplicate = True
         if not(duplicate):
-            dab.DatabaseActions.insert(self, "configs", {'name':"", 'email':crypt.Encryption.encrypt(self, emailAdd), 'dTest':"", 'keyLen':"", 'lstChanged':""})
+            dab.DatabaseActions.insert(self, "configs", {'passTest':"",
+                'emailAdd':crypt.Encryption.encrypt(self, emailAdd),
+                'keyLen':0,
+                'lastChgd':str(datetime.datetime.now())})
 
         #If no username was give, use the email address as the username
         if theUsername == "":
@@ -160,8 +163,7 @@ class Passwords(QtWidgets.QWidget):
                 "gen":crypt.Encryption.encrypt(self, generated), 
                 "crypticPass":crypt.Encryption.encrypt(self, thePassword), 
                 "twofactor":crypt.Encryption.encrypt(self, str(twoFAEnabled)),
-                "comment":crypt.Encryption.encrypt(self, theComment),
-                "index":currentPassIndex}
+                "comment":crypt.Encryption.encrypt(self, theComment)}
         else:
             insertionData = {"name":crypt.Encryption.encrypt(self, passName),
                 "email":crypt.Encryption.encrypt(self, emailAdd),
@@ -170,8 +172,7 @@ class Passwords(QtWidgets.QWidget):
                 "gen":str(generated), 
                 "crypticPass":crypt.Encryption.encrypt(self, thePassword), 
                 "twofactor":str(twoFAEnabled),
-                "comment":str(theComment),
-                "index":currentPassIndex}
+                "comment":str(theComment)}
         print(update)
         if update:
             dab.DatabaseActions.update(self, "passwords", insertionData)
@@ -250,7 +251,7 @@ class Passwords(QtWidgets.QWidget):
 
                 #Array and tuple for keeping the order on the slate and for storing everything decrypted of an index
                 decData = []
-                readOrder = (0,1,5,6,7,2,3,4,8,10,11)
+                readOrder = (0,1,4,5,2,3,6,8)
 
                 #Loop for decrypting everything and testing if it actually needs to be decrypted
                 for j in range(len(readOrder)):
