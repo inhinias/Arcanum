@@ -115,9 +115,6 @@ class Overview(QtWidgets.QWidget):
         hOverview.addWidget(wOCenter)
         hOverview.addLayout(gStats)
 
-        dab.DatabaseActions.getAmmount(self, "banners")
-        dab.DatabaseActions.getAmmount(self, "categories")
-
         self.setLayout(hOverview)
     
     def setNumPasswords(self, ammount):

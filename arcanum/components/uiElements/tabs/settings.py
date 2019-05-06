@@ -10,7 +10,7 @@ class Settings(QtWidgets.QWidget):
         gSettingsMain.setAlignment(QtCore.Qt.AlignTop)
 
         #Create the settings tab
-        leEmail = QtWidgets.QLineEdit(create.CreateUI.emailAddress)
+        leEmail = QtWidgets.QLineEdit("")
         leEmail.setPlaceholderText("Email Address")
         leEmail.setMaximumWidth(300)
         gSettingsMain.addWidget(leEmail, 0, 0)
@@ -26,30 +26,20 @@ class Settings(QtWidgets.QWidget):
         liAddresses.setMaximumWidth(400)
         gSettingsMain.addWidget(liAddresses, 1, 0)
 
-        global chkSaltedEncrypt
-        chkSaltedEncrypt = QtWidgets.QCheckBox("Encrypt with salt")
-        chkSaltedEncrypt.setChecked(False)
-        gSettingsMain.addWidget(chkSaltedEncrypt, 0, 2)
-
         self.setLayout(gSettingsMain)
 
     def createData(self):
-        #Check if salt is used and tick the checkbox if needed
-        salt = False
-        if dab.DatabaseActions.read(self, "configs", rows=1)[6] == 1: salt=True
-
-        if salt: chkSaltedEncrypt.setChecked(False)
-        else: chkSaltedEncrypt.setChecked(True)
-        
         #Add all the email adresses!
         liAddresses.clear()
         dataEmail = dab.DatabaseActions.read(self, table="configs", everything=True)
         for i in range(1, len(dataEmail)):
-            liAddresses.addItem(crypt.Encryption.decrypt(self, dataEmail[i][2], salt)[0])
+            liAddresses.addItem(crypt.Encryption.decrypt(self, dataEmail[i][2])[0])
+            """
             if i == 0:
                 create.CreateUI.updateProgressBar(self, 0)
             else:
                 create.CreateUI.updateProgressBar(self, (len(dataEmail))/i*100)
+            """
         print("Settings tab set")
 
     def addMailAddress(self, address):

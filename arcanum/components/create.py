@@ -1,6 +1,6 @@
 import qtawesome as qta
 from PyQt5 import QtGui, QtCore, QtWidgets
-from components.uiElements.tabs import overview, passwords, generator, notes, keys, settings
+from components.uiElements.tabs import overview, passwords, keys, settings
 from components import dab, crypt
 from components.uiElements import passItem, seperator
 
@@ -18,7 +18,6 @@ class CreateUI:
     newPass = None
     infoEdit = None
     password = ""
-    emailAddress = "kenneth.mathis99@gmail.com"
     def create(self):
         #Layouts
         #Main Layouts
@@ -36,14 +35,10 @@ class CreateUI:
         #The tabs which are in different files are added here!
         wOverview = overview.Overview()
         wPasswords = passwords.Passwords()
-        wGenerator = generator.Generator()
-        wNotesMain = notes.Notes()
         wKeys = keys.Keys()
         wSettings = settings.Settings()
         self.sCentral.addWidget(wOverview)
         self.sCentral.addWidget(wPasswords)
-        self.sCentral.addWidget(wGenerator)
-        self.sCentral.addWidget(wNotesMain)
         self.sCentral.addWidget(wKeys)
         self.sCentral.addWidget(wSettings)
 
@@ -94,55 +89,48 @@ class CreateUI:
         rackIcoSize = QtCore.QSize(32, 32)
         btnOverview = QtWidgets.QPushButton(qta.icon("fa.compass", color="#f9f9f9"), "Overview")
         btnPasswords = QtWidgets.QPushButton(qta.icon("fa.lock", color="#f9f9f9"), "Passwords")
-        btnGenerate = QtWidgets.QPushButton(qta.icon("fa.bolt", color="#f9f9f9"), "Generator")
-        btnNotes = QtWidgets.QPushButton(qta.icon("fa.paperclip", color="#f9f9f9"), "Notes")
-        btnBunkers = QtWidgets.QPushButton(qta.icon("fa.key", color="#f9f9f9"), "Keys")
+        btnKeys = QtWidgets.QPushButton(qta.icon("fa.key", color="#f9f9f9"), "Keys")
         btnSettings = QtWidgets.QPushButton(qta.icon("fa.cog", color="#f9f9f9"), "Settings")
 
         btnOverview.setMinimumHeight(rackBtnMinheight)
         btnPasswords.setMinimumHeight(rackBtnMinheight)
-        btnGenerate.setMinimumHeight(rackBtnMinheight)
-        btnNotes.setMinimumHeight(rackBtnMinheight)
-        btnBunkers.setMinimumHeight(rackBtnMinheight)
+        btnKeys.setMinimumHeight(rackBtnMinheight)
         btnSettings.setMinimumHeight(rackBtnMinheight)
 
         btnOverview.setIconSize(rackIcoSize)
         btnPasswords.setIconSize(rackIcoSize)
-        btnGenerate.setIconSize(rackIcoSize)
-        btnNotes.setIconSize(rackIcoSize)
-        btnBunkers.setIconSize(rackIcoSize)
+        btnKeys.setIconSize(rackIcoSize)
         btnSettings.setIconSize(rackIcoSize)
 
         btnOverview.clicked.connect(lambda:CreateUI.switchTab(self, 0))
         btnPasswords.clicked.connect(lambda:CreateUI.switchTab(self, 1))
-        btnGenerate.clicked.connect(lambda:CreateUI.switchTab(self, 2))
-        btnNotes.clicked.connect(lambda:CreateUI.switchTab(self, 3))
-        btnBunkers.clicked.connect(lambda:CreateUI.switchTab(self, 4))
-        btnSettings.clicked.connect(lambda:CreateUI.switchTab(self, 5))
+        btnKeys.clicked.connect(lambda:CreateUI.switchTab(self, 2))
+        btnSettings.clicked.connect(lambda:CreateUI.switchTab(self, 3))
 
         global prgWorking
         prgWorking = QtWidgets.QProgressBar()
         prgWorking.setTextVisible(False)
         prgWorking.setValue(0)
+        #Hide the progressbar till its wanted again
+        prgWorking.setVisible(False)
         prgWorking.setSizePolicy(QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Minimum))
         
         vToolRack.addWidget(btnOverview)
         vToolRack.addWidget(btnPasswords)
-        vToolRack.addWidget(btnGenerate)
-        vToolRack.addWidget(btnNotes)
-        vToolRack.addWidget(btnBunkers)
+        vToolRack.addWidget(btnKeys)
         vToolRack.addWidget(btnSettings)
         vToolRack.addWidget(prgWorking)
 
         self.setLayout(vBack)
 
+    #Set all the data in the wanted tab
     def setData(self, tab):
         #Overview
         if tab == 0:
-            CreateUI.updateProgressBar(self, 0)
+            #CreateUI.updateProgressBar(self, 0)
             numPass = dab.DatabaseActions.getAmmount(self, "passwords")
             print("Currently {0} passwords stored".format(numPass))
-            CreateUI.updateProgressBar(self, 50)
+            #CreateUI.updateProgressBar(self, 50)
             if numPass == 0:
                 overview.Overview.setNumPasswords(self, "000000")
             
@@ -161,36 +149,26 @@ class CreateUI:
             else:
                 print("Error with adding 0 to the numPass number")
 
-            CreateUI.updateProgressBar(self, 100)
+            #CreateUI.updateProgressBar(self, 100)
             print("Overview data set")
 
         #Passwords
         elif tab == 1:
             passwords.Passwords.createPassSlates(self)
 
-        #Generators not needed
+        #Keys
         elif tab == 2:
-            print("Generator tab needs nothing to be set")
-
-        #Notes
-        elif tab == 3:
-            print("Notes tab data set")
-
-        #Bunkers
-        elif tab == 4:
-            print("Bunkers tab set")
+            print("Keys tab set")
 
         #Settings
-        elif tab == 5:
+        elif tab == 3:
             settings.Settings.createData(self)
 
         #catch out of bounds
         else:
             print("The given tab index was not found!")
 
-        #general
-        CreateUI.emailAddress = crypt.Encryption.decrypt(self, dab.DatabaseActions.read(self, table="configs", rows=1)[1][0])
-
+    """
     def updateProgressBar(self, value):
         prgWorking.setVisible(True)
         if value == 100:
@@ -209,6 +187,7 @@ class CreateUI:
         timer.setInterval(500)
         timer.timeout.connect(lambda:CreateUI.updateProgressBar(self, 100))
         timer.start()
+    """
 
     def getProgressValue(self):
         return prgWorking.value()

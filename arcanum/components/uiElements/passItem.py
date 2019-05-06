@@ -5,7 +5,7 @@ from components.uiElements import seperator
 from components.uiElements.tabs import passwords
 
 class CreateUI(QtWidgets.QWidget):
-    def setup(self, passIndex, name, lastChanged, generated, banner="", email="", username="", category="generic", twoFa="False", comment="", salted=False):
+    def setup(self, passIndex, name, lastChanged, generated, email="", username="", twoFa="False", comment=""):
         #Main layouts and layout widgets
         lMain = QtWidgets.QGridLayout()
         lMain.setContentsMargins(0,0,0,0)
@@ -22,27 +22,13 @@ class CreateUI(QtWidgets.QWidget):
         self.name = name
         self.lastChanged = lastChanged
         self.generated = generated
-        self.banner = banner
         self.email = email
         self.username = username
-        self.category = category
         self.twoFa = twoFa
         self.comment = comment
 
-        #Banner to the Password currently only in placeholder version!
+        #Banner to the Password currently only in placeholder version! Will be removed later!
         iBanner = QtWidgets.QLabel()
-        """
-        if banner != "":
-            try:
-                iBanner.setPixmap(QtGui.QPixmap(banner).scaled(256, 256, QtCore.Qt.KeepAspectRatio))
-            except:
-                iBanner.setPixmap(QtGui.QPixmap("./resources/icons/icon256.png").scaled(256, 256, QtCore.Qt.KeepAspectRatio))
-        else:
-        """
-
-        if str(salted) == "True": salted = True
-        else: salted = False
-        print("Salted {0}".format(salted))
 
         #There is a layout (lmain) which holds the banner and the delete button so the delet btn can be directly in the corner
         iBanner.setPixmap(QtGui.QPixmap("./resources/icons/icon256.png").scaled(128, 128, QtCore.Qt.KeepAspectRatio))
@@ -111,10 +97,9 @@ class CreateUI(QtWidgets.QWidget):
         data = dab.DatabaseActions.read(self, table="passTable", rows=passIndex)
         lPassword = QtWidgets.QLabel("")
         lPassword.setTextInteractionFlags(QtCore.Qt.TextSelectableByMouse)
-        if salted:
-            lPassword.setText(str(crypt.Encryption.decrypt(self, data[9], salted)[0]))
-        else:
-            lPassword.setText(str(crypt.Encryption.decrypt(self, data[9], salted)[0]))
+        
+        lPassword.setText(str(crypt.Encryption.decrypt(self, data[9])[0]))
+
         gMain.addWidget(lPassword, 5, 1)
 
         #Use later to decrypt the password on demand
@@ -160,28 +145,21 @@ class CreateUI(QtWidgets.QWidget):
             lGenerated.setText("Error")
         gMain.addWidget(lGenerated, 8, 1)
 
-        lSaltedLabel = QtWidgets.QLabel("Salted:")
-        lSaltedLabel.setObjectName("passLabel")
-        gMain.addWidget(lSaltedLabel, 9, 0)
-        lSalted = QtWidgets.QLabel(str(salted))
-        lSalted.setObjectName("passLabel")
-        gMain.addWidget(lSalted, 9, 1)
-
         lDateLabel = QtWidgets.QLabel("Last Changed:")
         lDateLabel.setObjectName("passLabel")
-        gMain.addWidget(lDateLabel, 10, 0)       
+        gMain.addWidget(lDateLabel, 9, 0)       
         lDate = QtWidgets.QLabel(str(lastChanged).split(".")[0])
         lDate.setObjectName("passLabel")
         lDate.setTextInteractionFlags(QtCore.Qt.TextSelectableByMouse)
-        gMain.addWidget(lDate, 10, 1)
+        gMain.addWidget(lDate, 9, 1)
 
         lCommentLabel = QtWidgets.QLabel("Comment:")
         lCommentLabel.setObjectName("passLabel")
-        gMain.addWidget(lCommentLabel, 11, 0)
+        gMain.addWidget(lCommentLabel, 10, 0)
         lComment = QtWidgets.QLabel(comment)
         lComment.setObjectName("passLabel")
         lComment.setTextInteractionFlags(QtCore.Qt.TextSelectableByMouse)
-        gMain.addWidget(lComment, 11, 1)
+        gMain.addWidget(lComment, 10, 1)
 
         wMain.setLayout(lMain)
         vBack.addWidget(wMain)
