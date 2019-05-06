@@ -1,4 +1,4 @@
-import  datetime, time, qtawesome as qta
+import  datetime, time, logging, qtawesome as qta
 from PyQt5 import QtCore, QtWidgets
 from components import create, crypt, dab
 from components.uiElements import seperator, passItem
@@ -223,8 +223,8 @@ class Passwords(QtWidgets.QWidget):
 
     #Refine, that if nothing has changed nothing will be regenerated
     def createPassSlates(self):
-        #Set the progressbar to 0, clear the passwords grid and update progress to 5%
-        #create.CreateUI.updateProgressBar(self, 0)
+        #Delete all the password slates in order to add them again
+        #Change later to only add the ones again which were changed
         for i in reversed(range(Passwords.gPasswords.count())):
             Passwords.gPasswords.itemAt(i).widget().setParent(None)
         #create.CreateUI.updateProgressBar(self, 5)
@@ -236,35 +236,39 @@ class Passwords(QtWidgets.QWidget):
 
         #Get every password entry and save the time for calculating decrypt time
         data = dab.DatabaseActions.read(self, table="passTable", everything=True)
-        #slateProgressIncrement = 80/len(data)
         startTime = time.time()
-        
-        #loop through every added password
-        for i in range(len(data)):
-            passSlate = passItem.CreateUI()
-            print("Decrypting password N°: {0}".format(i+1))
 
-            #Array and tuple for keeping the order on the slate and for storing everything decrypted of an index
-            decData = []
-            readOrder = (0,1,5,6,7,2,3,4,8,10,11)
+        #Create the password displays only when there are passwords present
+        if data == None:
+            logging.info("No passwords present")
 
-            #Loop for decrypting everything and testing if it actually needs to be decrypted
-            for j in range(len(readOrder)):
-                decrypt = crypt.Encryption.decrypt(self, data[i][readOrder[j]])
-                if decrypt[1]:
-                    decData.append(decrypt[0])
-                else:
-                    decData.append(data[i][readOrder[j]])
-            print(decData)
-            #Note the password is fetched and decrypted in the passSlate widget based on the given index!
-            passSlate.setup(passIndex = decData[0],
-                            name = decData[1],
-                            lastChanged = decData[2],
-                            generated = decData[3],
-                            email = decData[4],
-                            username = decData[5],
-                            twoFa  = decData[6],
-                            comment = decData[7])
+        else:
+            #loop through every added password
+            for i in range(len(data)):
+                passSlate = passItem.CreateUI()
+                print("Decrypting password N°: {0}".format(i+1))
+
+                #Array and tuple for keeping the order on the slate and for storing everything decrypted of an index
+                decData = []
+                readOrder = (0,1,5,6,7,2,3,4,8,10,11)
+
+                #Loop for decrypting everything and testing if it actually needs to be decrypted
+                for j in range(len(readOrder)):
+                    decrypt = crypt.Encryption.decrypt(self, data[i][readOrder[j]])
+                    if decrypt[1]:
+                        decData.append(decrypt[0])
+                    else:
+                        decData.append(data[i][readOrder[j]])
+                print(decData)
+                #Note the password is fetched and decrypted in the passSlate widget based on the given index!
+                passSlate.setup(passIndex = decData[0],
+                                name = decData[1],
+                                lastChanged = decData[2],
+                                generated = decData[3],
+                                email = decData[4],
+                                username = decData[5],
+                                twoFa  = decData[6],
+                                comment = decData[7])
 
             #decide where in the grid the new slate should be added.
             #Needs some math to base it on the width of the passScroll widget

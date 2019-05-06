@@ -33,7 +33,6 @@ class Encryption:
         #Test if a password was provided otherwise use the one defined by the encryption class
         if password == None or password == "": passThing = Encryption.password
         else: passThing = password
-        return str(gpg.encrypt(data=theData, recipients=recipients, passphrase=passThing, symmetric=True))
         
         decrypted = gpg.decrypt(message=str(theData), passphrase=passThing)
         return str(decrypted), decrypted.ok, decrypted.status

@@ -157,7 +157,7 @@ class DatabaseActions():
     #Read a table from the database
     #If everything from the table is wanted: everything=True
     #Else the wanted row needs to be given
-    def read(self, table, everything=False, rows=0):
+    def read(self, table, everything=False, row=0):
         #Test if everything is wanted and return the according table
         if everything:
             logging.info("Getting everything from {0}".format(table))
