@@ -38,6 +38,9 @@ class DatabaseActions():
         else: return 0
 
     def createTables(self):
+        #Define a schema if the current one doesnt exist
+        schema = "CREATE SCHEMA IF NOT EXISTS passwords DEFAULT CHARACTER SET utf8;"
+
         #Define a tables dictionary. The table name 
         tables = {}
         tables['passTable'] = (
@@ -68,7 +71,7 @@ class DatabaseActions():
             #This will be set at the first launch and used to test  if password/keys are correct.
             "decryptTest VARCHAR(300),"
             #How strong the asymmetic key length shold be
-            "keyLength int,"
+            "keyLength INT,"
             #The last time the config got changed
             "lastChanged VARCHAR(300));"
         )
@@ -90,7 +93,10 @@ class DatabaseActions():
         )
         """
 
-        #Create all the tables if they dont exist
+        #Creat a new schema if needed
+        cur.execute(schema)
+
+        #Create all the tables
         for table_name in tables:
             table_description = tables[table_name]
             try:
@@ -146,12 +152,12 @@ class DatabaseActions():
             print("unable to find table to get ammount of!")
             ammount = None
 
-        return ammount
+        return int(ammount)
     
     #Read a table from the database
     #If everything from the table is wanted: everything=True
     #Else the wanted row needs to be given
-    def read(self, table, everything=True, row=1):
+    def read(self, table, everything=False, rows=0):
         #Test if everything is wanted and return the according table
         if everything:
             logging.info("Getting everything from {0}".format(table))

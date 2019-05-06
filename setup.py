@@ -38,7 +38,7 @@ setup(
     url='https://github.com/JFK422/Arcanum/',
     description='An encryption manager',
     long_description="""Arcanum is a tool for handling encryption. Generate/store passwords in a database
-    of your choice, encrypt notes and store them there too.
+    of your choice.
     Handle keys and asymmetric stuff.
     STILL IN THE WORKS!""",
     classifiers=[

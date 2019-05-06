@@ -10,7 +10,7 @@ class Settings(QtWidgets.QWidget):
         gSettingsMain.setAlignment(QtCore.Qt.AlignTop)
 
         #Create the settings tab
-        leEmail = QtWidgets.QLineEdit(crypt.Encryption.decrypt(self, dab.DatabaseActions.read(self, "configs", False, 0)[1])[0])
+        leEmail = QtWidgets.QLineEdit("")
         leEmail.setPlaceholderText("Email Address")
         leEmail.setMaximumWidth(300)
         gSettingsMain.addWidget(leEmail, 0, 0)
@@ -34,10 +34,12 @@ class Settings(QtWidgets.QWidget):
         dataEmail = dab.DatabaseActions.read(self, table="configs", everything=True)
         for i in range(1, len(dataEmail)):
             liAddresses.addItem(crypt.Encryption.decrypt(self, dataEmail[i][2])[0])
+            """
             if i == 0:
                 create.CreateUI.updateProgressBar(self, 0)
             else:
                 create.CreateUI.updateProgressBar(self, (len(dataEmail))/i*100)
+            """
         print("Settings tab set")
 
     def addMailAddress(self, address):

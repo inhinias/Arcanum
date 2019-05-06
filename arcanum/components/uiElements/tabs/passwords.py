@@ -2,6 +2,7 @@ import  datetime, time, qtawesome as qta
 from PyQt5 import QtCore, QtWidgets
 from components import create, crypt, dab
 from components.uiElements import seperator, passItem
+from components.uiElements.tabs import generator
 
 class Passwords(QtWidgets.QWidget):
     #Global variables
@@ -13,7 +14,9 @@ class Passwords(QtWidgets.QWidget):
         #Password tab layouts
         vPassMain = QtWidgets.QHBoxLayout()
         vPassMain.setAlignment(QtCore.Qt.AlignTop | QtCore.Qt.AlignHCenter)
-        vPExtras = QtWidgets.QVBoxLayout()
+
+        #The side layout with all the stuff to add/edit account data
+        vPExtras = QtWidgets.QGridLayout()
         vPExtras.setAlignment(QtCore.Qt.AlignTop)
         vPExtras.setSpacing(10)
  
@@ -34,53 +37,58 @@ class Passwords(QtWidgets.QWidget):
         leSearch = QtWidgets.QLineEdit()
         leSearch.setPlaceholderText("Search")
         leSearch.setMaximumWidth(300)
-        vPExtras.addWidget(leSearch)
+        vPExtras.addWidget(leSearch, 0,0)
 
         sep = seperator.MenuSeperator()
-        vPExtras.addWidget(sep)
+        vPExtras.addWidget(sep, 1,0)
 
         global lePassName
         lePassName = QtWidgets.QLineEdit()
         lePassName.setPlaceholderText("Name for Password")
         lePassName.setMaximumWidth(300)
-        vPExtras.addWidget(lePassName)
+        vPExtras.addWidget(lePassName, 2,0)
 
         lEmail = QtWidgets.QLabel("Email Address")
         lEmail.setObjectName("smallLabel")
-        vPExtras.addWidget(lEmail)
+        vPExtras.addWidget(lEmail, 3,0)
 
         global cbEmail
         cbEmail = QtWidgets.QComboBox()
         cbEmail.setEditable(True)
         cbEmail.setMaximumWidth(300)
-        vPExtras.addWidget(cbEmail)
+        vPExtras.addWidget(cbEmail, 4,0)
 
         global leUsername
         leUsername = QtWidgets.QLineEdit()
         leUsername.setPlaceholderText("Username")
         leUsername.setMaximumWidth(300)
-        vPExtras.addWidget(leUsername)
+        vPExtras.addWidget(leUsername, 5,0)
 
         global leNewPass
         leNewPass = QtWidgets.QLineEdit()
         leNewPass.setPlaceholderText("Password")
         leNewPass.setMaximumWidth(300)
-        vPExtras.addWidget(leNewPass)
+        vPExtras.addWidget(leNewPass, 6,0)
+
+        btnGenPass = QtWidgets.QPushButton(qta.icon("fa.bolt", color="#f9f9f9"), "")
+        btnGenPass.setMaximumSize(QtCore.QSize(50,50))
+        btnGenPass.clicked.connect(lambda:Passwords.generatePassword(self))
+        vPExtras.addWidget(btnGenPass, 6,1)
 
         global chkGen
         chkGen = QtWidgets.QCheckBox("Generated")
         chkGen.setMaximumWidth(300)
-        vPExtras.addWidget(chkGen)
+        vPExtras.addWidget(chkGen, 7,0)
 
         global chkTwoFA
         chkTwoFA = QtWidgets.QCheckBox("Uses 2FA")
         chkTwoFA.setMaximumWidth(300)
-        vPExtras.addWidget(chkTwoFA)
+        vPExtras.addWidget(chkTwoFA, 8,0)
 
         global chkEncAll
         chkEncAll = QtWidgets.QCheckBox("Encrypt Everything")
         chkTwoFA.setMaximumWidth(300)
-        vPExtras.addWidget(chkEncAll)
+        vPExtras.addWidget(chkEncAll, 9,0)
 
         global pteComment
         pteComment = QtWidgets.QTextEdit()
@@ -88,7 +96,7 @@ class Passwords(QtWidgets.QWidget):
         pteComment.setMaximumWidth(300)
         pteComment.setMaximumHeight(100)
         pteComment.setSizePolicy(QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Minimum))
-        vPExtras.addWidget(pteComment)
+        vPExtras.addWidget(pteComment, 10,0)
         
         global btnPWCreate
         btnPWCreate = QtWidgets.QPushButton("Create New")
@@ -105,7 +113,7 @@ class Passwords(QtWidgets.QWidget):
             chkTwoFA.isChecked(),
             pteComment.toPlainText(),
             chkEncAll.isChecked()))
-        vPExtras.addWidget(btnPWCreate)
+        vPExtras.addWidget(btnPWCreate, 11,0)
 
         global btnPWUpdate
         btnPWUpdate = QtWidgets.QPushButton("Update")
@@ -123,7 +131,7 @@ class Passwords(QtWidgets.QWidget):
             pteComment.toPlainText(),
             chkEncAll.isChecked(),
             True))
-        vPExtras.addWidget(btnPWUpdate)
+        vPExtras.addWidget(btnPWUpdate, 12,0)
 
         self.setLayout(vPassMain)
 
@@ -216,10 +224,10 @@ class Passwords(QtWidgets.QWidget):
     #Refine, that if nothing has changed nothing will be regenerated
     def createPassSlates(self):
         #Set the progressbar to 0, clear the passwords grid and update progress to 5%
-        create.CreateUI.updateProgressBar(self, 0)
+        #create.CreateUI.updateProgressBar(self, 0)
         for i in reversed(range(Passwords.gPasswords.count())):
             Passwords.gPasswords.itemAt(i).widget().setParent(None)
-        create.CreateUI.updateProgressBar(self, 5)
+        #create.CreateUI.updateProgressBar(self, 5)
 
         row = 0
         column = 0
@@ -228,7 +236,7 @@ class Passwords(QtWidgets.QWidget):
 
         #Get every password entry and save the time for calculating decrypt time
         data = dab.DatabaseActions.read(self, table="passTable", everything=True)
-        slateProgressIncrement = 80/len(data)
+        #slateProgressIncrement = 80/len(data)
         startTime = time.time()
         
         #loop through every added password
@@ -274,7 +282,7 @@ class Passwords(QtWidgets.QWidget):
             """
             Passwords.gPasswords.addWidget(passSlate, 0, i)
             
-            create.CreateUI.updateProgressBar(self, create.CreateUI.getProgressValue(self)+slateProgressIncrement)
+            #create.CreateUI.updateProgressBar(self, create.CreateUI.getProgressValue(self)+slateProgressIncrement)
         endTime = time.time()
         print("Time taken for decryption: {0}".format(round(endTime-startTime, 3)))
                 
@@ -284,5 +292,8 @@ class Passwords(QtWidgets.QWidget):
         dataEmail = dab.DatabaseActions.read(self, table="configs", everything=True)
         for i in range(1, len(dataEmail)):
             cbEmail.addItem(crypt.Encryption.decrypt(self, dataEmail[i][2])[0])
-        create.CreateUI.updateProgressBar(self, 100)
+        #create.CreateUI.updateProgressBar(self, 100)
         print("Passwords tab data set")
+    
+    def generatePassword(self):
+        gen = generator.Generator()
