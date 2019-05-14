@@ -39,13 +39,14 @@ class DatabaseActions():
 
     def createTables(self):
         #Define a schema if the current one doesnt exist
+        #Note: This is useless as this needs to be defined when connecting
         schema = "CREATE SCHEMA IF NOT EXISTS passwords DEFAULT CHARACTER SET utf8;"
 
         #Define a tables dictionary. The table name 
         tables = {}
         tables['passTable'] = (
             "CREATE TABLE IF NOT EXISTS passwords.passTable("
-            "prim int(11) PRIMARY KEY,"
+            "prim INT(11) PRIMARY KEY NOT NULL AUTO_INCREMENT,"
             #Where the password is from
             "`name` VARCHAR(300),"
             #An email address with the account
@@ -65,9 +66,7 @@ class DatabaseActions():
         )
         tables['configs'] = (
             "CREATE TABLE IF NOT EXISTS passwords.configs("
-            "prim int(11) PRIMARY KEY,"
-            #The standard email address. Further addresses are added in the rows after with the rest set to NULL.
-            "emailAddress VARCHAR(300),"
+            "prim INT(11) PRIMARY KEY NOT NULL AUTO_INCREMENT,"
             #This will be set at the first launch and used to test  if password/keys are correct.
             "decryptTest VARCHAR(300),"
             #How strong the asymmetic key length shold be
@@ -76,22 +75,27 @@ class DatabaseActions():
             "lastChanged VARCHAR(300));"
         )
 
+        #Create a table for all the email addresses
+        tables['email'] = (
+            "CREATE TABLE IF NOT EXISTS passwords.email("
+            "prim INT(11) PRIMARY KEY NOT NULL AUTO_INCREMENT,"
+            "`address` VARCHAR(300));"
+        )
+
         #For RSA encryption to maybe speed up the de/encryption process.
-        """
         tables['keys'] = (
             "CREATE TABLE IF NOT EXISTS passwords.keys("
-            "prim int(11) PRIMARY KEY,"
+            "prim INT PRIMARY KEY NOT NULL AUTO_INCREMENT,"
             #They keys value
-            "key VARCHAR(600),"
+            "encKey VARCHAR(600),"
             #How strong the key is
-            "keyLength 4096,"
+            "keyLength INT,"
             #When the key got changed
-            "lastRotation VARCHAR(300)),"
+            "lastRotation VARCHAR(300),"
             #0=None, 1=AES256, 2=RSA
             #Pub Key arent encrypted, Private keys are either AES or RSA encrypted.
-            "encryption INT"
+            "encryption INT);"
         )
-        """
 
         #Creat a new schema if needed
         cur.execute(schema)
@@ -108,7 +112,7 @@ class DatabaseActions():
                 else:
                     print(err.msg)
                     logging.critical(err.msg)
-                    crashDialog(self, err.msg)
+                    crashDialog.ErrorDialog(err.msg)
 
         logging.info("All tables were created/exist!")
 
@@ -116,12 +120,12 @@ class DatabaseActions():
     def addInitData(self):
         #This is the dictionary to contain all the data to be added to the database
         data = {'passTest':crypt.Encryption.encrypt(self, theData=crypt.Encryption.genPassword(self, letters="both", digits=True, length=16)),
-            'emailAdd':"", 
             'keyLen':4096, 
             "lastChgd":str(datetime.datetime.now())}
                 
-        #Insert the data into the database and return true because its the first launch.
+        #Insert the data into the database
         DatabaseActions.insert(self, "configs", data)
+        DatabaseActions.DatabaseActions.insert(self, "email",{'emailAdd':str(crypt.Encryption.encrypt(self, "None"))})
         logging.info("Created initial config data")
 
     #Close the connection to the database and its cursor object
@@ -145,6 +149,10 @@ class DatabaseActions():
 
         elif table=="configs":
             cur.execute("SELECT COUNT(*) FROM passwords.configs")
+            ammount = cur.fetchall()[0][0]
+
+        elif table=="email":
+            cur.execute("SELECT COUNT(*) FROM passwords.email")
             ammount = cur.fetchall()[0][0]
 
         #The given table was not found, return nothing.
@@ -171,8 +179,18 @@ class DatabaseActions():
                 except:
                     return None
                     logging.info("Returning nothing from row {0} from table: {1}".format(row, table))
-            if table == "configs":
+            elif table == "configs":
                 cur.execute("SELECT * FROM passwords.configs")
+                result = cur.fetchall()
+                try:
+                    test = result[0]
+                    return result
+                except:
+                    return None
+                    logging.info("Returning nothing from row {0} from table: {1}".format(row, table))
+
+            elif table == "email":
+                cur.execute("SELECT * FROM passwords.email")
                 result = cur.fetchall()
                 try:
                     test = result[0]
@@ -192,8 +210,15 @@ class DatabaseActions():
                     except:
                         return None
                         logging.info("Returning nothing from row {0} from table: {1}".format(row, table))
-                if table == "configs":
+                elif table == "configs":
                     cur.execute("SELECT * FROM passwords.configs WHERE prim = %(theRow)s", dictOfRow)
+                    try: return cur.fetchall()[0]
+                    except:
+                        logging.info("Returning nothing from row {0} from table: {1}".format(row, table))
+                        return None
+
+                elif table == "email":
+                    cur.execute("SELECT * FROM passwords.email WHERE prim = %(theRow)s", dictOfRow)
                     try: return cur.fetchall()[0]
                     except:
                         logging.info("Returning nothing from row {0} from table: {1}".format(row, table))
@@ -216,6 +241,13 @@ class DatabaseActions():
             cur.execute("INSERT INTO passwords.configs"
             "(emailAddress, decryptTest, keyLength, lastChanged)"
             "VALUES (%(emailAdd)s, %(passTest)s, %(keyLen)s, %(lastChgd)s)", context)
+            connection.commit()
+            logging.info("Inserted data into configs table")
+
+        elif table == "email":
+            cur.execute("INSERT INTO passwords.email"
+            "(address)"
+            "VALUES (%(emailAdd)s)", context)
             connection.commit()
             logging.info("Inserted data into configs table")
         
