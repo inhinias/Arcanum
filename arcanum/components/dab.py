@@ -232,8 +232,8 @@ class DatabaseActions():
         if table == "passwords":
             print("Inserting password")
             cur.execute("INSERT INTO passwords.passTable"
-            "(name, email, username, lastUsed, generated, twoFA, encryptedPassword)"
-            "VALUES (%(name)s, %(email)s, %(uName)s, %(lstUsed)s, %(gen)s, %(twofactor)s, %(crypticPass)s)", context)
+            "(name, email, username, lastUsed, generated, twoFA, encryptedPassword, comment)"
+            "VALUES (%(name)s, %(email)s, %(uName)s, %(lstUsed)s, %(gen)s, %(twofactor)s, %(crypticPass)s, %(comment)s)", context)
             connection.commit()
             logging.info("Inserted data into passwords table")
         
@@ -265,11 +265,12 @@ class DatabaseActions():
     #Update a row in the given table
     def update(self, table, context, row=0):
         #Atm there is only the passwords table, may be expanded further
+        context["index"] = row
         if table == "passwords":
             print("Updating password")
             cur.execute("UPDATE passwords.passTable "
             "SET name = %(name)s, email = %(email)s, username = %(uName)s, lastUsed = %(lstUsed)s, "
-            "generated = %(gen)s, twoFA = %(twofactor)s, encryptedPassword = %(crypticPass)s"
+            "generated = %(gen)s, twoFA = %(twofactor)s, encryptedPassword = %(crypticPass)s, comment = %(comment)s"
             "WHERE prim = %(index)s", context)
             connection.commit()
         

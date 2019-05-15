@@ -2,7 +2,7 @@ import  datetime, time, logging, qtawesome as qta
 from PyQt5 import QtCore, QtWidgets
 from components import create, crypt, dab
 from components.uiElements import seperator, passItem
-from components.uiElements.tabs import generator
+from components.uiElements.tabs import generator, overview
 
 class Passwords(QtWidgets.QWidget):
     #Global variables
@@ -151,6 +151,12 @@ class Passwords(QtWidgets.QWidget):
             update = True))
         vPExtras.addWidget(btnPWUpdate, line,0)
 
+        line += 1
+        global lIndex
+        lIndex = QtWidgets.QLabel("")
+        lIndex.setVisible(False)
+        vPExtras.addWidget(lIndex)
+
         self.setLayout(vPassMain)
 
         #PasswordsName, email, Username, Password, 2fa
@@ -162,11 +168,11 @@ class Passwords(QtWidgets.QWidget):
         if not(emailAdd == "None" or emailAdd == ""):
             #If there are no email addresses saved just skip the duplicate test and add the address
             if emailData != None:
-                encMailAdd = crypt.Encryption.encrypt(self, emailAdd)
                 for i in range(len(emailData)):
-                    if emailData[i][1] == encMailAdd:
+                    decMail = crypt.Encryption.decrypt(self, emailData[i][1])[0]
+                    if decMail == str(emailAdd):
                         duplicate = True
-                        emailAdd == i+1
+                        emailIndex = i+1
                 if not(duplicate):
                     dab.DatabaseActions.insert(self,
                         "email",
@@ -186,8 +192,8 @@ class Passwords(QtWidgets.QWidget):
         #But im not going to do so because the email addresses are in a diffrent table
         #and usernames aren't encrypted in the database
 
-        #Note: Here used to be a split between if everything shuld be encrypted
-        print(theComment)
+        #Note: Here used to be a split between if everything should be encrypted or only the important stuff
+        #Got rid of it due to no real necessity
         insertionData = {"name":crypt.Encryption.encrypt(self, passName), #The name is encrypted so no real account can be traced to the password.
             "email":emailIndex, #The email address is referenced here as an index to where it can be found in the email table
             "uName":str(theUsername), #Note: the username is not encrypted as it isn't a important part 
@@ -198,8 +204,11 @@ class Passwords(QtWidgets.QWidget):
             "comment":crypt.Encryption.encrypt(self, str(theComment))} #The comment on the account is encrypted as the user cannot be trusted to not have critical info in here
 
         if update:
-            dab.DatabaseActions.update(self, "passwords", insertionData)
             logging.info("Password is being updated")
+            dab.DatabaseActions.update(self, "passwords", insertionData, int(float(lIndex.text())))
+            btnPWCreate.setHidden(False)
+            btnPWUpdate.setHidden(True)
+
         else:
             logging.info("Password is being inserted")
             dab.DatabaseActions.insert(self, "passwords", insertionData)
@@ -212,6 +221,7 @@ class Passwords(QtWidgets.QWidget):
     def editPassword(self):
         """
         Rundown of all the data present
+        The data is defined in the pass item file which calls this method
         self.index = passIndex
         self.name = name
         self.lastChanged = lastChanged
@@ -223,8 +233,6 @@ class Passwords(QtWidgets.QWidget):
 
         btnPWCreate.setHidden(True)
         btnPWUpdate.setHidden(False)
-        global currentPassIndex
-        currentPassIndex = self.index
         data = dab.DatabaseActions.read(self, table="passTable", row=self.index)
         lPassword = crypt.Encryption.decrypt(self, data[7])[0]
 
@@ -235,6 +243,7 @@ class Passwords(QtWidgets.QWidget):
         if self.twoFa == "True": chkTwoFA.setChecked(True)
         else: chkTwoFA.setChecked(False)
         pteComment.setText(self.comment)
+        lIndex.setText(str(self.index))
 
     #Clears the list of the passwords
     def clearData(self):
@@ -320,6 +329,9 @@ class Passwords(QtWidgets.QWidget):
             cbEmail.addItem(email)
         logging.info("Decrypted email addresses")
         print("Passwords tab data set")
+
+        #Update the overview number every time the passwords display gets updated
+        overview.Overview.setGeneralInfo(self)
     
     def generatePassword(self):
         gen = generator.Generator()
