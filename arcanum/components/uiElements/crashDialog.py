@@ -9,6 +9,6 @@ class ErrorDialog():
         msg.setWindowTitle("uwu, Something went wrong!")
         msg.setStandardButtons(QtWidgets.QMessageBox.Ok)
         retval = msg.exec_()
-        msg.buttonClicked.connect(QtCore.QCoreApplication.instance().quit)
+        msg.buttonClicked.connect(lambda:quit())
 
         

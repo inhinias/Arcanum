@@ -1,0 +1,147 @@
+2019/05/15 11:27:39 AM:INFO:Qt version:5.11.1
+2019/05/15 11:27:39 AM:INFO:PyQt version:5.11.2
+2019/05/15 11:27:39 AM:INFO:SIP version:4.19.7
+2019/05/15 11:27:41 :DEBUG:11518: gpg --status-fd 2 --no-tty --no-verbose --fixed-list-mode --batch --with-colons --homedir gpg --version
+2019/05/15 11:27:41 :DEBUG:stderr reader: <Thread(Thread-1, initial daemon)>
+2019/05/15 11:27:41 :DEBUG:stdout reader: <Thread(Thread-2, initial daemon)>
+2019/05/15 11:27:41 :DEBUG:gpg: WARNING: unsafe permissions on homedir '/home/jfk422/Projects/Code/Arcanum/arcanum/gpg'
+2019/05/15 11:27:41 :DEBUG:chunk: b'gpg (GnuPG) 2.2.4\nlibgcrypt 1.8.1\nCopyright (C) 2017 Free Software Foundation, Inc.\nLicense GPLv3+: GNU GPL version 3 or later <https://gnu.org/licenses/gpl.html>\nThis is free software: you are free to change and redistribute it.\nThere is NO WARRANTY, to t'
+2019/05/15 11:27:41 :INFO:Connection to database established
+2019/05/15 11:27:41 :INFO:Created table passTable: 
+2019/05/15 11:27:41 :INFO:Created table configs: 
+2019/05/15 11:27:41 :INFO:Created table email: 
+2019/05/15 11:27:41 :INFO:Created table keys: 
+2019/05/15 11:27:41 :INFO:All tables were created/exist!
+2019/05/15 11:27:41 :INFO:Getting row: 1 from table: configs
+2019/05/15 11:27:41 :INFO:Getting row: 1 from table: configs
+2019/05/15 11:27:41 :DEBUG:11521: gpg --pinentry-mode loopback --status-fd 2 --no-tty --no-verbose --fixed-list-mode --batch --with-colons --homedir gpg --passphrase-fd 0 --decrypt
+2019/05/15 11:27:41 :DEBUG:Wrote passphrase
+2019/05/15 11:27:41 :DEBUG:data copier: <Thread(Thread-3, initial daemon)>, <_io.BytesIO object at 0x7f1d94b65048>, <_io.BufferedWriter name=27>
+2019/05/15 11:27:41 :DEBUG:stderr reader: <Thread(Thread-4, initial daemon)>
+2019/05/15 11:27:41 :DEBUG:closed output, 179 bytes sent
+2019/05/15 11:27:41 :DEBUG:stdout reader: <Thread(Thread-5, initial daemon)>
+2019/05/15 11:27:41 :DEBUG:gpg: WARNING: unsafe permissions on homedir '/home/jfk422/Projects/Code/Arcanum/arcanum/gpg'
+2019/05/15 11:27:41 :DEBUG:gpg: AES256 encrypted data
+2019/05/15 11:27:41 :DEBUG:[GNUPG:] NEED_PASSPHRASE_SYM 9 3 2
+2019/05/15 11:27:41 :DEBUG:gpg: encrypted with 1 passphrase
+2019/05/15 11:27:41 :DEBUG:[GNUPG:] BEGIN_DECRYPTION
+2019/05/15 11:27:41 :DEBUG:chunk: b'OQwAjBBLVkeaWCEs'
+2019/05/15 11:27:41 :DEBUG:[GNUPG:] DECRYPTION_COMPLIANCE_MODE 23
+2019/05/15 11:27:41 :DEBUG:message ignored: DECRYPTION_COMPLIANCE_MODE, 23
+2019/05/15 11:27:41 :DEBUG:[GNUPG:] DECRYPTION_INFO 2 9
+2019/05/15 11:27:41 :DEBUG:[GNUPG:] PLAINTEXT 62 1557911496
+2019/05/15 11:27:41 :DEBUG:[GNUPG:] PLAINTEXT_LENGTH 16
+2019/05/15 11:27:41 :DEBUG:[GNUPG:] DECRYPTION_OKAY
+2019/05/15 11:27:41 :DEBUG:[GNUPG:] GOODMDC
+2019/05/15 11:27:41 :DEBUG:[GNUPG:] END_DECRYPTION
+2019/05/15 11:27:41 :DEBUG:decrypt result: b'OQwAjBBLVkeaWCEs'
+2019/05/15 11:27:41 :INFO:Getting everything from passTable
+2019/05/15 11:27:41 :DEBUG:11525: gpg --pinentry-mode loopback --status-fd 2 --no-tty --no-verbose --fixed-list-mode --batch --with-colons --homedir gpg --passphrase-fd 0 --decrypt
+2019/05/15 11:27:41 :DEBUG:Wrote passphrase
+2019/05/15 11:27:41 :DEBUG:data copier: <Thread(Thread-6, initial daemon)>, <_io.BytesIO object at 0x7f1d94b6b0a0>, <_io.BufferedWriter name=27>
+2019/05/15 11:27:41 :DEBUG:stderr reader: <Thread(Thread-7, initial daemon)>
+2019/05/15 11:27:41 :DEBUG:closed output, 1 bytes sent
+2019/05/15 11:27:41 :DEBUG:stdout reader: <Thread(Thread-8, initial daemon)>
+2019/05/15 11:27:41 :DEBUG:gpg: WARNING: unsafe permissions on homedir '/home/jfk422/Projects/Code/Arcanum/arcanum/gpg'
+2019/05/15 11:27:41 :DEBUG:gpg: [don't know]: invalid packet (ctb=31)
+2019/05/15 11:27:41 :DEBUG:[GNUPG:] NODATA 3
+2019/05/15 11:27:41 :DEBUG:decrypt result: b''
+2019/05/15 11:27:41 :DEBUG:11529: gpg --pinentry-mode loopback --status-fd 2 --no-tty --no-verbose --fixed-list-mode --batch --with-colons --homedir gpg --passphrase-fd 0 --decrypt
+2019/05/15 11:27:41 :DEBUG:Wrote passphrase
+2019/05/15 11:27:41 :DEBUG:data copier: <Thread(Thread-9, initial daemon)>, <_io.BytesIO object at 0x7f1d94b6b0a0>, <_io.BufferedWriter name=27>
+2019/05/15 11:27:41 :DEBUG:stderr reader: <Thread(Thread-10, initial daemon)>
+2019/05/15 11:27:41 :DEBUG:closed output, 163 bytes sent
+2019/05/15 11:27:41 :DEBUG:stdout reader: <Thread(Thread-11, initial daemon)>
+2019/05/15 11:27:42 :DEBUG:gpg: WARNING: unsafe permissions on homedir '/home/jfk422/Projects/Code/Arcanum/arcanum/gpg'
+2019/05/15 11:27:42 :DEBUG:gpg: AES256 encrypted data
+2019/05/15 11:27:42 :DEBUG:[GNUPG:] NEED_PASSPHRASE_SYM 9 3 2
+2019/05/15 11:27:42 :DEBUG:gpg: encrypted with 1 passphrase
+2019/05/15 11:27:42 :DEBUG:chunk: b'test'
+2019/05/15 11:27:42 :DEBUG:[GNUPG:] BEGIN_DECRYPTION
+2019/05/15 11:27:42 :DEBUG:[GNUPG:] DECRYPTION_COMPLIANCE_MODE 23
+2019/05/15 11:27:42 :DEBUG:message ignored: DECRYPTION_COMPLIANCE_MODE, 23
+2019/05/15 11:27:42 :DEBUG:[GNUPG:] DECRYPTION_INFO 2 9
+2019/05/15 11:27:42 :DEBUG:[GNUPG:] PLAINTEXT 62 1557912096
+2019/05/15 11:27:42 :DEBUG:[GNUPG:] PLAINTEXT_LENGTH 4
+2019/05/15 11:27:42 :DEBUG:[GNUPG:] DECRYPTION_OKAY
+2019/05/15 11:27:42 :DEBUG:[GNUPG:] GOODMDC
+2019/05/15 11:27:42 :DEBUG:[GNUPG:] END_DECRYPTION
+2019/05/15 11:27:42 :DEBUG:decrypt result: b'test'
+2019/05/15 11:27:42 :DEBUG:11533: gpg --pinentry-mode loopback --status-fd 2 --no-tty --no-verbose --fixed-list-mode --batch --with-colons --homedir gpg --passphrase-fd 0 --decrypt
+2019/05/15 11:27:42 :DEBUG:Wrote passphrase
+2019/05/15 11:27:42 :DEBUG:data copier: <Thread(Thread-12, initial daemon)>, <_io.BytesIO object at 0x7f1d94b6b0a0>, <_io.BufferedWriter name=27>
+2019/05/15 11:27:42 :DEBUG:stderr reader: <Thread(Thread-13, initial daemon)>
+2019/05/15 11:27:42 :DEBUG:closed output, 26 bytes sent
+2019/05/15 11:27:42 :DEBUG:stdout reader: <Thread(Thread-14, initial daemon)>
+2019/05/15 11:27:42 :DEBUG:gpg: WARNING: unsafe permissions on homedir '/home/jfk422/Projects/Code/Arcanum/arcanum/gpg'
+2019/05/15 11:27:42 :DEBUG:gpg: no valid OpenPGP data found.
+2019/05/15 11:27:42 :DEBUG:[GNUPG:] NODATA 1
+2019/05/15 11:27:42 :DEBUG:[GNUPG:] NODATA 2
+2019/05/15 11:27:42 :DEBUG:[GNUPG:] FAILURE decrypt 4294967295
+2019/05/15 11:27:42 :DEBUG:gpg: decrypt_message failed: Unknown system error
+2019/05/15 11:27:42 :DEBUG:decrypt result: b''
+2019/05/15 11:27:42 :DEBUG:11537: gpg --pinentry-mode loopback --status-fd 2 --no-tty --no-verbose --fixed-list-mode --batch --with-colons --homedir gpg --passphrase-fd 0 --decrypt
+2019/05/15 11:27:42 :DEBUG:Wrote passphrase
+2019/05/15 11:27:42 :DEBUG:data copier: <Thread(Thread-15, initial daemon)>, <_io.BytesIO object at 0x7f1d94b6b0a0>, <_io.BufferedWriter name=27>
+2019/05/15 11:27:42 :DEBUG:stderr reader: <Thread(Thread-16, initial daemon)>
+2019/05/15 11:27:42 :DEBUG:closed output, 4 bytes sent
+2019/05/15 11:27:42 :DEBUG:stdout reader: <Thread(Thread-17, initial daemon)>
+2019/05/15 11:27:42 :DEBUG:gpg: WARNING: unsafe permissions on homedir '/home/jfk422/Projects/Code/Arcanum/arcanum/gpg'
+2019/05/15 11:27:42 :DEBUG:gpg: no valid OpenPGP data found.
+2019/05/15 11:27:42 :DEBUG:[GNUPG:] NODATA 1
+2019/05/15 11:27:42 :DEBUG:[GNUPG:] NODATA 2
+2019/05/15 11:27:42 :DEBUG:[GNUPG:] FAILURE decrypt 4294967295
+2019/05/15 11:27:42 :DEBUG:gpg: decrypt_message failed: Unknown system error
+2019/05/15 11:27:42 :DEBUG:decrypt result: b''
+2019/05/15 11:27:42 :DEBUG:11541: gpg --pinentry-mode loopback --status-fd 2 --no-tty --no-verbose --fixed-list-mode --batch --with-colons --homedir gpg --passphrase-fd 0 --decrypt
+2019/05/15 11:27:42 :DEBUG:Wrote passphrase
+2019/05/15 11:27:42 :DEBUG:data copier: <Thread(Thread-18, initial daemon)>, <_io.BytesIO object at 0x7f1d94b6b0a0>, <_io.BufferedWriter name=27>
+2019/05/15 11:27:42 :DEBUG:stderr reader: <Thread(Thread-19, initial daemon)>
+2019/05/15 11:27:42 :DEBUG:closed output, 13 bytes sent
+2019/05/15 11:27:42 :DEBUG:stdout reader: <Thread(Thread-20, initial daemon)>
+2019/05/15 11:27:42 :DEBUG:gpg: WARNING: unsafe permissions on homedir '/home/jfk422/Projects/Code/Arcanum/arcanum/gpg'
+2019/05/15 11:27:42 :DEBUG:gpg: no valid OpenPGP data found.
+2019/05/15 11:27:42 :DEBUG:[GNUPG:] NODATA 1
+2019/05/15 11:27:42 :DEBUG:[GNUPG:] NODATA 2
+2019/05/15 11:27:42 :DEBUG:[GNUPG:] FAILURE decrypt 4294967295
+2019/05/15 11:27:42 :DEBUG:gpg: decrypt_message failed: Unknown system error
+2019/05/15 11:27:42 :DEBUG:decrypt result: b''
+2019/05/15 11:27:42 :DEBUG:11545: gpg --pinentry-mode loopback --status-fd 2 --no-tty --no-verbose --fixed-list-mode --batch --with-colons --homedir gpg --passphrase-fd 0 --decrypt
+2019/05/15 11:27:42 :DEBUG:Wrote passphrase
+2019/05/15 11:27:42 :DEBUG:data copier: <Thread(Thread-21, initial daemon)>, <_io.BytesIO object at 0x7f1d94b6b0a0>, <_io.BufferedWriter name=27>
+2019/05/15 11:27:42 :DEBUG:closed output, 4 bytes sent
+2019/05/15 11:27:42 :DEBUG:stderr reader: <Thread(Thread-22, initial daemon)>
+2019/05/15 11:27:42 :DEBUG:stdout reader: <Thread(Thread-23, initial daemon)>
+2019/05/15 11:27:42 :DEBUG:gpg: WARNING: unsafe permissions on homedir '/home/jfk422/Projects/Code/Arcanum/arcanum/gpg'
+2019/05/15 11:27:42 :DEBUG:gpg: no valid OpenPGP data found.
+2019/05/15 11:27:42 :DEBUG:[GNUPG:] NODATA 1
+2019/05/15 11:27:42 :DEBUG:[GNUPG:] NODATA 2
+2019/05/15 11:27:42 :DEBUG:[GNUPG:] FAILURE decrypt 4294967295
+2019/05/15 11:27:42 :DEBUG:gpg: decrypt_message failed: Unknown system error
+2019/05/15 11:27:42 :DEBUG:decrypt result: b''
+2019/05/15 11:27:42 :DEBUG:11549: gpg --pinentry-mode loopback --status-fd 2 --no-tty --no-verbose --fixed-list-mode --batch --with-colons --homedir gpg --passphrase-fd 0 --decrypt
+2019/05/15 11:27:42 :DEBUG:Wrote passphrase
+2019/05/15 11:27:42 :DEBUG:data copier: <Thread(Thread-24, initial daemon)>, <_io.BytesIO object at 0x7f1d94b6b0a0>, <_io.BufferedWriter name=27>
+2019/05/15 11:27:42 :DEBUG:closed output, 4 bytes sent
+2019/05/15 11:27:42 :DEBUG:stderr reader: <Thread(Thread-25, initial daemon)>
+2019/05/15 11:27:42 :DEBUG:stdout reader: <Thread(Thread-26, initial daemon)>
+2019/05/15 11:27:42 :DEBUG:gpg: WARNING: unsafe permissions on homedir '/home/jfk422/Projects/Code/Arcanum/arcanum/gpg'
+2019/05/15 11:27:42 :DEBUG:gpg: no valid OpenPGP data found.
+2019/05/15 11:27:42 :DEBUG:[GNUPG:] NODATA 1
+2019/05/15 11:27:42 :DEBUG:[GNUPG:] NODATA 2
+2019/05/15 11:27:42 :DEBUG:[GNUPG:] FAILURE decrypt 4294967295
+2019/05/15 11:27:42 :DEBUG:gpg: decrypt_message failed: Unknown system error
+2019/05/15 11:27:42 :DEBUG:decrypt result: b''
+2019/05/15 11:27:42 :DEBUG:11553: gpg --pinentry-mode loopback --status-fd 2 --no-tty --no-verbose --fixed-list-mode --batch --with-colons --homedir gpg --passphrase-fd 0 --decrypt
+2019/05/15 11:27:42 :DEBUG:Wrote passphrase
+2019/05/15 11:27:42 :DEBUG:data copier: <Thread(Thread-27, initial daemon)>, <_io.BytesIO object at 0x7f1d94b6b0a0>, <_io.BufferedWriter name=27>
+2019/05/15 11:27:42 :DEBUG:closed output, 4 bytes sent
+2019/05/15 11:27:42 :DEBUG:stderr reader: <Thread(Thread-28, initial daemon)>
+2019/05/15 11:27:42 :DEBUG:stdout reader: <Thread(Thread-29, initial daemon)>
+2019/05/15 11:27:42 :DEBUG:gpg: WARNING: unsafe permissions on homedir '/home/jfk422/Projects/Code/Arcanum/arcanum/gpg'
+2019/05/15 11:27:42 :DEBUG:gpg: no valid OpenPGP data found.
+2019/05/15 11:27:42 :DEBUG:[GNUPG:] NODATA 1
+2019/05/15 11:27:42 :DEBUG:[GNUPG:] NODATA 2
+2019/05/15 11:27:42 :DEBUG:[GNUPG:] FAILURE decrypt 4294967295
+2019/05/15 11:27:42 :DEBUG:gpg: decrypt_message failed: Unknown system error
+2019/05/15 11:27:42 :DEBUG:decrypt result: b''

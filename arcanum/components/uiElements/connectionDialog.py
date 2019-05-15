@@ -139,7 +139,7 @@ class CreateUI(QtWidgets.QWidget):
     #When connecting to the database this method is called to test the given decrypting password.
     #The given password is used to decrypt the decryptTest from the config table. If this fails the given password is wrong.
     def testPassword(self, password):
-        passTest = crypt.Encryption.decrypt(self, theData=dab.DatabaseActions.read(self, "configs", False, 1)[2])
+        passTest = crypt.Encryption.decrypt(self, theData=dab.DatabaseActions.read(self, "configs", False, 1)[1])
 
         if passTest[0] != "":
             if passTest[1]: return True

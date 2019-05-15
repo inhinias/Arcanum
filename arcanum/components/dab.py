@@ -125,7 +125,7 @@ class DatabaseActions():
                 
         #Insert the data into the database
         DatabaseActions.insert(self, "configs", data)
-        DatabaseActions.DatabaseActions.insert(self, "email",{'emailAdd':str(crypt.Encryption.encrypt(self, "None"))})
+        DatabaseActions.insert(self, "email",{'emailAdd':crypt.Encryption.encrypt(self, "None")})
         logging.info("Created initial config data")
 
     #Close the connection to the database and its cursor object
@@ -165,7 +165,7 @@ class DatabaseActions():
     #Read a table from the database
     #If everything from the table is wanted: everything=True
     #Else the wanted row needs to be given
-    def read(self, table, everything=False, row=0):
+    def read(self, table, everything=False, row=1):
         #Test if everything is wanted and return the according table
         if everything:
             logging.info("Getting everything from {0}".format(table))
@@ -239,8 +239,8 @@ class DatabaseActions():
         
         elif table == "configs":
             cur.execute("INSERT INTO passwords.configs"
-            "(emailAddress, decryptTest, keyLength, lastChanged)"
-            "VALUES (%(emailAdd)s, %(passTest)s, %(keyLen)s, %(lastChgd)s)", context)
+            "(decryptTest, keyLength, lastChanged)"
+            "VALUES (%(passTest)s, %(keyLen)s, %(lastChgd)s)", context)
             connection.commit()
             logging.info("Inserted data into configs table")
 
@@ -249,7 +249,7 @@ class DatabaseActions():
             "(address)"
             "VALUES (%(emailAdd)s)", context)
             connection.commit()
-            logging.info("Inserted data into configs table")
+            logging.info("Inserted data into email table")
         
         #The wanted table wasnt found. Doing nothing!
         else:

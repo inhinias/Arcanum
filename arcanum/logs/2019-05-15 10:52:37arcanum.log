@@ -1,0 +1,41 @@
+2019/05/15 10:52:37 AM:INFO:Qt version:5.11.1
+2019/05/15 10:52:37 AM:INFO:PyQt version:5.11.2
+2019/05/15 10:52:37 AM:INFO:SIP version:4.19.7
+2019/05/15 10:52:38 :DEBUG:8593: gpg --status-fd 2 --no-tty --no-verbose --fixed-list-mode --batch --with-colons --homedir gpg --version
+2019/05/15 10:52:38 :DEBUG:stderr reader: <Thread(Thread-1, initial daemon)>
+2019/05/15 10:52:38 :DEBUG:stdout reader: <Thread(Thread-2, initial daemon)>
+2019/05/15 10:52:38 :DEBUG:gpg: WARNING: unsafe permissions on homedir '/home/jfk422/Projects/Code/Arcanum/arcanum/gpg'
+2019/05/15 10:52:38 :DEBUG:chunk: b'gpg (GnuPG) 2.2.4\nlibgcrypt 1.8.1\nCopyright (C) 2017 Free Software Foundation, Inc.\nLicense GPLv3+: GNU GPL version 3 or later <https://gnu.org/licenses/gpl.html>\nThis is free software: you are free to change and redistribute it.\nThere is NO WARRANTY, to t'
+2019/05/15 10:52:38 :INFO:Connection to database established
+2019/05/15 10:52:38 :INFO:Created table passTable: 
+2019/05/15 10:52:38 :INFO:Created table configs: 
+2019/05/15 10:52:38 :INFO:Created table email: 
+2019/05/15 10:52:38 :INFO:Created table keys: 
+2019/05/15 10:52:38 :INFO:All tables were created/exist!
+2019/05/15 10:52:38 :INFO:Getting row: 0 from table: configs
+2019/05/15 10:52:38 :INFO:Returning nothing from row 0 from table: configs
+2019/05/15 10:52:38 :DEBUG:8596: gpg --pinentry-mode loopback --status-fd 2 --no-tty --no-verbose --fixed-list-mode --batch --with-colons --homedir gpg --passphrase-fd 0 --symmetric --armor
+2019/05/15 10:52:38 :DEBUG:Wrote passphrase
+2019/05/15 10:52:38 :DEBUG:data copier: <Thread(Thread-3, initial daemon)>, <_io.BytesIO object at 0x7f3cd23a8fc0>, <_io.BufferedWriter name=27>
+2019/05/15 10:52:38 :DEBUG:stderr reader: <Thread(Thread-4, initial daemon)>
+2019/05/15 10:52:38 :DEBUG:closed output, 16 bytes sent
+2019/05/15 10:52:38 :DEBUG:stdout reader: <Thread(Thread-5, initial daemon)>
+2019/05/15 10:52:38 :DEBUG:chunk: b'-----BEGIN PGP MESSAGE-----\n\njA0ECQMCS8hZ78v9YLj/0kUBW3lC8m9KAwuaxEY44YUnDsKs8osWm7+UKoXq3EH1\n/CDb96MB9U6J4dFnl2+jwNkBD72Ql7VWkhBwu1iqms5HO8MrlKE=\n=xnfU\n-----END PGP MESSAGE-----\n'
+2019/05/15 10:52:38 :DEBUG:gpg: WARNING: unsafe permissions on homedir '/home/jfk422/Projects/Code/Arcanum/arcanum/gpg'
+2019/05/15 10:52:38 :DEBUG:[GNUPG:] NEED_PASSPHRASE_SYM 9 3 2
+2019/05/15 10:52:38 :DEBUG:[GNUPG:] BEGIN_ENCRYPTION 2 9
+2019/05/15 10:52:38 :DEBUG:[GNUPG:] END_ENCRYPTION
+2019/05/15 10:52:38 :DEBUG:encrypt result: b'-----BEGIN PGP MESSAGE-----\n\njA0ECQMCS8hZ78v9YLj/0kUBW3lC8m9KAwuaxEY44YUnDsKs8osWm7+UKoXq3EH1\n/CDb96MB9U6J4dFnl2+jwNkBD72Ql7VWkhBwu1iqms5HO8MrlKE=\n=xnfU\n-----END PGP MESSAGE-----\n'
+2019/05/15 10:52:38 :INFO:Inserted data into configs table
+2019/05/15 10:52:38 :DEBUG:8601: gpg --pinentry-mode loopback --status-fd 2 --no-tty --no-verbose --fixed-list-mode --batch --with-colons --homedir gpg --passphrase-fd 0 --symmetric --armor
+2019/05/15 10:52:38 :DEBUG:Wrote passphrase
+2019/05/15 10:52:38 :DEBUG:data copier: <Thread(Thread-6, initial daemon)>, <_io.BytesIO object at 0x7f3cd23a8fc0>, <_io.BufferedWriter name=27>
+2019/05/15 10:52:38 :DEBUG:stderr reader: <Thread(Thread-7, initial daemon)>
+2019/05/15 10:52:38 :DEBUG:closed output, 4 bytes sent
+2019/05/15 10:52:38 :DEBUG:stdout reader: <Thread(Thread-8, initial daemon)>
+2019/05/15 10:52:39 :DEBUG:gpg: WARNING: unsafe permissions on homedir '/home/jfk422/Projects/Code/Arcanum/arcanum/gpg'
+2019/05/15 10:52:39 :DEBUG:chunk: b'-----BEGIN PGP MESSAGE-----\n\njA0ECQMCcq7M1SG6cz//0jkBWvOAlS62MsHCgxrDy5uDJB4XB08Q7yzpKfTzJPUz\nVlv9SMKqxTSa9vEyR99NtFyIFYDclitYbHI=\n=9HCH\n-----END PGP MESSAGE-----\n'
+2019/05/15 10:52:39 :DEBUG:[GNUPG:] NEED_PASSPHRASE_SYM 9 3 2
+2019/05/15 10:52:39 :DEBUG:[GNUPG:] BEGIN_ENCRYPTION 2 9
+2019/05/15 10:52:39 :DEBUG:[GNUPG:] END_ENCRYPTION
+2019/05/15 10:52:39 :DEBUG:encrypt result: b'-----BEGIN PGP MESSAGE-----\n\njA0ECQMCcq7M1SG6cz//0jkBWvOAlS62MsHCgxrDy5uDJB4XB08Q7yzpKfTzJPUz\nVlv9SMKqxTSa9vEyR99NtFyIFYDclitYbHI=\n=9HCH\n-----END PGP MESSAGE-----\n'
