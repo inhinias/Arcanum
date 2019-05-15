@@ -26,7 +26,7 @@ class Encryption:
         if password == None or password == "": passThing = Encryption.password
         else: passThing = password
 
-        encrypted = str(gpg.encrypt(data=theData, recipients=recipients, passphrase=passThing, symmetric=True))
+        encrypted = str(gpg.encrypt(data=str(theData), recipients=recipients, passphrase=passThing, symmetric=True))
         return encrypted
         
     def decrypt(self, theData, password=None):

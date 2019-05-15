@@ -2,11 +2,13 @@ import  datetime, time, logging, qtawesome as qta
 from PyQt5 import QtCore, QtWidgets
 from components import create, crypt, dab
 from components.uiElements import seperator, passItem
-from components.uiElements.tabs import generator
+from components.uiElements.tabs import generator, overview
 
 class Passwords(QtWidgets.QWidget):
     #Global variables
     gPasswords = None
+    leNewPass = None
+    generated = False
 
     def __init__(self):
         super(Passwords, self).__init__()
@@ -34,70 +36,86 @@ class Passwords(QtWidgets.QWidget):
         vPassMain.addWidget(passScroll)
 
         #Create passwords tab
+        line = 0
         leSearch = QtWidgets.QLineEdit()
         leSearch.setPlaceholderText("Search")
         leSearch.setMaximumWidth(300)
-        vPExtras.addWidget(leSearch, 0,0)
+        vPExtras.addWidget(leSearch, line,0)
+        
+        line += 1
+        sep = seperator.MenuSeperator(300)
+        vPExtras.addWidget(sep, line,0)
 
-        sep = seperator.MenuSeperator()
-        vPExtras.addWidget(sep, 1,0)
-
+        line += 1
         global lePassName
         lePassName = QtWidgets.QLineEdit()
         lePassName.setPlaceholderText("Name for Password")
         lePassName.setMaximumWidth(300)
-        vPExtras.addWidget(lePassName, 2,0)
+        vPExtras.addWidget(lePassName, line,0)
 
+        line += 1
         lEmail = QtWidgets.QLabel("Email Address")
         lEmail.setObjectName("smallLabel")
-        vPExtras.addWidget(lEmail, 3,0)
+        vPExtras.addWidget(lEmail, line,0)
 
+        line += 1
         global cbEmail
         cbEmail = QtWidgets.QComboBox()
         cbEmail.setEditable(True)
         cbEmail.setMaximumWidth(300)
-        vPExtras.addWidget(cbEmail, 4,0)
+        vPExtras.addWidget(cbEmail, line,0)
 
+        line += 1
         global leUsername
         leUsername = QtWidgets.QLineEdit()
         leUsername.setPlaceholderText("Username")
         leUsername.setMaximumWidth(300)
-        vPExtras.addWidget(leUsername, 5,0)
+        vPExtras.addWidget(leUsername, line,0)
 
-        global leNewPass
-        leNewPass = QtWidgets.QLineEdit()
-        leNewPass.setPlaceholderText("Password")
-        leNewPass.setMaximumWidth(300)
-        vPExtras.addWidget(leNewPass, 6,0)
+        wPassword = QtWidgets.QWidget()
+        wPassword.setMaximumWidth(300)
+        hPassword = QtWidgets.QHBoxLayout()
+        hPassword.setAlignment(QtCore.Qt.AlignLeft)
+        hPassword.setContentsMargins(0,0,0,0)
+        wPassword.setLayout(hPassword)
+
+        line += 1
+        Passwords.leNewPass = QtWidgets.QLineEdit()
+        Passwords.leNewPass.setPlaceholderText("Password")
+        Passwords.leNewPass.setMaximumWidth(240)
+        hPassword.addWidget(Passwords.leNewPass)
 
         btnGenPass = QtWidgets.QPushButton(qta.icon("fa.bolt", color="#f9f9f9"), "")
         btnGenPass.setMaximumSize(QtCore.QSize(50,50))
         btnGenPass.clicked.connect(lambda:Passwords.generatePassword(self))
-        vPExtras.addWidget(btnGenPass, 6,1)
+        hPassword.addWidget(btnGenPass)
 
+        vPExtras.addWidget(wPassword, line,0)
+
+        """
+        line += 1
         global chkGen
         chkGen = QtWidgets.QCheckBox("Generated")
         chkGen.setMaximumWidth(300)
-        vPExtras.addWidget(chkGen, 7,0)
+        vPExtras.addWidget(chkGen, line,0)
+        """
 
+        line += 1
         global chkTwoFA
         chkTwoFA = QtWidgets.QCheckBox("Uses 2FA")
         chkTwoFA.setMaximumWidth(300)
-        vPExtras.addWidget(chkTwoFA, 8,0)
+        vPExtras.addWidget(chkTwoFA, line,0)
 
-        global chkEncAll
-        chkEncAll = QtWidgets.QCheckBox("Encrypt Everything")
-        chkTwoFA.setMaximumWidth(300)
-        vPExtras.addWidget(chkEncAll, 9,0)
-
+        line += 1
         global pteComment
         pteComment = QtWidgets.QTextEdit()
         pteComment.setPlaceholderText("Comment")
         pteComment.setMaximumWidth(300)
         pteComment.setMaximumHeight(100)
         pteComment.setSizePolicy(QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Minimum))
-        vPExtras.addWidget(pteComment, 10,0)
+        vPExtras.addWidget(pteComment, line,0)
         
+        line += 1
         global btnPWCreate
         btnPWCreate = QtWidgets.QPushButton("Create New")
         btnPWCreate.setObjectName("btncreate")
@@ -105,16 +123,17 @@ class Passwords(QtWidgets.QWidget):
 
         #PasswordsName, email, Username, Password, 2fa
         btnPWCreate.clicked.connect(lambda:Passwords.addPassword(
-            self, lePassName.text(), 
-            cbEmail.currentText(), 
-            leUsername.text(), 
-            leNewPass.text(), 
-            chkGen.isChecked(), 
-            chkTwoFA.isChecked(),
-            pteComment.toPlainText(),
-            chkEncAll.isChecked()))
-        vPExtras.addWidget(btnPWCreate, 11,0)
+            self, passName = lePassName.text(), 
+            emailAdd = cbEmail.currentText(), 
+            theUsername = leUsername.text(), 
+            thePassword = Passwords.leNewPass.text(), 
+            generated = Passwords.generated, 
+            twoFAEnabled = chkTwoFA.isChecked(),
+            theComment = pteComment.toPlainText(),
+            update = False))
+        vPExtras.addWidget(btnPWCreate, line,0)
 
+        line += 1
         global btnPWUpdate
         btnPWUpdate = QtWidgets.QPushButton("Update")
         btnPWUpdate.setObjectName("btncreate")
@@ -122,61 +141,78 @@ class Passwords(QtWidgets.QWidget):
         btnPWUpdate.setHidden(True)
         #PasswordsName, email, Username, Password, 2fa
         btnPWUpdate.clicked.connect(lambda:Passwords.addPassword(
-            self, lePassName.text(), 
-            cbEmail.currentText(), 
-            leUsername.text(), 
-            leNewPass.text(), 
-            chkGen.isChecked(), 
-            chkTwoFA.isChecked(),
-            pteComment.toPlainText(),
-            chkEncAll.isChecked(),
-            True))
-        vPExtras.addWidget(btnPWUpdate, 12,0)
+            self, passName = lePassName.text(), 
+            emailAdd = cbEmail.currentText(), 
+            theUsername = leUsername.text(), 
+            thePassword = Passwords.leNewPass.text(), 
+            generated = Passwords.generated, 
+            twoFAEnabled = chkTwoFA.isChecked(),
+            theComment = pteComment.toPlainText(),
+            update = True))
+        vPExtras.addWidget(btnPWUpdate, line,0)
+
+        line += 1
+        global lIndex
+        lIndex = QtWidgets.QLabel("")
+        lIndex.setVisible(False)
+        vPExtras.addWidget(lIndex)
 
         self.setLayout(vPassMain)
 
         #PasswordsName, email, Username, Password, 2fa
-    def addPassword(self, passName, emailAdd, theUsername, thePassword, generated, twoFAEnabled, theComment, encEverything, update=False, index=0):
+    def addPassword(self, passName, emailAdd, theUsername, thePassword, generated, twoFAEnabled, theComment, update=False):
         #Check if the given email is already in the databse an add it if not
         duplicate = False
-        emailData = dab.DatabaseActions.read(self, "configs", True)
-        encMailAdd = crypt.Encryption.encrypt(self, emailAdd)
-        for i in range(len(emailData)):
-            if emailData[i][2] == encMailAdd:
-                duplicate = True
-        if not(duplicate):
-            dab.DatabaseActions.insert(self, "configs", {'name':"", 'email':crypt.Encryption.encrypt(self, emailAdd), 'dTest':"", 'keyLen':"", 'lstChanged':""})
-
-        #If no username was give, use the email address as the username
-        if theUsername == "":
-            theUsername = emailAdd
-
-        #decide if everything or just the name, email, username and password should be encrypted and inserted
-        if encEverything:
-            insertionData = {"name":crypt.Encryption.encrypt(self, passName),
-                "email":crypt.Encryption.encrypt(self, emailAdd),
-                "uName":crypt.Encryption.encrypt(self, theUsername),
-                "lstUsed":crypt.Encryption.encrypt(self, str(datetime.datetime.now())), 
-                "gen":crypt.Encryption.encrypt(self, generated), 
-                "crypticPass":crypt.Encryption.encrypt(self, thePassword), 
-                "twofactor":crypt.Encryption.encrypt(self, str(twoFAEnabled)),
-                "comment":crypt.Encryption.encrypt(self, theComment),
-                "index":currentPassIndex}
+        emailData = dab.DatabaseActions.read(self, "email", True)
+        #If no email was given do nothing
+        if not(emailAdd == "None" or emailAdd == ""):
+            #If there are no email addresses saved just skip the duplicate test and add the address
+            if emailData != None:
+                for i in range(len(emailData)):
+                    decMail = crypt.Encryption.decrypt(self, emailData[i][1])[0]
+                    if decMail == str(emailAdd):
+                        duplicate = True
+                        emailIndex = i+1
+                if not(duplicate):
+                    dab.DatabaseActions.insert(self,
+                        "email",
+                        {'emailAdd':crypt.Encryption.encrypt(self, emailAdd)})
+                    emailIndex = dab.DatabaseActions.getAmmount(self, "email")
+            
+            #Add the current email address because no other was present
+            else:
+                dab.DatabaseActions.insert(self,
+                    "email",
+                    {'emailAdd':crypt.Encryption.encrypt(self, emailAdd)})
+                emailIndex = dab.DatabaseActions.getAmmount(self, "email")
         else:
-            insertionData = {"name":crypt.Encryption.encrypt(self, passName),
-                "email":crypt.Encryption.encrypt(self, emailAdd),
-                "uName":theUsername,
-                "lstUsed":str(datetime.datetime.now()), 
-                "gen":str(generated), 
-                "crypticPass":crypt.Encryption.encrypt(self, thePassword), 
-                "twofactor":str(twoFAEnabled),
-                "comment":str(theComment),
-                "index":currentPassIndex}
-        print(update)
+            emailIndex = 1
+
+        #If no username was give, one could use the email address as the username
+        #But im not going to do so because the email addresses are in a diffrent table
+        #and usernames aren't encrypted in the database
+
+        #Note: Here used to be a split between if everything should be encrypted or only the important stuff
+        #Got rid of it due to no real necessity
+        insertionData = {"name":crypt.Encryption.encrypt(self, passName), #The name is encrypted so no real account can be traced to the password.
+            "email":emailIndex, #The email address is referenced here as an index to where it can be found in the email table
+            "uName":str(theUsername), #Note: the username is not encrypted as it isn't a important part 
+            "lstUsed":str(datetime.datetime.now()), #The last used timestamp will stay unencrypted to save resources
+            "gen":str(generated), #The generated info can stay not encrypted as its non vital info
+            "crypticPass":crypt.Encryption.encrypt(self, thePassword), #The most important thing of them all
+            "twofactor":str(twoFAEnabled), #Meh, who cares to know if 2FA is used. It just sorts the more difficutl accounts out
+            "comment":crypt.Encryption.encrypt(self, str(theComment))} #The comment on the account is encrypted as the user cannot be trusted to not have critical info in here
+
         if update:
-            dab.DatabaseActions.update(self, "passwords", insertionData)
+            logging.info("Password is being updated")
+            dab.DatabaseActions.update(self, "passwords", insertionData, int(float(lIndex.text())))
+            btnPWCreate.setHidden(False)
+            btnPWUpdate.setHidden(True)
+
         else:
+            logging.info("Password is being inserted")
             dab.DatabaseActions.insert(self, "passwords", insertionData)
+            
 
         #Clear everything and repopulate, change later to only adding the new item!
         Passwords.clearData(self)
@@ -185,6 +221,7 @@ class Passwords(QtWidgets.QWidget):
     def editPassword(self):
         """
         Rundown of all the data present
+        The data is defined in the pass item file which calls this method
         self.index = passIndex
         self.name = name
         self.lastChanged = lastChanged
@@ -196,28 +233,23 @@ class Passwords(QtWidgets.QWidget):
 
         btnPWCreate.setHidden(True)
         btnPWUpdate.setHidden(False)
-        global currentPassIndex
-        currentPassIndex = self.index
-        data = dab.DatabaseActions.read(self, table="passTable", rows=self.index)
-        lPassword = crypt.Encryption.decrypt(self, data[9])[0]
+        data = dab.DatabaseActions.read(self, table="passTable", row=self.index)
+        lPassword = crypt.Encryption.decrypt(self, data[7])[0]
 
         lePassName.setText(self.name)
         cbEmail.setCurrentIndex(cbEmail.findText(self.email))
         leUsername.setText(self.username)
-        leNewPass.setText(lPassword)
-        if self.generated == "True": chkGen.setChecked(True)
-        else: chkGen.setChecked(False)
+        Passwords.leNewPass.setText(lPassword)
         if self.twoFa == "True": chkTwoFA.setChecked(True)
         else: chkTwoFA.setChecked(False)
-        #chkEncAll needs to be implemented the long way because the variable isnt passed on!
         pteComment.setText(self.comment)
+        lIndex.setText(str(self.index))
 
     #Clears the list of the passwords
     def clearData(self):
         lePassName.setText("")
         leUsername.setText("")
-        leNewPass.setText("")
-        chkGen.setChecked(False)
+        Passwords.leNewPass.setText("")
         chkTwoFA.setChecked(False)
         pteComment.setText("")
 
@@ -227,77 +259,79 @@ class Passwords(QtWidgets.QWidget):
         #Change later to only add the ones again which were changed
         for i in reversed(range(Passwords.gPasswords.count())):
             Passwords.gPasswords.itemAt(i).widget().setParent(None)
-        #create.CreateUI.updateProgressBar(self, 5)
 
+        #This is meant for the grid arrangement but not in use atm
         row = 0
         column = 0
-        #Ajust to the ammount of horizontal widgets
         widgetRowBreak = 4
 
-        #Get every password entry and save the time for calculating decrypt time
+        #Get every password entry
         data = dab.DatabaseActions.read(self, table="passTable", everything=True)
-        startTime = time.time()
 
         #Create the password displays only when there are passwords present
         if data == None:
             logging.info("No passwords present")
 
         else:
+            #Store the start time to calculate the time taken for the decryption
+            startTime = time.time()
             #loop through every added password
             for i in range(len(data)):
                 passSlate = passItem.CreateUI()
-                print("Decrypting password N°: {0}".format(i+1))
+                print("Decrypting password N° {0}".format(i+1))
 
                 #Array and tuple for keeping the order on the slate and for storing everything decrypted of an index
                 decData = []
-                readOrder = (0,1,5,6,7,2,3,4,8,10,11)
+                readOrder = (0,1,4,5,2,3,6,8)
 
                 #Loop for decrypting everything and testing if it actually needs to be decrypted
                 for j in range(len(readOrder)):
-                    decrypt = crypt.Encryption.decrypt(self, data[i][readOrder[j]])
-                    if decrypt[1]:
-                        decData.append(decrypt[0])
-                    else:
-                        decData.append(data[i][readOrder[j]])
-                print(decData)
-                #Note the password is fetched and decrypted in the passSlate widget based on the given index!
+                    decrypt = crypt.Encryption.decrypt(self, data[i][readOrder[j]]) #Decrypt the current database index
+                    if decrypt[1]: decData.append(decrypt[0]) #Append the decrypted data. No need to watch for read order. The line above takes care of that
+                    else: decData.append(data[i][readOrder[j]]) #Get the current row data and append the wanted cell defined in the read order
+                    
+                
+                #Note the password is fetched and decrypted in the passSlate widget based on the given index! IDK why?!
+                #The email needs to be read from a diffrent table this here is just the index
                 passSlate.setup(passIndex = decData[0],
                                 name = decData[1],
                                 lastChanged = decData[2],
                                 generated = decData[3],
-                                email = decData[4],
+                                email = crypt.Encryption.decrypt(self, dab.DatabaseActions.read(self, "email", False, int(decData[4]))[1])[0],
                                 username = decData[5],
                                 twoFa  = decData[6],
                                 comment = decData[7])
 
-            #decide where in the grid the new slate should be added.
-            #Needs some math to base it on the width of the passScroll widget
-            #Atm its just horizontal with scrolling
-            """
-            if column < widgetRowBreak:
-                print("Adding slate at Row: {0}; Column: {1}".format(row, column))
-                Passwords.gPasswords.addWidget(passSlate, row, column)
-                column += 1
-            else:
-                row += 1
-                column = 0
-                Passwords.gPasswords.addWidget(passSlate, row, column)
-                column +=1
-            """
-            Passwords.gPasswords.addWidget(passSlate, 0, i)
+                #decide where in the grid the new slate should be added.
+                #Needs some math to base it on the width of the passScroll widget
+                #Atm its just horizontal with scrolling
+                """
+                if column < widgetRowBreak:
+                    print("Adding slate at Row: {0}; Column: {1}".format(row, column))
+                    Passwords.gPasswords.addWidget(passSlate, row, column)
+                    column += 1
+                else:
+                    row += 1
+                    column = 0
+                    Passwords.gPasswords.addWidget(passSlate, row, column)
+                    column +=1
+                """
+                Passwords.gPasswords.addWidget(passSlate, 0, i)
             
-            #create.CreateUI.updateProgressBar(self, create.CreateUI.getProgressValue(self)+slateProgressIncrement)
-        endTime = time.time()
-        print("Time taken for decryption: {0}".format(round(endTime-startTime, 3)))
+            endTime = time.time()
+            print("Time taken for decryption: {0}".format(round(endTime-startTime, 3)))
                 
         #fill in the combobox for the email addresses
-        print("Decrypting combobox data")
-        cbEmail.addItem("None")
-        dataEmail = dab.DatabaseActions.read(self, table="configs", everything=True)
-        for i in range(1, len(dataEmail)):
-            cbEmail.addItem(crypt.Encryption.decrypt(self, dataEmail[i][2])[0])
-        #create.CreateUI.updateProgressBar(self, 100)
+        dataEmail = dab.DatabaseActions.read(self, table="email", everything=True)
+        cbEmail.clear()
+        for k in range(len(dataEmail)):
+            email = crypt.Encryption.decrypt(self, dataEmail[k][1])[0]
+            cbEmail.addItem(email)
+        logging.info("Decrypted email addresses")
         print("Passwords tab data set")
+
+        #Update the overview number every time the passwords display gets updated
+        overview.Overview.setGeneralInfo(self)
     
     def generatePassword(self):
         gen = generator.Generator()

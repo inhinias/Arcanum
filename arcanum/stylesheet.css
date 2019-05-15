@@ -51,7 +51,7 @@ QPushButton:hover{
 }
 
 #numPasswords{
-    font-size: 70px;
+    font-size: 20px;
     font-family: 'DSEG14Classic';
 }
 
@@ -208,18 +208,22 @@ QScrollBar:horizontal {
     background-color: #032358;
 }
 
+QScrollBar:horizontal:hover {
+    background-color: #173e7c;
+}
+
 QScrollBar::handle:horizontal {
     border: 3px solid #ff9853;
     border-radius: 5px;
     min-height: 25px;
 }
 
-QScrollBar::up-arrow:horizontal{
+QScrollBar::right-arrow:horizontal{
     background-color: #032358;
     border-style: solid;
 }
 
-QScrollBar::down-arrow:horizontal{
+QScrollBar::left-arrow:horizontal{
     background-color: #032358;
     border-style: solid;
 }

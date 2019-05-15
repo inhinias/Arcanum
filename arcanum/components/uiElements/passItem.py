@@ -94,11 +94,11 @@ class CreateUI(QtWidgets.QWidget):
         lPasswordLabel = QtWidgets.QLabel("Password:")
         lPasswordLabel.setObjectName("passLabel")
         gMain.addWidget(lPasswordLabel, 5, 0)
-        data = dab.DatabaseActions.read(self, table="passTable", rows=passIndex)
+        data = dab.DatabaseActions.read(self, table="passTable", row=passIndex)
         lPassword = QtWidgets.QLabel("")
         lPassword.setTextInteractionFlags(QtCore.Qt.TextSelectableByMouse)
         
-        lPassword.setText(str(crypt.Encryption.decrypt(self, data[9])[0]))
+        lPassword.setText(str(crypt.Encryption.decrypt(self, data[7])[0]))
 
         gMain.addWidget(lPassword, 5, 1)
 
@@ -109,17 +109,9 @@ class CreateUI(QtWidgets.QWidget):
         gMain.addWidget(passBtn, 5, 1)
         """
 
-        lCategoryLabel = QtWidgets.QLabel("Category")
-        lCategoryLabel.setObjectName("passLabel")
-        gMain.addWidget(lCategoryLabel, 6, 0)
-        lCategory = QtWidgets.QLabel(str(category))
-        lCategory.setObjectName("passLabel")
-        lCategory.setTextInteractionFlags(QtCore.Qt.TextSelectableByMouse)
-        gMain.addWidget(lCategory, 6, 1)
-
         lTwoFALabel = QtWidgets.QLabel("2FA")
         lTwoFALabel.setObjectName("passLabel")
-        gMain.addWidget(lTwoFALabel, 7, 0)
+        gMain.addWidget(lTwoFALabel, 6, 0)
         lTwoFA = QtWidgets.QLabel("2FA: ")
         lTwoFA.setObjectName("passLabel")
         lTwoFA.setTextInteractionFlags(QtCore.Qt.TextSelectableByMouse)
@@ -129,11 +121,11 @@ class CreateUI(QtWidgets.QWidget):
             lTwoFA.setText("2FA: Active")
         else:
             lTwoFA.setText("2FA: Error:{0}".format(twoFa))
-        gMain.addWidget(lTwoFA, 7, 1)
+        gMain.addWidget(lTwoFA, 6, 1)
 
         lGeneratedLabel = QtWidgets.QLabel("Generated:")
         lGeneratedLabel.setObjectName("passLabel")
-        gMain.addWidget(lGeneratedLabel, 8, 0)
+        gMain.addWidget(lGeneratedLabel, 7, 0)
         lGenerated = QtWidgets.QLabel()
         lGenerated.setObjectName("passLabel")
         lGenerated.setTextInteractionFlags(QtCore.Qt.TextSelectableByMouse)
@@ -143,23 +135,23 @@ class CreateUI(QtWidgets.QWidget):
             lGenerated.setText("False")
         else:
             lGenerated.setText("Error")
-        gMain.addWidget(lGenerated, 8, 1)
+        gMain.addWidget(lGenerated, 7, 1)
 
         lDateLabel = QtWidgets.QLabel("Last Changed:")
         lDateLabel.setObjectName("passLabel")
-        gMain.addWidget(lDateLabel, 9, 0)       
+        gMain.addWidget(lDateLabel, 8, 0)       
         lDate = QtWidgets.QLabel(str(lastChanged).split(".")[0])
         lDate.setObjectName("passLabel")
         lDate.setTextInteractionFlags(QtCore.Qt.TextSelectableByMouse)
-        gMain.addWidget(lDate, 9, 1)
+        gMain.addWidget(lDate, 8, 1)
 
         lCommentLabel = QtWidgets.QLabel("Comment:")
         lCommentLabel.setObjectName("passLabel")
-        gMain.addWidget(lCommentLabel, 10, 0)
+        gMain.addWidget(lCommentLabel, 9, 0)
         lComment = QtWidgets.QLabel(comment)
         lComment.setObjectName("passLabel")
         lComment.setTextInteractionFlags(QtCore.Qt.TextSelectableByMouse)
-        gMain.addWidget(lComment, 10, 1)
+        gMain.addWidget(lComment, 9, 1)
 
         wMain.setLayout(lMain)
         vBack.addWidget(wMain)

@@ -37,7 +37,6 @@ class CreateUI:
         wPasswords = passwords.Passwords()
         wKeys = keys.Keys()
         wSettings = settings.Settings()
-        self.sCentral.addWidget(wOverview)
         self.sCentral.addWidget(wPasswords)
         self.sCentral.addWidget(wKeys)
         self.sCentral.addWidget(wSettings)
@@ -103,10 +102,11 @@ class CreateUI:
         btnSettings.setIconSize(rackIcoSize)
 
         btnOverview.clicked.connect(lambda:CreateUI.switchTab(self, 0))
-        btnPasswords.clicked.connect(lambda:CreateUI.switchTab(self, 1))
-        btnKeys.clicked.connect(lambda:CreateUI.switchTab(self, 2))
-        btnSettings.clicked.connect(lambda:CreateUI.switchTab(self, 3))
+        btnPasswords.clicked.connect(lambda:CreateUI.switchTab(self, 0))
+        btnKeys.clicked.connect(lambda:CreateUI.switchTab(self, 1))
+        btnSettings.clicked.connect(lambda:CreateUI.switchTab(self, 2))
 
+        """
         global prgWorking
         prgWorking = QtWidgets.QProgressBar()
         prgWorking.setTextVisible(False)
@@ -114,12 +114,13 @@ class CreateUI:
         #Hide the progressbar till its wanted again
         prgWorking.setVisible(False)
         prgWorking.setSizePolicy(QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Minimum))
-        
-        vToolRack.addWidget(btnOverview)
+        """
+
+        #vToolRack.addWidget(btnOverview)
         vToolRack.addWidget(btnPasswords)
         vToolRack.addWidget(btnKeys)
         vToolRack.addWidget(btnSettings)
-        vToolRack.addWidget(prgWorking)
+        vToolRack.addWidget(wOverview)
 
         self.setLayout(vBack)
 
@@ -127,41 +128,14 @@ class CreateUI:
     def setData(self, tab):
         #Overview
         if tab == 0:
-            #CreateUI.updateProgressBar(self, 0)
-            numPass = dab.DatabaseActions.getAmmount(self, "passwords")
-            print("Currently {0} passwords stored".format(numPass))
-            #CreateUI.updateProgressBar(self, 50)
-            if numPass == 0:
-                overview.Overview.setNumPasswords(self, "000000")
-            
-            elif len(str(numPass)) >= 6:
-                overview.Overview.setNumPasswords(self, str(numPass))
-            elif len(str(numPass)) == 5:
-                overview.Overview.setNumPasswords(self, "0" + str(numPass))
-            elif len(str(numPass)) == 4:
-                overview.Overview.setNumPasswords(self, "00" + str(numPass))
-            elif len(str(numPass)) == 3:
-                overview.Overview.setNumPasswords(self, "000" + str(numPass))
-            elif len(str(numPass)) == 2:
-                overview.Overview.setNumPasswords(self, "0000" + str(numPass))
-            elif len(str(numPass))== 1:
-                overview.Overview.setNumPasswords(self, "00000" + str(numPass))
-            else:
-                print("Error with adding 0 to the numPass number")
-
-            #CreateUI.updateProgressBar(self, 100)
-            print("Overview data set")
-
-        #Passwords
-        elif tab == 1:
             passwords.Passwords.createPassSlates(self)
 
         #Keys
-        elif tab == 2:
+        elif tab == 1:
             print("Keys tab set")
 
         #Settings
-        elif tab == 3:
+        elif tab == 2:
             settings.Settings.createData(self)
 
         #catch out of bounds

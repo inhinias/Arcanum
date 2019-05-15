@@ -1,5 +1,6 @@
 from PyQt5 import QtCore, QtWidgets, QtGui
 from components import create
+from components.uiElements.tabs import overview
 
 class Window(QtWidgets.QWidget):
     def __init__(self):
@@ -10,6 +11,7 @@ class Window(QtWidgets.QWidget):
         self.center()
         self.show()
         create.CreateUI.setData(self, 0)
+        overview.Overview.setGeneralInfo(self)
 
     def center(self):
         frameGm = self.frameGeometry()
