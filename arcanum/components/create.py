@@ -1,4 +1,4 @@
-import qtawesome as qta
+import logging, qtawesome as qta
 from PyQt5 import QtGui, QtCore, QtWidgets
 from components.uiElements.tabs import overview, passwords, keys, settings
 from components import dab, crypt
@@ -132,7 +132,7 @@ class CreateUI:
 
         #Keys
         elif tab == 1:
-            print("Keys tab set")
+            logging.debug("Keys tab set")
 
         #Settings
         elif tab == 2:
@@ -140,7 +140,7 @@ class CreateUI:
 
         #catch out of bounds
         else:
-            print("The given tab index was not found!")
+            logging.debug("The given tab index was not found!")
 
     """
     def updateProgressBar(self, value):

@@ -35,12 +35,6 @@ if __name__ == '__main__':
     log.info("PyQt version:" + str(Qt.PYQT_VERSION_STR))
     log.info("SIP version:"+ str(sip.SIP_VERSION_STR))
 
-    """
-    print("Qt version:", QtCore.QT_VERSION_STR)
-    print("PyQt version:", Qt.PYQT_VERSION_STR)
-    print("SIP version:", sip.SIP_VERSION_STR)
-    """
-
     #Creating the QApplication
     app = QtWidgets.QApplication(sys.argv)
 

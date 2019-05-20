@@ -1,5 +1,5 @@
 from pathlib import Path
-import gnupg, random, string
+import gnupg, random, string, logging
 from components import dab
 
 #IMPORTANT ADD A RANDOM DEFINED LENGTH TEXT AT THE END OF THE ENCRYPTION DATA AND REMOVE IT AT DECRYPTION!
@@ -15,7 +15,7 @@ class Encryption:
     
     #Generate a key pair with a keyName, the key type and its strength.
     def generateKey(self, keyName, typeOfKey="RSA", length=4096):
-        print("Generating key pair")
+        logging.info("Generating RSA Key Pair")
         inputData = gpg.gen_key_input(key_type=typeOfKey, key_length=length, name_real=keyName)
         key = gpg.gen_key(inputData)
         return key
@@ -61,4 +61,4 @@ class Encryption:
             if charlist != "":
                 return ''.join(random.choice(charlist) for i in range(length))
             else:
-                print("Cannot create password, invalid configuration!")
+                logging.info("Cannot create password, invalid configuration!")

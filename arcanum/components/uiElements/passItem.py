@@ -162,10 +162,10 @@ class CreateUI(QtWidgets.QWidget):
     #Works! Kinda! The password gets removed but only in a temporary local manner.
     #The db still contains the item. Probably a permission issue!
     def delPassword(self):
-        print(self.index)
         text, ok = QtWidgets.QInputDialog.getText(self, 'Delete?', 'Confirm deletion by typing delete:')
         if ok:
-            if text=="delete":
+            if text=="delete" or text=="Delete" or text=="DELETE":
+                logging.info("Deleting the selected password")
                 dab.DatabaseActions.delete(self, "passwords", self.index)
                 passwords.Passwords.createPassSlates(self)
             else:
