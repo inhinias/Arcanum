@@ -118,7 +118,7 @@ class CreateUI:
 
         #vToolRack.addWidget(btnOverview)
         vToolRack.addWidget(btnPasswords)
-        vToolRack.addWidget(btnKeys)
+        #vToolRack.addWidget(btnKeys)
         vToolRack.addWidget(btnSettings)
         vToolRack.addWidget(wOverview)
 
