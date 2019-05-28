@@ -13,6 +13,12 @@ Arcanum's password storing is finishing its alpha phase. There are still improve
 The settings tab is there but a buggy mess atm. Will be fixed wit the next few additions.
 There is a key management system planned but not implemented at the moment.
 
+## How to run
+- Have Python3 with pip installed
+- Install every module mentioned in the requirements.txt file
+  - eg. sudo pip3 install PyQt5 (Omit the sudo for Windows)
+- Run the index.py file in the arcanum folder with python3 index.py
+
 ## Notes:
 - I can't guarante that your passwords will be secure. Use this programm at your own risk.
 - Logging is enabled by default with no personal information being logged.
