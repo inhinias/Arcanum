@@ -9,9 +9,8 @@ At the moment one can only connect to online database servers. (SQLite/Offline s
 Feel free to have a look around and modfiy the code to your personal (private) needs.
 
 ## Status:
-Arcanum's password storing is finishing its alpha phase. There are still improvements needed to speed up En-&Decryption.
-The settings tab is there but a buggy mess atm. Will be fixed wit the next few additions.
-There is a key management system planned but not implemented at the moment.
+Arcanum is now in beta. Go ahead. BREAK IT! But please report any bug you find on the issues page.
+Some features are disabled atm due to them stil being in development and not publishing ready!
 
 ## How to run
 - Have Python3 with pip installed
