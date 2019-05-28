@@ -78,13 +78,6 @@ class CreateUI(QtWidgets.QWidget):
         leCryptPass.setEchoMode(2)
         mainLay.addWidget(leCryptPass)
 
-        global lWrongPass
-        lWrongPass = QtWidgets.QLabel("Wrong Password")
-        lWrongPass.setObjectName("wrongPass")
-        lWrongPass.setAlignment(QtCore.Qt.AlignHCenter)
-        mainLay.addWidget(lWrongPass)
-        lWrongPass.hide()
-
         btnConnect = QtWidgets.QPushButton("Connect")
         btnConnect.setObjectName("btnConnect")
         btnConnect.setMinimumHeight(38)
@@ -124,8 +117,7 @@ class CreateUI(QtWidgets.QWidget):
             logging.warning("Bad DB error. Does the database exist?")
         else:
             logging.critical(connectionStatus)
-            print(connectionStatus)
-            #crashDialog(self, connectionStatus)
+            crashDialog(self, connectionStatus)
 
     #Show a message box giving more infromation about the current error
     def raiseError(self, errorMessage, title):

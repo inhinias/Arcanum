@@ -25,13 +25,13 @@ class DatabaseActions():
         #Catch any error and retrn them to the connection dialog to dislpay
         except connector.Error as err:
             if err.errno == connector.errorcode.ER_ACCESS_DENIED_ERROR:
-                print("Access to the DB denied. Wrong credentials?")
+                logging.info("Access to the DB denied. Wrong credentials?")
                 return 1
             elif err.errno == connector.errorcode.ER_BAD_DB_ERROR:
-                print("Bad DB error. Does the database exist?")
+                logging.info("Bad DB error. Does the database exist?")
                 return 2
             else:
-                print(err)
+                logging.error(err)
                 return err
         
         #Return true if no error occurred otherwise the error code will be returned
@@ -110,7 +110,6 @@ class DatabaseActions():
                 if err.errno == connector.errorcode.ER_TABLE_EXISTS_ERROR:
                     logging.info("Table {} already exists.".format(table_name))
                 else:
-                    print(err.msg)
                     logging.critical(err.msg)
                     crashDialog.ErrorDialog(err.msg)
 
@@ -157,7 +156,7 @@ class DatabaseActions():
 
         #The given table was not found, return nothing.
         else:
-            print("unable to find table to get ammount of!")
+            logging.error("unable to find table to get ammount of!")
             ammount = None
 
         return int(ammount)
@@ -230,7 +229,7 @@ class DatabaseActions():
     def insert(self, table, context):
         #PasswordsName, email, Username, Password, 2fa
         if table == "passwords":
-            print("Inserting password")
+            logging.debug("Inserting password")
             cur.execute("INSERT INTO passwords.passTable"
             "(name, email, username, lastUsed, generated, twoFA, encryptedPassword, comment)"
             "VALUES (%(name)s, %(email)s, %(uName)s, %(lstUsed)s, %(gen)s, %(twofactor)s, %(crypticPass)s, %(comment)s)", context)
@@ -253,11 +252,11 @@ class DatabaseActions():
         
         #The wanted table wasnt found. Doing nothing!
         else:
-            print("Table not found!")
+            logging.error("Table not found!")
 
     #Search for all the empty fields in the database
     def emptyDataTest(self):
-        print("Testing password table")
+        logging.info("Testing password table")
         cur.execute("SELECT * FROM passwords.passTable")
         data = cur.fetchall()
         print(data)
@@ -267,7 +266,7 @@ class DatabaseActions():
         #Atm there is only the passwords table, may be expanded further
         context["index"] = row
         if table == "passwords":
-            print("Updating password")
+            logging.info("Updating password")
             cur.execute("UPDATE passwords.passTable "
             "SET name = %(name)s, email = %(email)s, username = %(uName)s, lastUsed = %(lstUsed)s, "
             "generated = %(gen)s, twoFA = %(twofactor)s, encryptedPassword = %(crypticPass)s, comment = %(comment)s"
@@ -276,17 +275,19 @@ class DatabaseActions():
         
         #Do nothing upon a false table given
         else:
-            print("Invalid table name for deletion")
+            logging.error("Invalid table name for deletion")
 
     #Delete a row in a given table
     def delete(self, table, row):
         thisRow = { "theRow":row}
         if table == "passwords":
-            print("Removing row {0} from {1}".format(row, table))
+            logging.debug("Removing row {0} from {1}".format(row, table))
             cur.execute("DELETE FROM passwords.passTable WHERE prim = %(theRow)s", thisRow)
+            connection.commit()
         elif table == "configs":
-            print("Removing row {0} from {1}".format(row, table))
+            logging.debug("Removing row {0} from {1}".format(row, table))
             cur.execute("DELETE FROM passwords.passTable WHERE prim = %(theRow)s", thisRow)
+            connection.commit()
         else:
-            print("Invalid table name for deletion")
+            logging.info("Invalid table name for deletion")
     

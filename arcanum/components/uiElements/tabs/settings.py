@@ -1,5 +1,6 @@
 from components import dab, create, crypt
 from PyQt5 import QtCore, QtWidgets
+import logging
 
 class Settings(QtWidgets.QWidget):
     def __init__(self):
@@ -9,45 +10,45 @@ class Settings(QtWidgets.QWidget):
         gSettingsMain = QtWidgets.QGridLayout()
         gSettingsMain.setAlignment(QtCore.Qt.AlignTop)
 
+        line = 0
         #Create the settings tab
         leEmail = QtWidgets.QLineEdit("")
         leEmail.setPlaceholderText("Email Address")
         leEmail.setMaximumWidth(300)
-        gSettingsMain.addWidget(leEmail, 0, 0)
 
-        btnUpdateMail = QtWidgets.QPushButton("Add")
-        btnUpdateMail.setMaximumWidth(100)
-        btnUpdateMail.setMaximumHeight(leEmail.sizeHint().height())
-        btnUpdateMail.clicked.connect(lambda:Settings.addMailAddress(self, leEmail.text()))
-        gSettingsMain.addWidget(btnUpdateMail, 0, 1)
+        btnAddMail = QtWidgets.QPushButton("Add")
+        btnAddMail.setMaximumWidth(90)
+        btnAddMail.setMaximumHeight(leEmail.sizeHint().height())
+        btnAddMail.clicked.connect(lambda:Settings.addMailAddress(self, leEmail.text()))
 
+        wAddMail = QtWidgets.QWidget()
+        lAddMail = QtWidgets.QHBoxLayout()
+        lAddMail.setAlignment(QtCore.Qt.AlignLeft)
+        lAddMail.setContentsMargins(0,0,0,0)
+        wAddMail.setLayout(lAddMail)
+
+        lAddMail.addWidget(leEmail)
+        lAddMail.addWidget(btnAddMail)
+        gSettingsMain.addWidget(wAddMail, line, 0)
+
+        line += 1
         global liAddresses
         liAddresses = QtWidgets.QListWidget()
         liAddresses.setMaximumWidth(400)
-        gSettingsMain.addWidget(liAddresses, 1, 0)
+        liAddresses.setObjectName("emailList")
+        gSettingsMain.addWidget(liAddresses, line, 0)
 
         self.setLayout(gSettingsMain)
 
     def createData(self):
         #Add all the email adresses!
         liAddresses.clear()
-        dataEmail = dab.DatabaseActions.read(self, table="configs", everything=True)
+        dataEmail = dab.DatabaseActions.read(self, table="email", everything=True)
         for i in range(1, len(dataEmail)):
-            liAddresses.addItem(crypt.Encryption.decrypt(self, dataEmail[i][2])[0])
-            """
-            if i == 0:
-                create.CreateUI.updateProgressBar(self, 0)
-            else:
-                create.CreateUI.updateProgressBar(self, (len(dataEmail))/i*100)
-            """
-        print("Settings tab set")
+            liAddresses.addItem(crypt.Encryption.decrypt(self, dataEmail[i][1])[0])
+        liAddresses.sortItems()
+        logging.debug("Settings tab set")
 
     def addMailAddress(self, address):
-        #name, email, dTest, keyLen, lstChanged
-        #Add option later to encryt everything even if it is empty
-        insertionData = {"name":"",
-            "email":crypt.Encryption.encrypt(self, address),
-            "dTest":"",
-            "keyLen":"", 
-            "lstChanged":""}
-        dab.DatabaseActions.insert(self, "configs", insertionData)
+        #Add the new email address to the database and update the list
+        dab.DatabaseActions.insert(self, "email", {'emailAdd':crypt.Encryption.encrypt(self, address)})

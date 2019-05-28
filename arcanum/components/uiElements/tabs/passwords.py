@@ -278,7 +278,7 @@ class Passwords(QtWidgets.QWidget):
             #loop through every added password
             for i in range(len(data)):
                 passSlate = passItem.CreateUI()
-                print("Decrypting password N° {0}".format(i+1))
+                logging.debug("Decrypting password N° {0}".format(i+1))
 
                 #Array and tuple for keeping the order on the slate and for storing everything decrypted of an index
                 decData = []
@@ -319,7 +319,7 @@ class Passwords(QtWidgets.QWidget):
                 Passwords.gPasswords.addWidget(passSlate, 0, i)
             
             endTime = time.time()
-            print("Time taken for decryption: {0}".format(round(endTime-startTime, 3)))
+            logging.info("Time taken for decryption: {0}".format(round(endTime-startTime, 3)))
                 
         #fill in the combobox for the email addresses
         dataEmail = dab.DatabaseActions.read(self, table="email", everything=True)
@@ -328,7 +328,7 @@ class Passwords(QtWidgets.QWidget):
             email = crypt.Encryption.decrypt(self, dataEmail[k][1])[0]
             cbEmail.addItem(email)
         logging.info("Decrypted email addresses")
-        print("Passwords tab data set")
+        logging.debug("Passwords tab data set")
 
         #Update the overview number every time the passwords display gets updated
         overview.Overview.setGeneralInfo(self)
