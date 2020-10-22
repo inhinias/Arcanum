@@ -1,4 +1,4 @@
-import sys, sip, logging, datetime
+import sys, logging, datetime
 from PyQt5 import QtCore, QtGui, QtWidgets, Qt
 from components.uiElements import connectionDialog, mainWindow
 
@@ -33,7 +33,7 @@ if __name__ == '__main__':
 
     log.info("Qt version:" + str(QtCore.QT_VERSION_STR))
     log.info("PyQt version:" + str(Qt.PYQT_VERSION_STR))
-    log.info("SIP version:"+ str(sip.SIP_VERSION_STR))
+    #log.info("SIP version:"+ str(sip.SIP_VERSION_STR))
 
     #Creating the QApplication
     app = QtWidgets.QApplication(sys.argv)
